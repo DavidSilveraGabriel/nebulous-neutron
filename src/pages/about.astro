@@ -1,4 +1,6 @@
 ---
+import '../styles/global.css';
+
 const pageTitle = "About me";
 const identity = {
   firstName: "David",
@@ -10,7 +12,10 @@ const identity = {
 const skills = ["Python","Data Science","HTML", "CSS", "JavaScript", "React", "Astro", "Writing Docs"];
 const happy = true;
 const finished = false;
-const goal = 3;
+const goal = 6;
+const skillColor = "navy";
+const fontWeight = "bold";
+const textCase = "uppercase";
 ---
 <html lang="en">
 	<head>
@@ -40,12 +45,23 @@ const goal = 3;
         </ul>
         <p>My skills are:</p>
         <ul>
-        {skills.map((skill) => <li>{skill}</li>)}
+        {skills.map((skill) => <li class="skill">{skill}</li>)}
         </ul>
         {happy && <p>I am happy to be learning Astro!</p>}
 
         {finished && <p>I finished this tutorial!</p>}
 
-        {goal === 3 ? <p>My goal is to finish in 3 days.</p> : <p>My goal is not 3 days.</p>}
+        {goal === 6 ? <p>My goal is to finish in 6 days.</p> : <p>My goal is not 6 days.</p>}
+        <style define:vars={{skillColor, fontWeight, textCase}}>
+            h1 {
+              color: purple;
+              font-size: 4rem;
+            }
+            .skill {
+              color: var(--skillColor);
+              font-weight: var(--fontWeight);
+              text-transform: var(--textCase);
+            }
+          </style>
     </body>
 </html>
