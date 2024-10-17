@@ -1,7 +1,10 @@
 ---
 import Base from '../templates/Base.astro';
+import Greeting from '../components/Greeting';
+
 const pageTitle = "Home Page";
 ---
 <Base pageTitle={pageTitle}>
   <h2>VAMOS A PROBARLO</h2>
+  <Greeting client:load messages={["Hi", "Hello", "Howdy", "Hey there"]} />
 </Base>
