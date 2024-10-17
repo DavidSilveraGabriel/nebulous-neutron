@@ -1,38 +1,55 @@
 ---
-const { frontmatter } = Astro.props;
 import Base from './Base.astro';
 import { fade } from "astro:transitions";
 
----
-<Base pageTitle={frontmatter.title}>
+interface Frontmatter {
+  title: string;
+  pubDate: Date;
+  description: string;
+  author: string;
+  image: {
+    url: string;
+    alt: string;
+  };
+  tags: string[];
+}
 
-    <p>{frontmatter.pubDate.toString().slice(0,10)}</p>
-    <p transition:animate={fade({ duration: '2s' })}><em>{frontmatter.description}</em></p>
-    <p>Written by: <a href="/about/">{frontmatter.author}</a></p>
-    <img src={frontmatter.image.url} width="300" alt={frontmatter.image.alt} />
-    <div class="tags">
-        {frontmatter.tags.map((tag) => (
-          <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p>
-        ))}
-      </div>
-    <slot />
+interface Props {
+  frontmatter: Frontmatter;
+}
+
+const { frontmatter } = Astro.props;
+---
+
+<Base pageTitle={frontmatter.title}>
+  <p>{frontmatter.pubDate.toString().slice(0,10)}</p>
+  <p transition:animate={fade({ duration: '2s' })}><em>{frontmatter.description}</em></p>
+  <p>Written by: <a href="/about/">{frontmatter.author}</a></p>
+  <img src={frontmatter.image.url} width="300" alt={frontmatter.image.alt} />
+  <div class="tags">
+    {frontmatter.tags.map((tag: string) => (
+      <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p>
+    ))}
+  </div>
+  <slot />
 </Base>
+
 <style>
-    a {
-      color: #00539F;
-    }
-  
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-    }
-  
-    .tag {
-      margin: 0.25em;
-      border: dotted 1px #a1a1a1;
-      border-radius: .5em;
-      padding: .5em 1em;
-      font-size: 1.15em;
-      background-color: #F8FCFD;
-    }
-  </style>
+  a {
+    color: #00539F;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    margin: 0.25em;
+    border: dotted 1px #a1a1a1;
+    border-radius: .5em;
+    padding: .5em 1em;
+    font-size: 1.15em;
+    background-color: #F8FCFD;
+  }
+</style>
