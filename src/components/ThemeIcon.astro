@@ -46,8 +46,8 @@
       const isDark = element.classList.contains("dark");
       localStorage.setItem("theme", isDark ? "dark" : "light");
     };
-
-    document.getElementById("themeToggle").onclick = handleToggleClick;
+    
+    document.getElementById("themeToggle")?.onclick = handleToggleClick;
   });
   </script>
 
