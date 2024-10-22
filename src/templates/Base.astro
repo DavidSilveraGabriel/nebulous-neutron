@@ -1,31 +1,63 @@
 ---
-
-import '../styles/global.css';
+import { ViewTransitions } from "astro:transitions";
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { ViewTransitions } from "astro:transitions";
+import '../styles/global.css';
 
-const { pageTitle } = Astro.props; //const pageTitle = "index";
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
 
+const {
+  title,
+  description = "David's portfolio - Data Scientist & AI Developer",
+  image = "/default-og.png",
+} = Astro.props;
 ---
 
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{pageTitle}</title>
-		<ViewTransitions />
-
-	</head>
-	<body>
-		<Header />	
-		<h1 transition:animate="slide">{pageTitle}</h1>
-			<slot />
-		<Footer />
-		<script>
-			import "../scripts/menu.js";
-		</script>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={image} />
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <ViewTransitions />
+  </head>
+  <body class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
+    <Header />
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import "../scripts/menu.js";
+    </script>
+  </body>
 </html>

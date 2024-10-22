@@ -1,10 +1,39 @@
 ---
 import Base from '../templates/Base.astro';
-import Greeting from '../components/Greeting';
+import HeroSection from '../components/HeroSection.astro';
+import ProjectsGrid from '../components/ProjectsGrid.astro';
 
-const pageTitle = "Home Page";
+const pageTitle = "David's Portfolio - Data Scientist & AI Developer";
+
+const identity = {
+  firstName: "David",
+  occupation: "Data Scientist",
+  country: "Argentina",
+  hobbies: ["Train", "Play guitar", "Learn"],
+};
+const projects = [
+  {
+    title: "Data Analysis Dashboard",
+    description: "Interactive dashboard for visualizing business metrics",
+    image: "/projects/dashboard.jpg",
+    tags: ["Python", "Streamlit", "Pandas"],
+    github: "https://github.com/yourusername/project",
+    link: "https://project-demo.com"
+  },
+  // Más proyectos...
+];
+const skills = ["Python", "Data Science", "HTML", "CSS", "JavaScript", "React", "Astro", "Writing Docs"];
+
 ---
-<Base pageTitle={pageTitle}>
-  <h2>VAMOS A PROBARLO</h2>
-  <Greeting client:load messages={["Hi", "Hello", "Howdy", "Hey there"]} />
+
+<Base title={pageTitle}>
+  <div class="text-center sm:text-center">
+    <div class="flex">
+      <img src="src/assets/DAVID.png" alt="David" class="w-4 h-4 rounded-full mr-4">
+      <HeroSection />
+    </div>
+    
+  <ProjectsGrid projects={projects} layout="grid" />
+  </div>
 </Base>
+

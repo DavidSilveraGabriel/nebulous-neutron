@@ -1,17 +1,30 @@
 ---
-import Social from './Social.astro';
+import { Icon } from "astro-icon/components";
 ---
-<style>
-    footer {
-      display: flex;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-  </style>
-<footer>
-    My social:
-    <Social platform="twitter" username="David_Silvera21" />
-    <Social platform="github" username="DavidSilveraGabriel" />
-    <Social platform="youtube" username="@SilveraDavid" />
-    <Social platform="linkedin" username="in/davidsilveragabriel" />
+
+<footer class="bg-gray-800 text-gray py-8 mt-auto">
+  <div class="container px-7">
+    <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="mb-4 md:mb-0">
+            <h2 class="text-xl font-bold">David Silvera</h2>
+            <p class="text-gray-400">Data Scientist & Web Developer</p>
+          </div>
+      
+
+        <h3 class="text-lg mb-2">Connect with me:</h3>
+
+            <div class="py-8 gap-2 space-x-5">
+              <a href="https://github.com/DavidSilveraGabriel" class="inline-block"> <Icon name="mdi:github" /> </a>
+              <a href="https://x.com/David_Silvera21" class="inline-block"> <Icon name="mdi:twitter"/> </a>
+              <a href="https://www.linkedin.com/in/davidsilveragabriel/" class="inline-block"> <Icon name="mdi:linkedin"/> </a>
+              <a href="https://www.youtube.com/@SilveraDavid" class="inline-block"> <Icon name="mdi:youtube"/> </a>
+              <a href="https://www.instagram.com/davidsilverag/" class="inline-block"> <Icon name="mdi:instagram"/> </a>
+            </div>
+
+      
+    
+            <div class="mt-8 text-center text-gray-400 text-sm">
+              &copy; {new Date().getFullYear()} David Silvera. All rights reserved.
+            </div>
+  </div>
 </footer>

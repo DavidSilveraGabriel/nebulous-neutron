@@ -1,0 +1,129 @@
+<section class="min-h-[80vh] flex items-center justify-center py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <!-- Left Column - Text Content -->
+        <div class="space-y-8 text-center lg:text-left">
+          <h1 
+            class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white opacity-0 translate-y-8 animate-fade-up"
+          >
+            Data Science & <span class="text-primary-600 dark:text-primary-400">AI Solutions</span>
+          </h1>
+          
+          <p 
+            class="text-xl text-gray-600 dark:text-gray-300 leading-relaxed opacity-0 translate-y-8 animate-fade-up animation-delay-150"
+          >
+            Transforming data into actionable insights and building intelligent solutions for your business needs.
+          </p>
+          
+          <div class="flex flex-wrap gap-4 justify-center lg:justify-start opacity-0 translate-y-8 animate-fade-up animation-delay-300">
+            <a 
+              href="#projects" 
+              class="px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-300"
+            >
+              View Projects
+            </a>
+            <a 
+              href="#contact" 
+              class="px-8 py-3 border-2 border-primary-600 text-primary-600 hover:bg-primary-50 dark:text-primary-400 dark:border-primary-400 dark:hover:bg-primary-900/50 rounded-lg transition-colors duration-300"
+            >
+              Contact Me
+            </a>
+          </div>
+          
+          <!-- Tech Stack -->
+          <div class="pt-8 opacity-0 translate-y-8 animate-fade-up animation-delay-450">
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Technologies I work with:</p>
+            <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
+              {['Python', 'Data Science', 'Machine Learning', 'Deep Learning', 'NLP'].map((tech) => (
+                <span class="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-sm">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Column - Visual Element -->
+        <div class="relative opacity-0 translate-x-8 animate-fade-left animation-delay-300">
+          <div class="aspect-square rounded-2xl bg-gradient-to-br from-primary-100 to-accent-100 dark:from-primary-900 dark:to-accent-900 p-8">
+            <!-- Placeholder for future image or animation -->
+            <div class="absolute inset-0 flex items-center justify-center">
+              <svg class="w-3/4 h-3/4 text-primary-600 dark:text-primary-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <!-- Simplified data visualization icon -->
+                <path d="M4 4h16M4 12h16M4 20h16" stroke-linecap="round"/>
+                <circle cx="9" cy="4" r="1" fill="currentColor"/>
+                <circle cx="14" cy="12" r="1" fill="currentColor"/>
+                <circle cx="19" cy="20" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <style>
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(2rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeLeft {
+      from {
+        opacity: 0;
+        transform: translateX(2rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .animate-fade-up {
+      animation: fadeUp 0.8s ease-out forwards;
+    }
+    
+    .animate-fade-left {
+      animation: fadeLeft 0.8s ease-out forwards;
+    }
+    
+    .animation-delay-150 {
+      animation-delay: 150ms;
+    }
+    
+    .animation-delay-300 {
+      animation-delay: 300ms;
+    }
+    
+    .animation-delay-450 {
+      animation-delay: 450ms;
+    }
+  </style>
+  
+  <script>
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      threshold: 0.2,
+      rootMargin: '50px'
+    };
+  
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fade-up');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+  
+    document.addEventListener('astro:page-load', () => {
+      const animatedElements = document.querySelectorAll('.animate-on-scroll');
+      animatedElements.forEach(el => observer.observe(el));
+    });
+  </script>

@@ -1,14 +1,19 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
 html {
     background-color: #f1f5f9;
     font-family: sans-serif;
   }
   
 body {
-    margin: 0 auto;
+    margin: 0;
     width: 100%;
-    max-width: 80ch;
     padding: 1rem;
     line-height: 1.5;
+    align-items: center;
+    justify-content: center;
 }
 
 * {
@@ -22,16 +27,17 @@ h1 {
 
 /* nav styles */
 .hamburger {
-    padding-right: 20px;
+    padding-right: 17px;
     cursor: pointer;
+    margin-left: 22rem;
 }
 
 .hamburger .line {
-    display: block;
+    display: flex;
     width: 40px;
-    height: 5px;
+    height: 2px;
     margin-bottom: 10px;
-    background-color: #ff9776;
+    background-color: #363534;
 }
 
 .nav-links {
@@ -44,15 +50,33 @@ margin: 0;
 }
 
 .nav-links a {
-display: block;
+display: flex;
 text-align: center;
 padding: 10px 0;
 text-decoration: none;
-font-size: 1.2rem;
+font-size: 1rem;
 font-weight: bold;
 text-transform: uppercase;
 }
 
+a {
+    color: #b2b7bb;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+  }
+
+  .tag {
+    margin: 0.25em;
+    border: dotted 1px #a1a1a1;
+    border-radius: 0.5em;
+    padding: 0.5em 1em;
+    font-size: 1.15em;
+    background-color: #f8fcfd;
+  }
 .nav-links a:hover, a:focus {
 background-color: #ff9776;
 }
