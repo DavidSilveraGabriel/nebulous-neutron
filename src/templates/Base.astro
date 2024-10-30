@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
+import FormForProject from "../components/FormForProject.astro";
 interface Props {
   title: string;
   description?: string;
@@ -34,7 +35,14 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
-    
+    <!-- Google Analytics -->
+    <script type="text/partytown" async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script type="text/partytown">
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX'); // Reemplaza con tu ID
+    </script>
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:title" content={title} />
@@ -54,7 +62,9 @@ const {
     <Header />
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <slot />
+      <FormForProject />
     </main>
+   
     <Footer />
     <script>
       import "../scripts/menu.js";

@@ -12,10 +12,14 @@ const postsCollection = defineCollection({
         url: z.string(),
         alt: z.string()
       }),
-      tags: z.array(z.string())
+      tags: z.array(z.string()),
+      category: z.enum(['tutorial', 'case-study', 'technical', 'blog']),
+      readingTime: z.number(), // en minutos
+      featured: z.boolean().optional(),
+      draft: z.boolean().optional()
     })
 });
-// Export a single `collections` object to register your collection(s)
+
 export const collections = {
   posts: postsCollection,
 };

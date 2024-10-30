@@ -11,12 +11,14 @@ interface Project {
 
 interface Props {
   layout?: 'grid' | 'carousel' | 'list';
-  projects: Project[];
+  projects?: Project[];
 }
 
 const { 
   layout = 'grid',
-  projects = [] 
+  projects = [
+    
+  ]
 } = Astro.props;
 
 ---
