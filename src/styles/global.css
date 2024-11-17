@@ -158,3 +158,11 @@ html.dark {
   transform: translateY(0);
 }
 
+:root {
+  --color-primary: #2563eb;     /* Azul principal */
+  --color-secondary: #f97316;   /* Naranja acento */
+  --color-background: #ffffff;  /* Fondo claro */
+  --color-text: #1f2937;       /* Texto principal */
+  --color-muted: #6b7280;      /* Texto secundario */
+  --color-border: #e5e7eb;     /* Bordes */
+}
