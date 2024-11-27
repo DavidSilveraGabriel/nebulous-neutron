@@ -2,6 +2,8 @@
 import Base from '../components/layout/Base.astro';
 import HeroSection from '../components/sections/HeroSection.astro';
 import ProjectsGrid from '../components/sections/ProjectsGrid.astro';
+import ServicesSection from '../components/sections/ServicesSection.astro';
+import Testimonios from '../components/sections/Testimonies.astro';
 
 const pageTitle = "David Silvera - Data Scientist & AI Developer";
 
@@ -52,6 +54,8 @@ const skills = ["Python", "Data Science", "HTML", "CSS", "JavaScript", "React", 
     <div class="flex">
       <HeroSection />
     </div>
+    <ServicesSection />
+    <Testimonios />
     
   <ProjectsGrid projects={projects} layout="grid" />
   </div>
