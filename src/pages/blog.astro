@@ -9,9 +9,9 @@ const allPosts = await getCollection("blog");
 
 <Base title={pageTitle} showProjectForm={false}>
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-    <h1 class="text-4xl font-bold text-center mb-4">Mi Blog</h1>
+    <h1 class="text-4xl font-bold text-center mb-4">Welcome to my blog 🧐</h1>
     <p class="text-xl text-gray-600 text-center mb-12">
-      Artículos sobre desarrollo web, tecnología y experiencias personales.
+      Articles about Data Science, Machine Learning/Deep Learning/LLMs and much more... ✨ 
     </p>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -45,7 +45,7 @@ const allPosts = await getCollection("blog");
               href={`/blog/${post.slug}/`}
               class="inline-flex items-center text-primary-600 hover:text-primary-700"
             >
-              Leer más
+              Read more..
               <svg class="w-4 h-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
               </svg>
