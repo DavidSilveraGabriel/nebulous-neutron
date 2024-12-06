@@ -4,15 +4,25 @@ import HeroSection from '../components/sections/HeroSection.astro';
 import ProjectsGrid from '../components/sections/ProjectsGrid.astro';
 import ServicesSection from '../components/sections/ServicesSection.astro';
 import Testimonios from '../components/sections/Testimonies.astro';
+import BlogSection from '../components/sections/BlogSection.astro';
+
+import { getCollection } from "astro:content";
+import FormattedDate from '../components/FormattedDate.astro';
 
 const pageTitle = "David Silvera - Data Scientist & AI Developer";
 
 const identity = {
-  firstName: "David",
+  Name: "David Gabriel Silvera",
   occupation: "Data Scientist",
   country: "Argentina",
   hobbies: ["Train", "Play guitar", "Learn"],
+  skills: ['Python', 'Data Science', 'Machine Learning', 'Deep Learning', 'LLMs', 'GenAI','NLP', 'CV'],
 };
+
+// Obtener los posts destacados
+const allPosts = await getCollection("blog");
+const featuredPosts = allPosts.filter(post => post.data.featured);
+
 const projects = [
   {
     title: "Analyze and classify public domain EEG(ML) signals",
@@ -45,19 +55,23 @@ const projects = [
     github: "https://github.com/DavidSilveraGabriel/Intel--Edge-AI-for-IoT-Developers---Project-1"
   }
 ];
-const skills = ["Python", "Data Science", "HTML", "CSS", "JavaScript", "React", "Astro", "Writing Docs"];
 
 ---
 
 <Base title={pageTitle} showProjectForm={true}>
   <div class="text-center sm:text-center">
+     <!-- Sección de principal de introduccion -->
     <div class="flex">
-      <HeroSection />
+      <HeroSection identity={identity}/>
     </div>
+     <!-- Sección de servicios -->
     <ServicesSection />
+    <!-- Sección de testimonios -->
     <Testimonios />
-    
-  <ProjectsGrid projects={projects} layout="grid" />
+    <!-- Sección de proyectos -->
+    <ProjectsGrid projects={projects} layout="grid" />
+    <!-- Sección de Posts Destacados -->
+    <BlogSection />
   </div>
 </Base>
 
