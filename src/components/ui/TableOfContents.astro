@@ -6,59 +6,114 @@
 </nav>
 
 <script>
-function buildTableOfContents() {
+/**
+ * Genera una tabla de contenidos dinámica para encabezados H2 y H3 en un artículo.
+ * 
+ * Características:
+ * - Genera enlaces para cada encabezado
+ * - Crea IDs únicos para encabezados sin ID
+ * - Resalta el encabezado actualmente visible
+ * - Soporte para temas oscuros y claros
+ * - Compatibilidad con Astro
+ */
+ function buildTableOfContents() {
+  // Selecciona todos los encabezados H2 y H3 dentro del elemento 'article'
   const headings = document.querySelectorAll('article h2, article h3');
+  
+  // Obtiene el contenedor de la tabla de contenidos
   const tocContainer = document.getElementById('table-of-contents');
   
+  // Salir si no se encuentra el contenedor
   if (!tocContainer) return;
   
+  // Limpiar contenido previo
   tocContainer.innerHTML = '';
   
+  // Generar enlaces para cada encabezado
   headings.forEach((heading) => {
+    // Crear un enlace para cada encabezado
     const link = document.createElement('a');
     const level = heading.tagName.toLowerCase();
     
+    // Generar un ID único si no existe
     if (!heading.id) {
-      heading.id = heading.textContent?.toLowerCase().replace(/\s+/g, '-') ?? '';
+      heading.id = generateUniqueId(heading.textContent);
     }
     
+    // Configurar propiedades del enlace
     link.href = `#${heading.id}`;
     link.textContent = heading.textContent;
-    link.className = `block text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 ${
-      level === 'h3' ? 'pl-4' : ''
-    }`;
+    link.className = `
+      block 
+      text-gray-600 
+      dark:text-gray-400 
+      hover:text-primary-600 
+      dark:hover:text-primary-400 
+      ${level === 'h3' ? 'pl-4' : ''}
+    `;
     
     tocContainer.appendChild(link);
   });
 
-  // Nuevo observador de intersección que solo resalta el primer encabezado visible
-  const observer = new IntersectionObserver((entries) => {
-    // Encuentra el primer encabezado visible
-    let firstVisible: Element | null = null;
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !firstVisible) {
-        firstVisible = entry.target;
+  // Configurar observador de intersección para resaltar el encabezado activo
+  const observer = new IntersectionObserver(
+    (entries) => {
+      // Encontrar el primer encabezado visible
+      const firstVisible = entries.find(entry => entry.isIntersecting)?.target;
+
+      // Resetear estilos de todos los enlaces
+      const allLinks = tocContainer.querySelectorAll('a');
+      allLinks.forEach(link => {
+        link.classList.remove('text-primary-600', 'dark:text-primary-400', 'font-medium');
+      });
+
+      // Resaltar el enlace del encabezado visible
+      if (firstVisible) {
+        const headingId = firstVisible.getAttribute('id');
+        if (headingId) {
+          const activeLink = tocContainer.querySelector(`a[href="#${headingId}"]`);
+          activeLink?.classList.add('text-primary-600', 'dark:text-primary-400', 'font-medium');
+        }
       }
-    });
-
-    // Elimina el resaltado de todos los enlaces
-    const allLinks = tocContainer.querySelectorAll('a');
-    allLinks.forEach(link => {
-      link.classList.remove('text-primary-600', 'dark:text-primary-400', 'font-medium');
-    });
-
-    // Resalta solo el enlace correspondiente al primer encabezado visible
-    if (firstVisible && 'id' in firstVisible) {
-      const activeLink = tocContainer.querySelector(`a[href="#${firstVisible.id}"]`);
-      activeLink?.classList.add('text-primary-600', 'dark:text-primary-400', 'font-medium');
+    },
+    {
+      // Configuraciones del observador para mayor precisión
+      threshold: 0.5, // Activar cuando el 50% del elemento sea visible
+      rootMargin: '-10% 0px -10% 0px' // Ajustar márgenes para mejor precisión
     }
-  }, { 
-    threshold: 0.2, // Ajusta este valor según necesites
-    rootMargin: '-80px 0px -20% 0px' // Ajusta según la altura de tu header
-  });
+  );
 
+  // Observar cada encabezado
   headings.forEach(heading => observer.observe(heading));
 }
 
+/**
+ * Genera un ID único a partir del texto del encabezado.
+ * 
+ * @param {string | null} text - Texto del encabezado
+ * @returns {string} ID generado
+ */
+function generateUniqueId(text: string | null): string {
+  if (!text) return '';
+
+  // Convertir a minúsculas, reemplazar espacios con guiones
+  let id = text.toLowerCase()
+    .normalize('NFD')           // Descomponer caracteres acentuados
+    .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
+    .replace(/[^\w\s-]/g, '')    // Eliminar caracteres no alfanuméricos
+    .trim()
+    .replace(/\s+/g, '-');       // Reemplazar espacios con guiones
+
+  // Añadir un número único si es necesario para evitar duplicados
+  const existingElement = document.getElementById(id);
+  if (existingElement) {
+    const suffix = Date.now().toString(36);
+    id = `${id}-${suffix}`;
+  }
+
+  return id;
+}
+
+// Registrar evento para Astro
 document.addEventListener('astro:page-load', buildTableOfContents);
 </script>
