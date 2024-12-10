@@ -1,0 +1,64 @@
+---
+---
+<nav class="space-y-2 text-sm">
+  <p class="font-semibold text-gray-900 dark:text-white mb-4">Table of Contents</p>
+  <div id="table-of-contents" class="space-y-2"></div>
+</nav>
+
+<script>
+function buildTableOfContents() {
+  const headings = document.querySelectorAll('article h2, article h3');
+  const tocContainer = document.getElementById('table-of-contents');
+  
+  if (!tocContainer) return;
+  
+  tocContainer.innerHTML = '';
+  
+  headings.forEach((heading) => {
+    const link = document.createElement('a');
+    const level = heading.tagName.toLowerCase();
+    
+    if (!heading.id) {
+      heading.id = heading.textContent?.toLowerCase().replace(/\s+/g, '-') ?? '';
+    }
+    
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent;
+    link.className = `block text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 ${
+      level === 'h3' ? 'pl-4' : ''
+    }`;
+    
+    tocContainer.appendChild(link);
+  });
+
+  // Nuevo observador de intersección que solo resalta el primer encabezado visible
+  const observer = new IntersectionObserver((entries) => {
+    // Encuentra el primer encabezado visible
+    let firstVisible: Element | null = null;
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !firstVisible) {
+        firstVisible = entry.target;
+      }
+    });
+
+    // Elimina el resaltado de todos los enlaces
+    const allLinks = tocContainer.querySelectorAll('a');
+    allLinks.forEach(link => {
+      link.classList.remove('text-primary-600', 'dark:text-primary-400', 'font-medium');
+    });
+
+    // Resalta solo el enlace correspondiente al primer encabezado visible
+    if (firstVisible && 'id' in firstVisible) {
+      const activeLink = tocContainer.querySelector(`a[href="#${firstVisible.id}"]`);
+      activeLink?.classList.add('text-primary-600', 'dark:text-primary-400', 'font-medium');
+    }
+  }, { 
+    threshold: 0.2, // Ajusta este valor según necesites
+    rootMargin: '-80px 0px -20% 0px' // Ajusta según la altura de tu header
+  });
+
+  headings.forEach(heading => observer.observe(heading));
+}
+
+document.addEventListener('astro:page-load', buildTableOfContents);
+</script>

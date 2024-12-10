@@ -1,8 +1,9 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import Base from '../../components/layout/Base.astro';
-
-import FormattedDate from '../../components/FormattedDate.astro';
+import Base from './Base.astro';
+import FormattedDate from '../FormattedDate.astro';
+import TableOfContents from '../ui/TableOfContents.astro';
+import ReadingProgress from '../ui/ReadingProgress.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
@@ -10,37 +11,50 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
 <Base title={title} description={description}>
-  <main class="max-w-4xl mx-auto px-4 py-8">
-    <article class="prose prose-lg mx-auto">
-      {heroImage && (
-        <div class="mb-8">
-          <img 
-            src={heroImage} 
-            alt={title}
-            class="w-full h-auto rounded-lg shadow-lg"
-            width={1020} 
-            height={510}
-          />
+  <ReadingProgress />
+  
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="lg:grid lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-8">
+      <!-- Sidebar -->
+      <aside class="hidden lg:block">
+        <div class="sticky top-24">
+          <TableOfContents />
         </div>
-      )}
-      
-      <header class="mb-8 text-center">
-        <div class="text-gray-600 mb-2">
-          <FormattedDate date={pubDate} />
-          {updatedDate && (
-            <span class="italic ml-2">
-              (Actualizado: <FormattedDate date={updatedDate} />)
-            </span>
-          )}
-        </div>
-        <h1 class="text-4xl font-bold mb-4">{title}</h1>
-        {description && <p class="text-xl text-gray-600">{description}</p>}
-        <hr class="my-4" />
-      </header>
+      </aside>
 
-      <div class="prose-content">
-        <slot />
-      </div>
-    </article>
+      <!-- Article -->
+      <article class="prose prose-lg dark:prose-invert mx-auto">
+        {heroImage && (
+          <div class="mb-8 not-prose">
+            <img 
+              src={heroImage} 
+              alt={title}
+              class="w-full h-auto rounded-xl shadow-lg"
+              width={1020} 
+              height={510}
+            />
+          </div>
+        )}
+        
+        <header class="mb-8">
+          <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-4">
+            <FormattedDate date={pubDate} />
+            {updatedDate && (
+              <span class="italic">
+                (Updated: <FormattedDate date={updatedDate} />)
+              </span>
+            )}
+          </div>
+          <h1 class="text-4xl font-bold mb-4">{title}</h1>
+          {description && (
+            <p class="text-xl text-gray-600 dark:text-gray-300">{description}</p>
+          )}
+        </header>
+
+        <div class="prose-content">
+          <slot />
+        </div>
+      </article>
+    </div>
   </main>
 </Base>

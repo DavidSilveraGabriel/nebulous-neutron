@@ -5,6 +5,7 @@
 html {
     background-color: #f1f5f9;
     font-family: sans-serif;
+    scroll-behavior: smooth;
   }
   
 body {
@@ -165,4 +166,51 @@ html.dark {
   --color-text: #1f2937;       /* Texto principal */
   --color-muted: #6b7280;      /* Texto secundario */
   --color-border: #e5e7eb;     /* Bordes */
+}
+
+/* Agregar a tus estilos existentes */
+.prose {
+  --tw-prose-body: theme('colors.gray.700');
+  --tw-prose-headings: theme('colors.gray.900');
+  --tw-prose-links: theme('colors.primary.600');
+  --tw-prose-code: theme('colors.gray.900');
+  --tw-prose-pre-code: theme('colors.gray.200');
+  --tw-prose-pre-bg: theme('colors.gray.800');
+  
+  /* Dark mode */
+  --tw-prose-invert-body: theme('colors.gray.300');
+  --tw-prose-invert-headings: theme('colors.white');
+  --tw-prose-invert-links: theme('colors.primary.400');
+  --tw-prose-invert-code: theme('colors.white');
+}
+
+
+/* Mejoras para la legibilidad */
+.prose-content {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+/* Estilos para mejorar la distinción de subtítulos */
+.prose-content h2 {
+  font-size: 1.5rem; /* Aumenta el tamaño */
+  font-weight: bold; /* Negrita para mayor énfasis */
+  color: #1a202c; /* Color más oscuro */
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.prose-content h3 {
+  font-size: 1.25rem; /* Aumenta el tamaño */
+  font-weight: semi-bold; /* Semi-negrita */
+  color: #2d3748; /* Color más oscuro */
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+:target::before {
+  content: "";
+  display: block;
+  height: 80px; /* Ajusta este valor según la altura de tu encabezado */
+  margin-top: -80px; /* Debe ser el mismo valor que el height */
 }
