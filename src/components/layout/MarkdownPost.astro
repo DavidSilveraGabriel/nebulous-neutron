@@ -17,14 +17,21 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
     <div class="lg:grid lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-8">
       <!-- Sidebar -->
       <aside class="hidden lg:block">
-        <div class="sticky top-24">
+        <div class="sticky top-24 text-gray-100">
           <TableOfContents />
         </div>
       </aside>
 
       <!-- Article -->
-      <article class="prose prose-lg dark:prose-invert mx-auto">
-        {heroImage && (
+      <article class="prose prose-lg mx-auto
+      prose-headings:font-bold
+      prose-h1:text-gray-900 dark:prose-h1:text-white
+      prose-h2:text-gray-900 dark:prose-h2:text-white
+      prose-h3:text-gray-900 dark:prose-h3:text-white
+      prose-h4:text-gray-900 dark:prose-h4:text-white
+      prose-p:text-gray-800 dark:prose-p:text-gray-100
+    ">
+            {heroImage && (
           <div class="mb-8 not-prose">
             <img 
               src={heroImage} 
@@ -37,7 +44,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
         )}
         
         <header class="mb-8">
-          <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-4">
+          <div class="flex items-center gap-2 text-black dark:text-gray-100 mb-4">
             <FormattedDate date={pubDate} />
             {updatedDate && (
               <span class="italic">
@@ -47,7 +54,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
           </div>
           <h1 class="text-4xl font-bold mb-4">{title}</h1>
           {description && (
-            <p class="text-xl text-gray-600 dark:text-gray-300">{description}</p>
+            <p class="text-xl text-black dark:text-gray-300">{description}</p>
           )}
         </header>
 

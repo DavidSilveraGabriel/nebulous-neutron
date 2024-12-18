@@ -1,0 +1,38 @@
+[
+    {
+      "title": "NILES - Multimodal Chatbot with Gemini 🤖",
+      "description": "NILES is an advanced multimodal chatbot leveraging Gemini models to process both text and images. Built with a modular architecture and a clean interface, NILES delivers an intuitive and powerful chat experience.",
+      "image": "/projects_img/cover.png",
+      "tags": ["GenAI", "LLMs", "AI bot"],
+      "github": "https://github.com/DavidSilveraGabriel/NILES"
+    },
+    {
+      "title": "Analyze and classify public domain EEG(ML) signals",
+      "description": "analyze and classify public domain EEG signals with deep ConvNets for decoding imagined and executed movements",
+      "image": "https://camo.githubusercontent.com/498069f5bd135c865ea9ccf8adc3aa34c0998793362846725e1094284f230a16/68747470733a2f2f63646e2e746563686e6f6c6f67796e6574776f726b732e636f6d2f746e2f696d616765732f7468756d62732f776562702f3634305f3336302f66697273742d657665722d6e6f6e2d696e7661736976652d627261696e2d636f6d70757465722d696e746572666163652d646576656c6f7065642d3332303934312e776562703f763d3130323430343736",
+      "tags": ["Python", "mne", "Pandas", "braindecode", "EEG"],
+      "github": "https://github.com/DavidSilveraGabriel/EEG-classification",
+      "link": "https://github.com/DavidSilveraGabriel/EEG-classification/blob/master/Using_mne_and_braindecode.ipynb"
+    },
+    {
+      "title": "Data Science Resources",
+      "description": "A list of Data Science resources for everyone who is interested in this field.",
+      "image": "https://images.unsplash.com/photo-1666875753105-c63a6f3bdc86?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZGF0YSUyMHNjaWVuY2V8ZW58MHx8MHx8fDA%3D",
+      "tags": ["Data", "Machine Learning"],
+      "github": "https://github.com/DavidSilveraGabriel/Data-science-resources"
+    },
+    {
+      "title": "Computer Pointer Controller",
+      "description": "Computer Pointer Controller app estimate pose of head and is used to control the movement of mouse pointer by the direction of eyes.",
+      "image": "/projects_img/openvino.png",
+      "tags": ["Machine Learning", "Deep Learning", "AI"],
+      "github": "https://github.com/DavidSilveraGabriel/Intel--Edge-AI-for-IoT-Developers---Project-3"
+    },
+    {
+      "title": "Deploy a People Counter App at the Edge",
+      "description": "The app will detect people in a designated area, providing the number of people in the frame, average duration of people in frame, and total count.",
+      "image": "/projects_img/nanodegree.png",
+      "tags": ["Machine Learning", "Deep Learning", "AI"],
+      "github": "https://github.com/DavidSilveraGabriel/Intel--Edge-AI-for-IoT-Developers---Project-1"
+    }
+]

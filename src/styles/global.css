@@ -1,7 +1,75 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+/* Agregar al principio del archivo */
+* {
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+/* Modificar las variables de color para el modo oscuro */
+:root {
+  --tw-prose-body: theme('colors.gray.900');
+  --tw-prose-headings: theme('colors.gray.900');
+  --tw-prose-links: theme('colors.primary.600');
+  --tw-prose-code: theme('colors.gray.900');
+}
 
+/* Variables específicas para modo oscuro */
+.dark {
+  --tw-prose-body: theme('colors.gray.100');
+  --tw-prose-headings: theme('colors.white');
+  --tw-prose-links: theme('colors.primary.400');
+  --tw-prose-code: theme('colors.white');
+  
+  /* Asegurar que los títulos sean blancos en modo oscuro */
+  --tw-prose-invert-headings: theme('colors.white');
+  --tw-prose-invert-body: theme('colors.gray.100');
+  --tw-prose-invert-links: theme('colors.primary.400');
+  --tw-prose-invert-code: theme('colors.white');
+}
+
+/* Mejoras para la legibilidad */
+.prose-content {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+/* Estilos para mejorar la distinción de subtítulos */
+.prose-content h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--tw-prose-headings);
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.prose-content h3 {
+  font-size: 1.25rem;
+  font-weight: semi-bold;
+  color: var(--tw-prose-headings);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Asegurar que los títulos sean blancos en modo oscuro */
+.dark .prose-content h2,
+.dark .prose-content h3,
+.dark .prose-content h4 {
+  color: theme('colors.white');
+}
+
+/* Asegurar que el texto regular tenga buen contraste en modo oscuro */
+.dark .prose-content p,
+.dark .prose-content li {
+  color: theme('colors.gray.100');
+}
+
+.dark .prose-content {
+  /* Aumentar el contraste para bloques de código */
+  --tw-prose-pre-bg: theme('colors.gray.800');
+  
+  /* Mejorar la legibilidad de las citas */
+  --tw-prose-quotes: theme('colors.gray.200');
+}
 html {
     background-color: #f1f5f9;
     font-family: sans-serif;
@@ -213,4 +281,20 @@ html.dark {
   display: block;
   height: 80px; /* Ajusta este valor según la altura de tu encabezado */
   margin-top: -80px; /* Debe ser el mismo valor que el height */
+}
+
+/* Agregar animaciones de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
 }
