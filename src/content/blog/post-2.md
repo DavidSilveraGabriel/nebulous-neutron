@@ -3,7 +3,7 @@ title: The Ultimate Guide to Markdown
 author: David Silvera
 description: "How to Write and Format Text Like a Pro"
 image:
-    url: "https://docs.astro.build/assets/arc.webp"
+    url: "https://miro.medium.com/v2/resize:fit:828/format:webp/1*a3GTvJbSiV_poN5Xqv2xxw.jpeg"
     alt: "The Astro logo on a dark background with a purple gradient arc."
 pubDate: 2023-02-11
 tags: ["astro", "blogging", "learning in public", "successes"]
