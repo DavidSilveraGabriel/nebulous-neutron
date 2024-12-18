@@ -7,6 +7,7 @@ image:
     url: 'https://media.geeksforgeeks.org/wp-content/uploads/20240319155102/what-is-ai-artificial-intelligence.webp'
     alt: 'Abstract representation of artificial intelligence with connected nodes'
 tags: ["artificial intelligence", "technology", "future", "AGI", "ethics", "machine learning", "AI revolution", "technological advancement"]
+featured: True
 ---
 
 ## The Dawn of a New Era
