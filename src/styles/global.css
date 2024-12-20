@@ -1,300 +1,160 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-/* Agregar al principio del archivo */
-* {
-  transition: color 0.3s ease, background-color 0.3s ease;
-}
-/* Modificar las variables de color para el modo oscuro */
-:root {
-  --tw-prose-body: theme('colors.gray.900');
-  --tw-prose-headings: theme('colors.gray.900');
-  --tw-prose-links: theme('colors.primary.600');
-  --tw-prose-code: theme('colors.gray.900');
-}
-
-/* Variables específicas para modo oscuro */
-.dark {
-  --tw-prose-body: theme('colors.gray.100');
-  --tw-prose-headings: theme('colors.white');
-  --tw-prose-links: theme('colors.primary.400');
-  --tw-prose-code: theme('colors.white');
-  
-  /* Asegurar que los títulos sean blancos en modo oscuro */
-  --tw-prose-invert-headings: theme('colors.white');
-  --tw-prose-invert-body: theme('colors.gray.100');
-  --tw-prose-invert-links: theme('colors.primary.400');
-  --tw-prose-invert-code: theme('colors.white');
-}
-
-/* Mejoras para la legibilidad */
-.prose-content {
-  font-size: 1.125rem;
-  line-height: 1.75;
-}
-
-/* Estilos para mejorar la distinción de subtítulos */
-.prose-content h2 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--tw-prose-headings);
-  margin-top: 2.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.prose-content h3 {
-  font-size: 1.25rem;
-  font-weight: semi-bold;
-  color: var(--tw-prose-headings);
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-}
-
-/* Asegurar que los títulos sean blancos en modo oscuro */
-.dark .prose-content h2,
-.dark .prose-content h3,
-.dark .prose-content h4 {
-  color: theme('colors.white');
-}
-
-/* Asegurar que el texto regular tenga buen contraste en modo oscuro */
-.dark .prose-content p,
-.dark .prose-content li {
-  color: theme('colors.gray.100');
-}
-
-.dark .prose-content {
-  /* Aumentar el contraste para bloques de código */
-  --tw-prose-pre-bg: theme('colors.gray.800');
-  
-  /* Mejorar la legibilidad de las citas */
-  --tw-prose-quotes: theme('colors.gray.200');
-}
-html {
-    background-color: #f1f5f9;
-    font-family: sans-serif;
-    scroll-behavior: smooth;
-  }
-  
-body {
-    margin: 0;
-    width: 100%;
-    padding: 1rem;
-    line-height: 1.5;
-    align-items: center;
-    justify-content: center;
-}
-
-* {
-    box-sizing: border-box;
-}
-
-h1 {
-    margin: 1rem 0;
-    font-size: 2.5rem;
-}
-
-/* nav styles */
-.hamburger {
-    padding-right: 17px;
-    cursor: pointer;
-    margin-left: 22rem;
-}
-
-.hamburger .line {
-    display: flex;
-    width: 40px;
-    height: 2px;
-    margin-bottom: 10px;
-    background-color: #363534;
-}
-
-.nav-links {
-width: 100%;
-top: 5rem;
-left: 48px;
-background-color: #ff9776;
-display: none;
-margin: 0;
-}
-
-.nav-links a {
-display: flex;
-text-align: center;
-padding: 10px 0;
-text-decoration: none;
-font-size: 1rem;
-font-weight: bold;
-text-transform: uppercase;
-}
-
-a {
-    color: #b2b7bb;
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 auto;
-  }
-
-  .tag {
-    margin: 0.25em;
-    border: dotted 1px #a1a1a1;
-    border-radius: 0.5em;
-    padding: 0.5em 1em;
-    font-size: 1.15em;
-    background-color: #f8fcfd;
-  }
-.nav-links a:hover, a:focus {
-background-color: #ff9776;
-}
-
-.expanded {
-display: unset;
-}
-
-@media screen and (min-width: 636px) {
-.nav-links {
-    margin-left: 5em;
-    display: block;
-    position: static;
-    width: auto;
-    background: none;
-}
-
-.nav-links a {
-    display: inline-block;
-    padding: 15px 20px;
-}
-
-.hamburger {
-    display: none;
-}
-}
-
-html.dark {
-    background-color: #0d0950;
-    color: #fff;
-  }
-  
-  .dark .nav-links a {
-    color: #fff;
-  }
-
-/* ANIMACIONES SUTILES */
-@layer utilities {
-  .animate-fade-up {
-    opacity: 0;
-    animation: fadeUp 0.8s ease-out forwards;
-  }
-
-  .animate-fade-in {
-    opacity: 0;
-    animation: fadeIn 0.8s ease-out forwards;
-  }
-}
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Scroll animations */
-.scroll-fade-up {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
-
-.scroll-fade-up.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-:root {
-  --color-primary: #2563eb;     /* Azul principal */
-  --color-secondary: #f97316;   /* Naranja acento */
-  --color-background: #ffffff;  /* Fondo claro */
-  --color-text: #1f2937;       /* Texto principal */
-  --color-muted: #6b7280;      /* Texto secundario */
-  --color-border: #e5e7eb;     /* Bordes */
-}
-
-/* Agregar a tus estilos existentes */
-.prose {
-  --tw-prose-body: theme('colors.gray.700');
-  --tw-prose-headings: theme('colors.gray.900');
-  --tw-prose-links: theme('colors.primary.600');
-  --tw-prose-code: theme('colors.gray.900');
-  --tw-prose-pre-code: theme('colors.gray.200');
-  --tw-prose-pre-bg: theme('colors.gray.800');
-  
-  /* Dark mode */
-  --tw-prose-invert-body: theme('colors.gray.300');
-  --tw-prose-invert-headings: theme('colors.white');
-  --tw-prose-invert-links: theme('colors.primary.400');
-  --tw-prose-invert-code: theme('colors.white');
-}
-
-
-/* Mejoras para la legibilidad */
-.prose-content {
-  font-size: 1.125rem;
-  line-height: 1.75;
-}
-
-/* Estilos para mejorar la distinción de subtítulos */
-.prose-content h2 {
-  font-size: 1.5rem; /* Aumenta el tamaño */
-  font-weight: bold; /* Negrita para mayor énfasis */
-  color: #1a202c; /* Color más oscuro */
-  margin-top: 2.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.prose-content h3 {
-  font-size: 1.25rem; /* Aumenta el tamaño */
-  font-weight: semi-bold; /* Semi-negrita */
-  color: #2d3748; /* Color más oscuro */
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-}
-
-:target::before {
-  content: "";
-  display: block;
-  height: 80px; /* Ajusta este valor según la altura de tu encabezado */
-  margin-top: -80px; /* Debe ser el mismo valor que el height */
-}
-
-/* Agregar animaciones de entrada */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
-}
+/* ==========================================================================
+   1. IMPORTACIONES BASE
+   ========================================================================== */
+   @import "tailwindcss/base";
+   @import "tailwindcss/components";
+   @import "tailwindcss/utilities";
+   
+   /* ==========================================================================
+      2. CONFIGURACIÓN GLOBAL Y VARIABLES
+      ========================================================================== */
+   :root {
+     /* Variables de color principales */
+     --color-primary: #2563eb;
+     --color-secondary: #f97316;
+     --color-background: #ffffff;
+     --color-text: #1f2937;
+     --color-muted: #6b7280;
+     --color-border: #e5e7eb;
+   
+     /* Variables para el contenido de prosa */
+     --tw-prose-body: theme('colors.gray.900');
+     --tw-prose-headings: theme('colors.gray.900');
+     --tw-prose-links: theme('colors.primary.600');
+     --tw-prose-code: theme('colors.gray.900');
+   }
+   
+   /* ==========================================================================
+      3. ESTILOS BASE
+      ========================================================================== */
+   * {
+     box-sizing: border-box;
+     transition: color 0.3s ease, background-color 0.3s ease;
+   }
+   
+   html {
+     background-color: #f1f5f9;
+     font-family: sans-serif;
+     scroll-behavior: smooth;
+   }
+   
+   body {
+     margin: 0;
+     width: 100%;
+     padding: 1rem;
+     line-height: 1.5;
+     align-items: center;
+     justify-content: center;
+   }
+   
+   /* ==========================================================================
+      4. MODO OSCURO
+      ========================================================================== */
+   .dark {
+     --tw-prose-body: theme('colors.gray.100');
+     --tw-prose-headings: theme('colors.white');
+     --tw-prose-links: theme('colors.primary.400');
+     --tw-prose-code: theme('colors.white');
+     
+     /* Configuración invertida para modo oscuro */
+     --tw-prose-invert-headings: theme('colors.white');
+     --tw-prose-invert-body: theme('colors.gray.300');
+     --tw-prose-invert-links: theme('colors.primary.400');
+     --tw-prose-invert-code: theme('colors.white');
+   }
+   
+   html.dark {
+     background-color: #0d0950;
+     color: #fff;
+   }
+   
+   /* ==========================================================================
+      5. NAVEGACIÓN
+      ========================================================================== */
+   /* Estilos del menú hamburguesa */
+   .hamburger {
+     padding-right: 17px;
+     cursor: pointer;
+     margin-left: 22rem;
+   }
+   
+   .hamburger .line {
+     display: flex;
+     width: 40px;
+     height: 2px;
+     margin-bottom: 10px;
+     background-color: #363534;
+   }
+   
+   /* Enlaces de navegación */
+   .nav-links {
+     width: 100%;
+     top: 5rem;
+     left: 48px;
+     background-color: #ff9776;
+     display: none;
+     margin: 0;
+   }
+   
+   /* ==========================================================================
+      6. ANIMACIONES
+      ========================================================================== */
+   @layer utilities {
+     .animate-fade-up {
+       opacity: 0;
+       animation: fadeUp 0.8s ease-out forwards;
+     }
+   
+     .animate-fade-in {
+       opacity: 0;
+       animation: fadeIn 0.8s ease-out forwards;
+     }
+   }
+   
+   /* Definición de animaciones */
+   @keyframes fadeUp {
+     from {
+       opacity: 0;
+       transform: translateY(20px);
+     }
+     to {
+       opacity: 1;
+       transform: translateY(0);
+     }
+   }
+   
+   /* ==========================================================================
+      7. UTILIDADES Y COMPONENTES
+      ========================================================================== */
+   /* Estilos para etiquetas */
+   .tags {
+     display: flex;
+     flex-wrap: wrap;
+     margin: 0 auto;
+   }
+   
+   .tag {
+     margin: 0.25em;
+     border: dotted 1px #a1a1a1;
+     border-radius: 0.5em;
+     padding: 0.5em 1em;
+     font-size: 1.15em;
+     background-color: #f8fcfd;
+   }
+   
+   /* ==========================================================================
+      8. MEDIA QUERIES
+      ========================================================================== */
+   @media screen and (min-width: 636px) {
+     .nav-links {
+       margin-left: 5em;
+       display: block;
+       position: static;
+       width: auto;
+       background: none;
+     }
+   
+     .hamburger {
+       display: none;
+     }
+   }
