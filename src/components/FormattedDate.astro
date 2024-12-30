@@ -1,17 +1,32 @@
 ---
 interface Props {
-	date: Date;
+  date: Date | string; // Permitir Date o string como tipo
 }
 
 const { date } = Astro.props;
+let parsedDate: Date | null = null;
+
+if (date instanceof Date) {
+  parsedDate = date;
+} else if (typeof date === 'string') {
+  try {
+    parsedDate = new Date(date);
+  } catch (e) {
+    console.error("Error al parsear la fecha:", date, e);
+  }
+}
 ---
 
-<time datetime={date.toISOString()}>
-	{
-		date.toLocaleDateString('en-us', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		})
-	}
-</time>
+{
+  parsedDate ? (
+    <time datetime={parsedDate.toISOString()}>
+      {parsedDate.toLocaleDateString('en-us', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })}
+    </time>
+  ) : (
+    <span>Fecha no válida</span>
+  )
+}
