@@ -8,9 +8,12 @@
     "strict": true,
     "noImplicitAny": true,
     "strictPropertyInitialization": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "files.associations": {
-    "*.css": "tailwindcss"
-  }
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
