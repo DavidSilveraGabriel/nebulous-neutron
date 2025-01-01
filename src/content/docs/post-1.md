@@ -1,11 +1,11 @@
 ---
-title: The AI Revolution, Understanding Artificial Intelligence in 2024 - Are We Ready for the Robot Overlords? (Probably Not!)
-author: David Silvera
-description: "A ridiculously deep (and slightly panicked) dive into artificial intelligence, exploring its fundamentals, global impact, potential benefits, terrifying risks, and the utterly mind-blowing journey toward AGI. Discover how this transformative technology is reshaping our world, if we even still have a world, and what the future *might* hold… unless the robots decide otherwise."
-image:
-    url: "https://media.geeksforgeeks.org/wp-content/uploads/20240319155102/what-is-ai-artificial-intelligence.webp"
-    alt: "Abstract representation of artificial intelligence, which looks suspiciously like a brain…or a giant, sentient bowl of spaghetti."
+title: 'The AI Revolution: Understanding Artificial Intelligence in 2024 - Are We Ready for the Robot Overlords? (Probably Not!)'
 pubDate: 2024-12-18
+description: 'A ridiculously deep (and slightly panicked) dive into artificial intelligence, exploring its fundamentals, global impact, potential benefits, terrifying risks, and the utterly mind-blowing journey toward AGI. Discover how this transformative technology is reshaping our world, if we even still have a world, and what the future *might* hold… unless the robots decide otherwise.'
+author: 'David Silvera (a human, for now)'
+image:
+    url: 'https://media.geeksforgeeks.org/wp-content/uploads/20240319155102/what-is-ai-artificial-intelligence.webp'
+    alt: 'Abstract representation of artificial intelligence, which looks suspiciously like a brain…or a giant, sentient bowl of spaghetti.'
 tags: ["artificial intelligence", "technology", "future", "AGI", "ethics", "machine learning", "AI revolution", "technological advancement", "robot overlords", "existential dread", "sentient toasters"]
 featured: True
 ---

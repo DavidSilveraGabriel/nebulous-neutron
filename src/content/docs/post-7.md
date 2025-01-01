@@ -4,7 +4,7 @@ pubDate: 2024-12-31
 description: 'As 2024 draws to a close, it’s a moment to pause and reflect on the remarkable, and sometimes bewildering, year we’ve had in artificial intelligence. From breakthroughs to ethical quandaries, we’ve journeyed through a landscape of rapid change. Join me in considering the profound impact of this technology and the paths that lie ahead.'
 author: 'David Silvera'
 image:
-    url: '/imgs/sss.png'
+    url: 'imgs/sss.png'
     alt: 'A minimalist, slightly abstract image representing the passage of time and the interconnectedness of technology'
 tags: ["artificial intelligence", "technology", "reflection", "year in review", "future", "ethics", "2024", "2025","technological advancement", "AI progress"]
 

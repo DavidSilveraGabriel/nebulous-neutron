@@ -20,10 +20,10 @@ const identity = {
 
 // Obtener los posts destacados
 const allPosts = await getCollection("blog");
-const featuredPosts = allPosts.filter(post => post.data.featured);
+const featuredPosts = allPosts.filter(post => post.data.featured === true);
 
 // Importar los proyectos desde un archivo JSON
-import projects from '../pages/projects/projects.json';
+import projects from '../data/projects.json';
 
 ---
 
