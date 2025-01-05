@@ -29,7 +29,7 @@ export default defineConfig({
                   mdi: ['*'] // Esto incluirá todos los iconos de Material Design
                 }
   }), starlight({
-    title: 'Mastering Python with Silvera David',
+    title: "David's Docs",
   }), mdx()],
 //  output: "server",
 //  adapter: vercel({webAnalytics: {

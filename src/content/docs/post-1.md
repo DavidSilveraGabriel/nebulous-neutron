@@ -1,5 +1,5 @@
 ---
-title: 'The AI Revolution: Understanding Artificial Intelligence in 2024 - Are We Ready for the Robot Overlords? (Probably Not!)'
+title: 'The AI Revolution: Understanding Artificial Intelligence in 2024'
 pubDate: 2024-12-18
 description: 'A ridiculously deep (and slightly panicked) dive into artificial intelligence, exploring its fundamentals, global impact, potential benefits, terrifying risks, and the utterly mind-blowing journey toward AGI. Discover how this transformative technology is reshaping our world, if we even still have a world, and what the future *might* hold… unless the robots decide otherwise.'
 author: 'David Silvera (a human, for now)'

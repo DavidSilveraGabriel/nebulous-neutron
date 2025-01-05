@@ -20,7 +20,7 @@ const identity = {
 
 // Obtener los posts destacados
 const allPosts = await getCollection("blog");
-const featuredPosts = allPosts.filter(post => post.data.featured === true);
+//const featuredPosts = allPosts.filter(post => post.data.featured === true);
 
 // Importar los proyectos desde un archivo JSON
 import projects from '../data/projects.json';
@@ -34,7 +34,7 @@ import projects from '../data/projects.json';
       <HeroSection identity={identity}/>
     </div>
      <!-- Sección de servicios -->
-    <!--<ServicesSection />-->
+    <ServicesSection />
     <!-- Sección de testimonios -->
     <Testimonios />
     <!-- Sección de proyectos -->
