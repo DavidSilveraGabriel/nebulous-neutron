@@ -1,259 +1,295 @@
 ---
-title: Python Course Documentation (From Zero to Advanced)
-description: Learn Python from scratch to mastering advanced concepts, following best practices (PEP-8).
+title: "Python for Data Science: The Definitive Curriculum"
+description: A comprehensive curriculum covering fundamental to advanced topics in Python for Data Science, including mathematical foundations, machine learning, deep learning, MLOps, and career development.
 ---
 
-# Welcome to the Python Course!
-
-This course is designed to take you from the most basic concepts of Python to the application of advanced techniques, turning you into a competent and capable programmer.
-
-## Why Learn Python?
-
-Python has established itself as one of the most popular and versatile programming languages in the world for several reasons:
-
-*   **Clear and Readable Syntax:** Python resembles natural language, making it easy to learn and read code, which is ideal for beginners.
-*   **Wide Range of Applications:** From web development and data science to artificial intelligence and automation, Python has applications in virtually every field of technology.
-*   **Large Community and Resources:** The vast Python community provides abundant documentation, tutorials, libraries, and frameworks, which facilitates problem-solving and collaboration.
-*   **High Salary and Job Demand:** Python developers are in high demand in the industry, which translates into job opportunities and competitive salaries.
-*   **Ideal for Beginners and Experts:** Whether you are an absolute beginner or an experienced programmer, Python allows you to develop projects efficiently and scalably.
-
-## What Will You Learn in This Course?
-
-This course will guide you step by step through all the fundamental and advanced concepts of Python. Here is a general structure of what we will cover:
-
-## 🚀 Introduction to Python
-
-### What is Python and Why Use It?
-
-*   History and philosophy of Python
-*   Python 2 vs Python 3
-*   Python ecosystem and community
-
-### Environment Setup
-
-*   Python installation
-*   Package managers (pip)
-*   IDEs and editors (VS Code, PyCharm, Jupyter)
-*   Basic Git for development
-
-### Programming Fundamentals
-
-*   Algorithms and programming logic
-*   Pseudocode
-*   Flowcharts
-
-### Best Practices
-
-*   PEP 8 and code style
-*   Naming conventions
-*   Documentation and comments
-
-## 🧱 Python Fundamentals
-
-### Data Types and Variables
-
-*   Numbers (int, float, complex, decimal)
-*   Strings and text manipulation
-    *   String methods
-    *   Formatting (f-strings, .format())
-    *   Basic regular expressions
-*   Booleans and logical operators
-*   None and its usage
-
-### Data Structures
-
-*   Lists and operations
-*   Tuples and their immutability
-*   Dictionaries and use cases
-*   Sets and set operations
-*   Comprehensions (list, dict, set)
-
-### Control Flow
-
-*   Conditionals and operators
-*   Loops (for, while, break, continue)
-*   Match cases (Python 3.10+)
-
-### Functions
-
-*   Definition and calls
-*   Positional and named arguments
-*   `*args` and `**kwargs`
-*   Basic decorators
-*   Type hints
-*   Lambda functions
-*   Closures and scope
-
-### Modules and Packages
-
-*   Import and namespaces
-*   Module creation
-*   `requirements.txt` and `setup.py`
-
-## ⚙️ Intermediate Programming
-
-### Advanced OOP
-
-*   Classes and special methods
-*   Multiple inheritance
-*   Class and static methods
-*   Properties and descriptors
-*   Abstract Base Classes
-*   Mixins and composition
-
-### Data Handling
-
-*   Contexts (`with`)
-*   Files and directories
-*   JSON, CSV, XML
-*   Serialization
-*   SQLite and databases
-
-### Error Handling
-
-*   `try`/`except`/`finally`
-*   Creating exceptions
-*   Logging and debugging
-
-### Functional Programming
-
-*   `map`, `filter`, `reduce`
-*   `itertools` and `functools`
-*   Immutability
-*   Advanced decorators
-
-## 🎯 Advanced Python
-
-### Concurrency and Parallelism
-
-*   GIL and its impact
-*   Threading and race conditions
-*   Multiprocessing
-*   `async`/`await`
-*   Queues and pools
-
-### Testing
-
-*   Unit testing (`pytest`)
-*   Mocking
-*   Basic TDD
-*   Coverage
-*   Integration testing
-
-### Optimization
-
-*   Profiling
-*   Memory management
-*   Caching
-*   Generators and iterators
-
-### Typing and Quality
-
-*   Advanced type hints
-*   `mypy`
-*   Linting (`pylint`, `flake8`)
-*   Code quality tools
-
-## 🧮 Advanced Data Structures and Algorithms
-
-### Advanced Data Structures
-*   Trees (binary, AVL, etc.)
-*   Graphs and their representations (adjacency matrix, adjacency lists)
-*   Tries
-*   Heaps and priority queues
-
-### Advanced Algorithms
-*   Advanced search and sorting (mergesort, quicksort)
-*   Graph algorithms (Dijkstra, A*)
-*   Dynamic programming
-*   Greedy algorithms
-
-### Theoretical Concepts
-*   Algorithmic complexity (Big O notation)
-*   Recursion and memoization
-*   Programming paradigms (functional, object-oriented, imperative)
-
-## 📊 Data Science and ML
-
-### NumPy
-
-*   Arrays and operations
-*   Broadcasting
-*   Numerical optimization
-
-### Pandas
-
-*   DataFrames and Series
-*   Data manipulation
-*   Exploratory analysis
-
-### Visualization
-
-*   Matplotlib
-*   Seaborn
-*   Plotly
-
-### Basic Machine Learning
-
-*   Scikit-learn
-*   Basic pipelines
-*   Metrics and evaluation
-
-## 🌐 Web Development
-
-### FastAPI
-
-*   REST APIs
-*   Pydantic
-*   OpenAPI/Swagger
-*   Authentication
-
-### Django
-
-*   MVT pattern
-*   ORM
-*   Admin interface
-*   Templates
-
-### Flask
-
-*   Routing
-*   Templates
-*   Extensions
-
-## 🔒 Security
-
-### Web Development Security
-
-* Common attacks: XSS, CSRF, SQL Injection
-* Secure password handling
-* Sensitive data protection
-
-## 🛠️ Practical Projects
-
-### CLI Applications
-
-*   Click/Typer
-*   Rich for TUIs
-
-### Desktop Applications
-
-*   PyQt/PySide
-*   Tkinter
-
-### Automation
-
-*   Web scraping (BeautifulSoup, Selenium)
-*   Task automation
-*   Bots and scripts
-
-### Basic DevOps
-
-*   Docker
-*   Basic CI/CD
-*   Deployment
-*   Basic monitoring
-
-## Get Ready to Master Python!
-
-Throughout this course, you will learn in a practical and effective way, with examples, exercises, and projects that will allow you to consolidate your knowledge and skills. Let's start this journey together!
+# Python for Data Science: The Definitive Curriculum
+
+## 🎯 Foundations and Conceptual Framework
+
+### Introduction to Data Science
+- Fundamentals and Philosophy
+- History and evolution of data science
+- The scientific method in data analysis
+- Critical thinking and analytical approach
+- Differences between DS, ML, AI, and statistics
+- Roles and Specializations
+- Data Scientist vs Data Analyst vs Data Engineer
+- Generalist vs specialist data scientist
+- Emerging roles in the industry
+- Technical skills vs soft skills
+- Ethics and Responsibility
+- Bias in data and models
+- Privacy and data protection (GDPR, CCPA)
+- Transparency and explainability
+- Social impact of models
+- Sustainability in ML/AI
+
+### Professional Environment Setup
+- Environment Management
+- Anaconda and Miniforge
+- Poetry for dependency management
+- Docker for reproducible environments
+- GPU setup (CUDA, cuDNN)
+- Advanced Version Control
+- Git flow for data projects
+- DVC for data versioning
+- CI/CD for DS projects
+- IDEs and Tools
+- JupyterLab with advanced extensions
+- VSCode configuration for DS
+- PyCharm Professional features
+- Interactive notebooks (Colab, Databricks)
+
+## 📊 Programming and Data Fundamentals
+
+### Advanced Python for DS
+- Code Optimization
+- Vectorization and efficient operations
+- Memory and performance
+- Profiling and debugging
+- Parallel processing
+- Design Patterns
+- Factory pattern for models
+- Strategy pattern for pipelines
+- Observer for monitoring
+- Decorator for transformations
+- Testing in DS
+- Unit testing of models
+- Data testing
+- Property-based testing
+- Integration testing
+
+### Professional Data Manipulation
+- Advanced Pandas
+- Memory optimization
+- Chunking for large datasets
+- Custom vectorized operations
+- Advanced MultiIndex
+- Extension arrays
+- Distributed Processing
+- Dask for parallel computation
+- Vaex for large datasets
+- Rapids for GPU acceleration
+- Formats and Storage
+- Parquet and optimization
+- HDF5 for scientific data
+- Feather and Arrow
+- Data Streaming
+
+## 📈 Visualization and Communication
+
+### Advanced Visualization
+- Visualization Systems
+- Grammar of Graphics
+- Altair and Vega
+- Bokeh for interactivity
+- Basic D3.js
+- Specialized Visualizations
+- Complex network visualization
+- Spatiotemporal data
+- High-dimensional data
+- ML model visualization
+- Professional Dashboards
+- Dash for web applications
+- Advanced Streamlit
+- Panel for notebooks
+- Voilà for deployments
+
+### Communicating Results
+- Data Storytelling
+- Effective narrative
+- Presentation design
+- Automated reports
+- Technical documentation
+- Business Intelligence
+- Advanced Tableau
+- Power BI DAX
+- Looker
+- Reporting methods
+
+## 📐 Mathematical and Statistical Foundations
+
+### Mathematics for DS
+- Applied Linear Algebra
+- Matrix decomposition
+- Eigenvalues and eigenvectors
+- Matrix optimization
+- Applications in ML
+- Multivariable Calculus
+- Gradients and partial derivatives
+- Multivariable optimization
+- Lagrange multipliers
+- Applications in DL
+- Optimization
+- Convex and non-convex
+- Numerical methods
+- Stochastic optimization
+- Genetic algorithms
+
+### Advanced Statistics
+- Statistical Inference
+- Bootstrapping and resampling
+- Bayesian inference
+- Mixed models
+- Causal analysis
+- Experimental Design
+- Advanced A/B testing
+- Factorial designs
+- Multivariate tests
+- Statistical power
+- Time Series
+- ARIMA/SARIMA models
+- State-space models
+- Advanced Prophet
+- Temporal deep learning
+
+## 🤖 Advanced Machine Learning
+
+### Deep Fundamentals
+- Learning Theory
+- PAC learning
+- VC dimension
+- Regularization and complexity
+- Information theory
+- Advanced Feature Engineering
+- Automatic selection
+- Feature importance
+- Feature interaction
+- Feature learning
+
+### Advanced Models
+- Sophisticated Ensembles
+- Advanced stacking
+- Voting schemes
+- Cascading
+- AutoML
+- Unsupervised Learning
+- Spectral clustering
+- Manifold learning
+- Topic modeling
+- Advanced embeddings
+- Special Cases
+- Semi-supervised learning
+- Few-shot learning
+- Active learning
+- Online learning
+
+## 🧠 Deep Learning and Advanced AI
+
+### Modern Architectures
+- Advanced Transformers
+- Modern architectures
+- Advanced fine-tuning
+- Training optimization
+- Interpretability
+- Generative Models
+- Advanced GANs
+- Diffusion models
+- Hybrid architectures
+- Flow-based models
+- Reinforcement Learning
+- DQN and variants
+- Policy gradients
+- Model-based RL
+- Multi-agent systems
+
+### Specialized Applications
+- Advanced Computer Vision
+- Semantic segmentation
+- Object tracking
+- Few-shot vision
+- Neural rendering
+- Advanced NLP
+- Question answering
+- Summarization
+- Translation
+- LLMs and prompt engineering
+
+## 🛠 MLOps and Production
+
+### Infrastructure
+- Distributed Systems
+- Kubernetes for ML
+- Ray for training
+- Spark structured streaming
+- Airflow for pipelines
+- Advanced Cloud
+- Advanced AWS SageMaker
+- Azure ML enterprise
+- GCP Vertex AI
+- Multi-cloud strategies
+
+### ML Operations
+- Monitoring and Maintenance
+- Drift detection
+- Model health metrics
+- Performance monitoring
+- Auto-retraining
+- Security and Governance
+- Model security
+- Data governance
+- Compliance automation
+- Audit trails
+
+## 📡 Specialization and Use Cases
+
+### Industry Verticals
+- Finance
+    - Risk modeling
+    - Fraud detection
+    - Trading algorithms
+    - Credit scoring
+- Healthcare
+    - Medical imaging
+    - Clinical predictions
+    - Genomics
+    - Drug discovery
+- Retail
+    - Demand forecasting
+    - Recommendation systems
+    - Price optimization
+    - Customer segmentation
+- Manufacturing
+    - Predictive maintenance
+    - Quality control
+    - Supply chain optimization
+    - Process optimization
+
+### End-to-End Projects
+- Real Implementations
+    - System architecture
+    - Scalability
+    - Monitoring
+    - Maintenance
+- Case Studies
+    - Successes and failures
+    - Lessons learned
+    - Best practices
+    - ROI and metrics
+
+## 🎓 Professional Development
+
+### Career and Growth
+- Portfolio Building
+    - Featured projects
+    - Open source contributions
+    - Kaggle competitions
+    - Research papers
+- Networking
+    - Technical communities
+    - Conferences
+    - Mentoring
+    - Personal branding
+
+### Trends and Future
+- Emerging Technologies
+    - Quantum ML
+    - Edge AI
+    - AutoML/AutoDL
+    - Neural architecture search
+- Research
+    - Reading papers
+    - Reproducing results
+    - Experimentation
+    - Publication
