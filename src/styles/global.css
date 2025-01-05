@@ -9,19 +9,30 @@
       2. CONFIGURACIÓN GLOBAL Y VARIABLES
       ========================================================================== */
    :root {
-     /* Variables de color principales */
-     --color-primary: #2563eb;
-     --color-secondary: #f97316;
-     --color-background: #ffffff;
-     --color-text: #1f2937;
-     --color-muted: #6b7280;
-     --color-border: #e5e7eb;
+
+    /* Variables de color principales */
+    --color-primary: #2563eb;
+    --color-secondary: #f97316;
+    --color-background: #ffffff;
+    --color-text: #1f2937;
+    --color-muted: #6b7280;
+    --color-border: #e5e7eb;
    
-     /* Variables para el contenido de prosa */
-     --tw-prose-body: theme('colors.gray.900');
-     --tw-prose-headings: theme('colors.gray.900');
-     --tw-prose-links: theme('colors.primary.600');
-     --tw-prose-code: theme('colors.gray.900');
+    /* Colores para los diferentes tipos de markers */
+    --ec-marker-del-bg: rgba(255, 0, 0, 0.1);    /* Fondo rojo claro para líneas eliminadas */
+    --ec-marker-ins-bg: rgba(0, 255, 0, 0.1);    /* Fondo verde claro para líneas insertadas */
+    --ec-marker-mark-bg: rgba(255, 255, 0, 0.1); /* Fondo amarillo claro para líneas marcadas */
+
+    /* Bordes para los markers */
+    --ec-marker-del-border: #ff0000;   /* Borde rojo para líneas eliminadas */
+    --ec-marker-ins-border: #00ff00;   /* Borde verde para líneas insertadas */
+    --ec-marker-mark-border: #ffff00;  /* Borde amarillo para líneas marcadas */
+    
+    /* Variables para el contenido de prosa */
+    --tw-prose-body: theme('colors.gray.900');
+    --tw-prose-headings: theme('colors.gray.900');
+    --tw-prose-links: theme('colors.primary.600');
+    --tw-prose-code: theme('colors.gray.900');
     
    }
    
@@ -35,7 +46,7 @@
    
    html {
      background-color: #f1f5f9;
-     font-family: sans-serif;
+     font-family: 'Times New Roman',sans-serif;
      scroll-behavior: smooth;
    }
    
@@ -322,3 +333,19 @@
     html.dark article a:hover {
       border-bottom-color: var(--tw-prose-invert-links)
     }
+
+
+/* Estilos adicionales para mejorar la visibilidad de los markers */
+.expressive-code .marker {
+  
+  border-left-style: solid;
+}
+
+/* Ajuste opcional para el contraste del texto */
+.expressive-code .marker.del {
+  color: #ff8080;
+}
+
+.expressive-code .marker.ins {
+  color: #80ff80;
+}

@@ -48,7 +48,7 @@ src/
 
 1. Clonar el repositorio:
 
-git clone https://github.com/tuusuario/nebulous-neutron.git
+git clone https://github.com/DavidSilveraGabriel/nebulous-neutron.git
 
 2. Instalar dependencias:
 
@@ -100,4 +100,4 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 
 ## 📞 Contacto
 
-Para consultas sobre proyectos o colaboraciones, puedes contactarme a través del [formulario de contacto](https://tudominio.com/#contact) o por WhatsApp.
+Para consultas sobre proyectos o colaboraciones, puedes contactarme por WhatsApp.

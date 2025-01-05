@@ -1,6 +1,6 @@
 ---
 import Base from '../components/layout/Base.astro';
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry  } from "astro:content";
 import FormattedDate from '../components/FormattedDate.astro';
 const pageTitle = "Blog";
 const allPosts = await getCollection("blog");
@@ -15,7 +15,7 @@ const allPosts = await getCollection("blog");
     </p>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {allPosts.map((post, index) => (
+      {allPosts.map((post: CollectionEntry<'blog'>, index: number) => (
         <article 
           class="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 animate-on-scroll"
           style={`animation-delay: ${index * 150}ms`}

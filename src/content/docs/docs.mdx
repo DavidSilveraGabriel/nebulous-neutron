@@ -3,6 +3,134 @@ title: David's Docs
 description: A set of docs made by David and AI, covering a bunch of importants topics for learners and to guide them in Python and Data Science
 ---
 
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="Check this out" icon="open-book">
+    Interesting content you want to highlight.
+  </Card>
+  <Card title="Other feature" icon="information">
+    More information you want to share.
+  </Card>
+</CardGrid>
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution" title="Precaución ⚠️">
+  Ten cuidado con este punto. Es importante que lo revises.
+</Aside>
+<Aside type="tip" title="Consejo ✨">
+  Aquí tienes un consejo útil para este proceso.
+</Aside>
+<Aside type="note" title="Nota 📝">
+  Recuerda esta información importante.
+</Aside>
+<Aside type="danger" title="Peligro 🔥">
+  ¡Esto es peligroso! Evita esta acción.
+</Aside>
+
+
+import { Badge } from '@astrojs/starlight/components';
+
+<Badge text="Note" variant="note" />
+<Badge text="Success" variant="success" size="large" />
+<Badge text="Tip" variant="tip" size="small" />
+<Badge text="Caution" variant="caution" />
+<Badge text="Danger" variant="danger" size="medium" />
+
+import { Code } from '@astrojs/starlight/components';
+
+export const exampleCode = `
+def greet(name):
+  print("Hello, " + name + "!")
+  # This line will be removed
+  print("How are you doing?")
+  # This line will be added
+  print("Welcome to the new version")
+  print("I hope you're having a great day.")
+`;
+export const mark=[
+  { type: 'del', lines: [3] },
+  { type: 'ins', lines: [4] },
+  { type: 'mark', text: 'palabra' }
+]
+export const fileName = 'main.py';
+export const highlights = ['file', 'CMS']; //esta se reemplazo por marks
+
+<Code code={exampleCode} lang="py" title={fileName} mark={mark} showLineNumbers={true}/>
+
+import codigo from '../../components/layout/MarkdownPost.astro?raw';
+
+<Code code={codigo} lang="astro" showLineNumbers={false} title={"incluyendo codigo importado RECORDAR EL '?raw'"}  />
+
+import { FileTree } from '@astrojs/starlight/components';
+
+<FileTree>
+
+- astro.config.mjs
+- package.json
+- src
+  - components
+    - Header.astro
+    - **Title.astro** an **important** file
+  - pages/
+
+</FileTree>
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton
+  href="https://docs.astro.build"
+  variant="primary"
+  icon="right-arrow"
+  iconPlacement="end"
+>
+  Related: Astro
+</LinkButton>
+
+
+<LinkButton
+  href="https://github.com/dashboard"
+  variant="secondary"
+  icon="external"
+  iconPlacement="start"
+>
+  Related: github
+</LinkButton>
+<LinkButton
+  href="https://github.com/dashboard"
+  variant="minimal"
+  icon="pencil"
+  iconPlacement="end"
+>
+  Related: github
+</LinkButton>
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+<Tabs>
+  <TabItem label="Stars" icon="star">
+    Sirius, Vega, Betelgeuse
+  </TabItem>
+  <TabItem label="Moons" icon="moon">
+    Io, Europa, Ganymede
+  </TabItem>
+</Tabs>
+
+import { Steps } from '@astrojs/starlight/components';
+
+<Steps>
+
+1. Import the component into your MDX file:
+
+   ```js
+   import { Steps } from '@astrojs/starlight/components';
+   ```
+
+2. Wrap `<Steps>` around your ordered list items.
+
+</Steps>
+
 # ¡Bienvenido al Curso de Python!
 
 Este curso está diseñado para llevarte desde los conceptos más básicos de Python hasta la aplicación de técnicas avanzadas, convirtiéndote en un programador competente y capaz.
@@ -59,6 +187,11 @@ Este curso te guiará paso a paso a través de todos los conceptos fundamentales
     *   Expresiones regulares básicas
 *   Booleanos y operadores lógicos
 *   None y su uso
+
+```js showLineNumbers startLineNumber=5
+console.log('Greetings from line 5!')
+console.log('I am on line 6')
+```
 
 ### Estructuras de Datos
 
@@ -256,3 +389,16 @@ Este curso te guiará paso a paso a través de todos los conceptos fundamentales
 ## ¡Prepárate para dominar Python!
 
 A lo largo de este curso, aprenderás de manera práctica y efectiva, con ejemplos, ejercicios y proyectos que te permitirán consolidar tus conocimientos y habilidades. ¡Comencemos este viaje juntos!
+
+
+```js showLineNumbers
+// This code block will show line numbers
+console.log('Greetings from line 2!')
+console.log('I am on line 3')
+```
+
+```js showLineNumbers=false
+// Line numbers are disabled for this block
+console.log('Hello?')
+console.log('Sorry, do you know what line I am on?')
+```
