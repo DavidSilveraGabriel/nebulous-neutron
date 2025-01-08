@@ -9,31 +9,31 @@
       2. CONFIGURACIÓN GLOBAL Y VARIABLES
       ========================================================================== */
    :root {
-
-    /* Variables de color principales */
-    --color-primary: #2563eb;
-    --color-secondary: #f97316;
-    --color-background: #ffffff;
-    --color-text: #1f2937;
-    --color-muted: #6b7280;
-    --color-border: #e5e7eb;
    
-    /* Colores para los diferentes tipos de markers */
-    --ec-marker-del-bg: rgba(255, 0, 0, 0.1);    /* Fondo rojo claro para líneas eliminadas */
-    --ec-marker-ins-bg: rgba(0, 255, 0, 0.1);    /* Fondo verde claro para líneas insertadas */
-    --ec-marker-mark-bg: rgba(255, 255, 0, 0.1); /* Fondo amarillo claro para líneas marcadas */
-
-    /* Bordes para los markers */
-    --ec-marker-del-border: #ff0000;   /* Borde rojo para líneas eliminadas */
-    --ec-marker-ins-border: #00ff00;   /* Borde verde para líneas insertadas */
-    --ec-marker-mark-border: #ffff00;  /* Borde amarillo para líneas marcadas */
-    
-    /* Variables para el contenido de prosa */
-    --tw-prose-body: theme('colors.gray.900');
-    --tw-prose-headings: theme('colors.gray.900');
-    --tw-prose-links: theme('colors.primary.600');
-    --tw-prose-code: theme('colors.gray.900');
-    
+     /* Variables de color principales */
+     --color-primary: #2563eb;
+     --color-secondary: #f97316;
+     --color-background: #ffffff;
+     --color-text: #1f2937;
+     --color-muted: #6b7280;
+     --color-border: #e5e7eb;
+   
+     /* Colores para los diferentes tipos de markers */
+     --ec-marker-del-bg: rgba(255, 0, 0, 0.1);    /* Fondo rojo claro para líneas eliminadas */
+     --ec-marker-ins-bg: rgba(0, 255, 0, 0.1);    /* Fondo verde claro para líneas insertadas */
+     --ec-marker-mark-bg: rgba(255, 255, 0, 0.1); /* Fondo amarillo claro para líneas marcadas */
+   
+     /* Bordes para los markers */
+     --ec-marker-del-border: #ff0000;   /* Borde rojo para líneas eliminadas */
+     --ec-marker-ins-border: #00ff00;   /* Borde verde para líneas insertadas */
+     --ec-marker-mark-border: #ffff00;  /* Borde amarillo para líneas marcadas */
+   
+     /* Variables para el contenido de prosa */
+     --tw-prose-body: theme('colors.gray.900');
+     --tw-prose-headings: theme('colors.gray.900');
+     --tw-prose-links: theme('colors.primary.600');
+     --tw-prose-code: theme('colors.gray.900');
+   
    }
    
    /* ==========================================================================
@@ -46,7 +46,7 @@
    
    html {
      background-color: #f1f5f9;
-     font-family: 'Times New Roman',sans-serif;
+       font-family: 'Figtree', sans-serif; /* Aplicando Figtree como fuente principal */
      scroll-behavior: smooth;
    }
    
@@ -67,7 +67,7 @@
      --tw-prose-headings: theme('colors.white');
      --tw-prose-links: theme('colors.primary.400');
      --tw-prose-code: theme('colors.white');
-     
+   
      /* Configuración invertida para modo oscuro */
      --tw-prose-invert-headings: theme('colors.white');
      --tw-prose-invert-body: theme('colors.gray.300');
@@ -170,182 +170,199 @@
        display: none;
      }
    }
+   
+   /* ==========================================================================
+       9. ESTILOS DE MARKDOWN (estilo Medium)
+       ========================================================================== */
+       article {
+         max-width: 700px; /* Ancho máximo del contenido */
+         margin: 0 auto; /* Centrar el artículo */
+     }
+   
+     /* Estilos para encabezados */
+     article h1 {
+           font-family: 'Figtree', sans-serif; /* Aplicando Figtree como fuente principal */
+         font-size: 2.5rem; /* Tamaño de fuente grande */
+         font-weight: bold; /* Negrita */
+         line-height: 1.2;
+         margin-bottom: 1rem;
+         color: var(--color-text);
+     }
+   
+       article h2 {
+           font-family: 'Figtree', sans-serif; /* Aplicando Figtree como fuente principal */
+           font-size: 2rem; /* Tamaño de fuente un poco más pequeño */
+           font-weight: bold; /* Negrita */
+           line-height: 1.2;
+           margin-bottom: 0.8rem;
+           color: var(--color-text);
+       }
+   
+       article h3 {
+           font-family: 'Figtree', sans-serif; /* Aplicando Figtree como fuente principal */
+           font-size: 1.5rem;
+           font-weight: bold;
+           line-height: 1.2;
+           margin-bottom: 0.6rem;
+           color: var(--color-text);
+       }
+   
+     article h4 {
+       font-size: 1.25rem;
+       font-weight: bold;
+       line-height: 1.2;
+       margin-bottom: 0.4rem;
+         font-family: 'Figtree', sans-serif; /* Aplicando Figtree como fuente principal */
+       color: var(--color-text);
+   }
+   
+       article h5 {
+           font-size: 1.15rem;
+           font-weight: bold;
+           line-height: 1.2;
+           margin-bottom: 0.2rem;
+           font-family: 'Figtree', sans-serif; /* Aplicando Figtree como fuente principal */
+           color: var(--color-text);
+       }
+   
+     article h6 {
+       font-size: 1rem;
+       font-weight: bold;
+       line-height: 1.2;
+       margin-bottom: 0.1rem;
+         font-family: 'Figtree', sans-serif; /* Aplicando Figtree como fuente principal */
+       color: var(--color-text);
+   }
+   
+     /* Estilos para párrafos */
+     article p {
+       font-family: sans-serif; /* Fuente sans-serif para el cuerpo */
+       font-size: 1.1rem;
+       line-height: 1.6;
+       margin-bottom: 1rem;
+       color: var(--color-text);
+   }
+   
+     /* Estilos para enlaces */
+     article a {
+       color: var(--color-primary);
+       text-decoration: none;
+       border-bottom: 1px solid transparent; /* Para subrayado animado */
+       transition: border-bottom-color 0.3s ease;
+   }
+     article a:hover {
+       border-bottom-color: var(--color-primary);
+   }
+   
+     /* Estilos para negritas */
+     article strong, article b {
+       font-weight: 600;
+   }
+   
+     /* Estilos para itálicas */
+     article em, article i {
+       font-style: italic;
+   }
+       /* Estilos para listas */
+       article ul, article ol {
+         margin-left: 1.5rem;
+           margin-bottom: 1rem;
+   }
+     article li {
+       margin-bottom: 0.5rem;
+   }
+   
+     article ul {
+       list-style-type: disc;
+   }
+     article ol {
+         list-style-type: decimal;
+   }
+   
+   
+     /* Estilos para imágenes */
+     article img {
+       max-width: 100%;
+       height: auto;
+       display: block; /* Elimina espacio adicional debajo de la imagen */
+       margin: 1rem auto; /* Centrar imagen */
+       border-radius: 0.5rem;
+   }
+   
+     /* Estilos para bloques de código
+     article pre {
+         background-color: #f0f0f0;
+         padding: 1rem;
+         overflow-x: auto;
+         border-radius: 0.5rem;
+         margin-bottom: 1rem;
+     }
+   
+     article code {
+       font-family: monospace;
+       background-color: #f0f0f0;
+       padding: 0.2rem 0.4rem;
+       border-radius: 0.2rem;
+     } */
+   
+     /* Estilos para citas */
+     article blockquote {
+       border-left: 4px solid var(--color-primary);
+       padding-left: 1rem;
+       font-style: italic;
+       margin-bottom: 1rem;
+   }
+   
+     /* Estilos para reglas horizontales */
+     article hr {
+       border: 0;
+       border-top: 1px solid #ccc;
+       margin: 2rem 0;
+   }
+       /* Estilos para temas oscuros */
+     html.dark article h1,
+     html.dark article h2,
+       html.dark article h3,
+     html.dark article h4,
+     html.dark article h5,
+       html.dark article h6,
+       html.dark article p {
+         color: var(--tw-prose-invert-body);
+   }
+   
+     html.dark article a {
+       color: var(--tw-prose-invert-links);
+   }
+   html.dark article a:hover {
+     border-bottom-color: var(--tw-prose-invert-links)
+   }
+   
+   
+   /* Estilos adicionales para mejorar la visibilidad de los markers */
+   .expressive-code .marker {
+     
+     border-left-style: solid;
+   }
+   
+   /* Ajuste opcional para el contraste del texto */
+   .expressive-code .marker.del {
+     color: #ff8080;
+   }
+   
+   .expressive-code .marker.ins {
+     color: #80ff80;
+   }
 
-      /* ==========================================================================
-      9. ESTILOS DE MARKDOWN (estilo Medium)
-      ========================================================================== */
-      article {
-        max-width: 700px; /* Ancho máximo del contenido */
-        margin: 0 auto; /* Centrar el artículo */
-    }
-
-    /* Estilos para encabezados */
-    article h1 {
-        font-family: 'Times New Roman', serif; /* Fuente serif para titulares */
-        font-size: 2.5rem; /* Tamaño de fuente grande */
-        font-weight: bold; /* Negrita */
-        line-height: 1.2;
-        margin-bottom: 1rem;
-        color: var(--color-text);
-    }
-
-    article h2 {
-        font-family: 'Times New Roman', serif; /* Fuente serif para subtítulos */
-        font-size: 2rem; /* Tamaño de fuente un poco más pequeño */
-        font-weight: bold; /* Negrita */
-        line-height: 1.2;
-        margin-bottom: 0.8rem;
-        color: var(--color-text);
-    }
-
-    article h3 {
-        font-family: 'Times New Roman', serif;
-        font-size: 1.5rem;
-        font-weight: bold;
-        line-height: 1.2;
-        margin-bottom: 0.6rem;
-        color: var(--color-text);
-    }
-
-    article h4 {
-        font-size: 1.25rem;
-        font-weight: bold;
-        line-height: 1.2;
-        margin-bottom: 0.4rem;
-        color: var(--color-text);
-    }
-
-    article h5 {
-        font-size: 1.15rem;
-        font-weight: bold;
-        line-height: 1.2;
-        margin-bottom: 0.2rem;
-        color: var(--color-text);
-    }
-
-    article h6 {
-        font-size: 1rem;
-        font-weight: bold;
-        line-height: 1.2;
-        margin-bottom: 0.1rem;
-        color: var(--color-text);
-    }
-
-    /* Estilos para párrafos */
-    article p {
-        font-family: sans-serif; /* Fuente sans-serif para el cuerpo */
-        font-size: 1.1rem;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-        color: var(--color-text);
-    }
-
-    /* Estilos para enlaces */
-    article a {
-        color: var(--color-primary);
-        text-decoration: none;
-        border-bottom: 1px solid transparent; /* Para subrayado animado */
-        transition: border-bottom-color 0.3s ease;
-    }
-    article a:hover {
-        border-bottom-color: var(--color-primary);
-    }
-
-    /* Estilos para negritas */
-    article strong, article b {
-      font-weight: 600;
-    }
-
-    /* Estilos para itálicas */
-    article em, article i {
-        font-style: italic;
-    }
-    /* Estilos para listas */
-    article ul, article ol {
-        margin-left: 1.5rem;
-        margin-bottom: 1rem;
-    }
-    article li {
-      margin-bottom: 0.5rem;
-    }
-
-    article ul {
-        list-style-type: disc;
-    }
-    article ol {
-      list-style-type: decimal;
-    }
-
-
-    /* Estilos para imágenes */
-    article img {
-        max-width: 100%;
-        height: auto;
-        display: block; /* Elimina espacio adicional debajo de la imagen */
-        margin: 1rem auto; /* Centrar imagen */
-        border-radius: 0.5rem;
-    }
-
-    /* Estilos para bloques de código
-    article pre {
-        background-color: #f0f0f0;
-        padding: 1rem;
-        overflow-x: auto;
-        border-radius: 0.5rem;
-        margin-bottom: 1rem;
-    }
-
-    article code {
-      font-family: monospace;
-      background-color: #f0f0f0;
-      padding: 0.2rem 0.4rem;
-      border-radius: 0.2rem;
-    } */
-
-    /* Estilos para citas */
-    article blockquote {
-        border-left: 4px solid var(--color-primary);
-        padding-left: 1rem;
-        font-style: italic;
-        margin-bottom: 1rem;
-    }
-
-    /* Estilos para reglas horizontales */
-    article hr {
-      border: 0;
-      border-top: 1px solid #ccc;
-      margin: 2rem 0;
-    }
-    /* Estilos para temas oscuros */
-    html.dark article h1,
-    html.dark article h2,
-    html.dark article h3,
-    html.dark article h4,
-    html.dark article h5,
-    html.dark article h6,
-    html.dark article p {
-      color: var(--tw-prose-invert-body);
-    }
-
-    html.dark article a {
-        color: var(--tw-prose-invert-links);
-    }
-    html.dark article a:hover {
-      border-bottom-color: var(--tw-prose-invert-links)
-    }
-
-
-/* Estilos adicionales para mejorar la visibilidad de los markers */
-.expressive-code .marker {
-  
-  border-left-style: solid;
+  /* Estilos para el logo */
+.logo-icon {
+  height: 70px; /* Ajusta la altura a tu gusto */
+  width: auto; /* Mantiene la proporción de aspecto */
+  display: block; /* Evita espacios extra debajo de la imagen */
 }
 
-/* Ajuste opcional para el contraste del texto */
-.expressive-code .marker.del {
-  color: #ff8080;
+@media (min-width: 768px) { /* Ajuste para pantallas más grandes (ej: tablets) */
+  .logo-icon {
+      height: 69px;
+  }
 }
-
-.expressive-code .marker.ins {
-  color: #80ff80;
-}
+   
