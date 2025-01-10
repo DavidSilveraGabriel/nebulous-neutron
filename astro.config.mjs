@@ -37,7 +37,7 @@ export default defineConfig({
     starlight({
       title: "DAVID",
       logo: {
-        src: './src/assets/icon.png',
+        src: './src/assets/icono-black.png',//'./src/assets/icon.png',
         replacesTitle: true,
       },
       expressiveCode: {
