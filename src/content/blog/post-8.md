@@ -1,11 +1,11 @@
 ---
-title: Unleashing the Power of AI: Intelligent Agents Transforming the World
-author: David Silvera
+title: "Unleashing the Power of AI: Intelligent Agents Transforming the World"
+pubDate: 2024-02-27
 description: "Dive into the fascinating world of artificial intelligence agents: their workings, transformative potential, associated risks, and the tools shaping their future."
+author: "David Silvera"
 image:
     url: "/imgs/sssd.png"
     alt: "Abstract image of interconnected circuits representing the complexity of AI"
-pubDate: 2024-02-27
 tags: ["artificial intelligence", "ai agents", "machine learning", "deep learning", "automation", "future technology", "ai tools", "ai opportunities"]
 featured: True
 ---
