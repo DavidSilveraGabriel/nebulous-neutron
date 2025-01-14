@@ -7,6 +7,13 @@
       "github": "https://github.com/DavidSilveraGabriel/NILES"
     },
     {
+      "title": "🐱 MewAI - Feline Agent Crew",
+      "description": "MewAI is a multi-agent system powered by crewAI, utilizing 'feline agents' enhanced by Gemini to automate blog content creation. These agents collaborate on tasks involving web research, content drafting, and content review.",
+      "image": "/projects_img/mewai.png",
+      "tags": ["GenAI", "LLMs", "AI bot","AI Agents","CrewAI"],
+      "github": "https://github.com/DavidSilveraGabriel/MewAI"
+    },
+    {
       "title": "Analyze and classify public domain EEG(ML) signals",
       "description": "analyze and classify public domain EEG signals with deep ConvNets for decoding imagined and executed movements",
       "image": "https://camo.githubusercontent.com/498069f5bd135c865ea9ccf8adc3aa34c0998793362846725e1094284f230a16/68747470733a2f2f63646e2e746563686e6f6c6f67796e6574776f726b732e636f6d2f746e2f696d616765732f7468756d62732f776562702f3634305f3336302f66697273742d657665722d6e6f6e2d696e7661736976652d627261696e2d636f6d70757465722d696e746572666163652d646576656c6f7065642d3332303934312e776562703f763d3130323430343736",
