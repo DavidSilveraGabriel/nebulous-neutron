@@ -8,126 +8,206 @@ interface Testimonio {
 }
 
 const testimonios: Testimonio[] = [
-  {
-    id: 1,
-    nombre: "Claudio",
-    cargo: "Independent",
-    texto: "Kind and polite, he immediately made me feel at ease. Competent, attentive to details, he inserted without problems a couple of information that I had forgotten. The result was better than expected, excellent communication. I will use him again in the next steps.",
-    imagen: "/testimonies/Claudio.png"
-  },
-  {
-    id: 2,
-    nombre: "Andrew Palapa",
-    cargo: "Developer",
-    texto: "David helped creating an image classification AI that can detect if a package has been delivered in real time. You can see his work on the Palapa.ai app under the 'Your package has arrived' AI. Was good work delivered quickly.",
-    imagen: "/testimonies/Andrew.png"
-  },
-  {
-    id: 3,
-    nombre: "EJP",
-    cargo: "Student",
-    texto: "Excellent work",
-    imagen: "/testimonies/ejp006.png"
-  },
-  {
-    id: 4,
-    nombre: "Wayne Rivas",
-    cargo: "Independent",
-    texto: "amazing experience working with David.",
-    imagen: "/testimonies/waynerivas.png"
-  },
-  {
-    id: 5,
-    nombre: "Mihaylov",
-    cargo: "Independent",
-    texto: "The work was done in time. Excellent quality",
-    imagen: "/testimonies/mihaylovn.png"
-  },
-  {
-    id: 6,
-    nombre: "Hans",
-    cargo: "Tech Lead",
-    texto: "David is a serious, responsible professional. He meets deadlines, has valuable knowledge and is very good at communicating. He has an incredible ability to adapt, which allows him to integrate into projects with great challenges. I would definitely consider him for future projects.",
-    imagen: "/testimonies/Hans.png"
-  },
-  {
-    id: 7,
-    nombre: "Daniel",
-    cargo: "Independent",
-    texto: "It was an exceptional experience, is a true technology enthusiast with great knowledge, thank you for your help David, I will repeat!",
-    imagen: "/testimonies/Daniel.png"
-  }
+    {
+        id: 1,
+        nombre: "Claudio",
+        cargo: "Independent",
+        texto: "Kind and polite, he immediately made me feel at ease. Competent, attentive to details, he inserted without problems a couple of information that I had forgotten. The result was better than expected, excellent communication. I will use him again in the next steps.",
+        imagen: "/testimonies/Claudio.png"
+    },
+    {
+        id: 2,
+        nombre: "Andrew Palapa",
+        cargo: "Developer",
+        texto: "David helped creating an image classification AI that can detect if a package has been delivered in real time. You can see his work on the Palapa.ai app under the 'Your package has arrived' AI. Was good work delivered quickly.",
+        imagen: "/testimonies/Andrew.png"
+    },
+    {
+        id: 3,
+        nombre: "EJP",
+        cargo: "Student",
+        texto: "Excellent work",
+        imagen: "/testimonies/ejp006.png"
+    },
+    {
+        id: 4,
+        nombre: "Wayne Rivas",
+        cargo: "Independent",
+        texto: "amazing experience working with David.",
+        imagen: "/testimonies/waynerivas.png"
+    },
+    {
+        id: 5,
+        nombre: "Mihaylov",
+        cargo: "Independent",
+        texto: "The work was done in time. Excellent quality",
+        imagen: "/testimonies/mihaylovn.png"
+    },
+    {
+        id: 6,
+        nombre: "Hans",
+        cargo: "Tech Lead",
+        texto: "David is a serious, responsible professional. He meets deadlines, has valuable knowledge and is very good at communicating. He has an incredible ability to adapt, which allows him to integrate into projects with great challenges. I would definitely consider him for future projects.",
+        imagen: "/testimonies/Hans.png"
+    },
+    {
+        id: 7,
+        nombre: "Daniel",
+        cargo: "Independent",
+        texto: "It was an exceptional experience, is a true technology enthusiast with great knowledge, thank you for your help David, I will repeat!",
+        imagen: "/testimonies/Daniel.png"
+    }
 ];
 ---
 
-<section class="py-20 px-4 max-w-6xl mx-auto text-center mb-12 animate-on-scroll" id="testimoniosCarrusel" >
-  <h2 class="text-4xl font-medium text-center mb-12">
-    What my <a href="https://www.fiverr.com/davidsilverag" class="text-green-300 hover:underline">Fiverr</a>. clients say 
+<section class="py-20 px-4 max-w-6xl mx-auto text-center relative animate-on-scroll" id="testimoniosCarrusel">
+  <h2 class="text-4xl font-medium text-center mb-16">
+    What my <a href="https://www.fiverr.com/davidsilverag" class="text-green-300 hover:underline transition-colors">Fiverr</a> clients say
   </h2>
 
-  <div class="relative h-[500px] max-w-4xl mx-auto flex flex-col items-center justify-center px-4 overflow-hidden" >
-    {testimonios.map((testimonio, index) => (
-      <div 
-        class={`absolute top-0 left-0 w-full h-full opacity-0 transition-opacity duration-500 flex flex-col items-center text-center p-8 
-        ${index === 0 ? 'opacity-100' : ''}`}
-        data-testimonio
-      >
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md max-w-2xl w-full">
-          <img 
-            src={testimonio.imagen} 
-            alt={testimonio.nombre}
-            class="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-white dark:border-gray-700 shadow-sm"
-          />
-          <h3 class="text-gray-900 dark:text-white text-xl font-semibold mb-1">{testimonio.nombre}</h3>
-          <p class="text-gray-600 dark:text-gray-300 text-sm mb-6">{testimonio.cargo}</p>
-          <p class="text-gray-800 dark:text-gray-200 text-lg leading-relaxed italic">
-            "{testimonio.texto}"
-          </p>
-        </div>
-      </div>
-    ))}
+  <div class="relative max-w-4xl mx-auto">
+    <!-- Botones de navegación -->
+    <button 
+      class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors z-10"
+      id="prevBtn"
+      aria-label="Previous testimonial"
+    >
+      <span class="icon-[mdi--chevron-left] w-6 h-6"></span>
+    </button>
 
-    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3">
+    <button 
+      class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors z-10"
+      id="nextBtn"
+      aria-label="Next testimonial"
+    >
+      <span class="icon-[mdi--chevron-right] w-6 h-6"></span>
+    </button>
+
+    <!-- Contenedor del carrusel -->
+    <div class="overflow-hidden">
+      <div class="testimonials-container flex transition-all duration-500 ease-in-out">
+        {testimonios.map((testimonio) => (
+          <div
+            class="testimonial-slide flex-shrink-0 w-full px-4"
+            data-testimonio
+          >
+            <div class="bg-white dark:bg-gray-800 p-10 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl">
+              <div class="relative mb-8">
+                <img
+                  src={testimonio.imagen}
+                  alt={testimonio.nombre}
+                  class="w-20 h-20 rounded-full object-cover mx-auto border-4 border-white dark:border-gray-700 shadow-sm"
+                />
+                <span class="absolute -bottom-4 left-1/2 -translate-x-1/2 icon-[mdi--format-quote-open] w-8 h-8 text-green-300"></span>
+              </div>
+              
+              <p class="text-gray-800 dark:text-gray-200 text-lg leading-relaxed mb-8 min-h-[100px]">
+                "{testimonio.texto}"
+              </p>
+              
+              <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <h3 class="text-gray-900 dark:text-white text-xl font-semibold">{testimonio.nombre}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">{testimonio.cargo}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Indicadores -->
+    <div class="flex justify-center gap-3 mt-8">
       {testimonios.map((_, index) => (
         <button
-          class={`w-3 h-3 rounded-full transition-colors duration-300 hover:bg-gray-600
-          ${index === 0 ? 'bg-gray-800' : 'bg-gray-300'}`}
+          class="w-2 h-2 rounded-full transition-all duration-300 hover:bg-green-400 hover:scale-125"
           data-indicador={index}
+          aria-label={`Go to testimonial ${index + 1}`}
         />
       ))}
     </div>
   </div>
 </section>
 
-<script>
-  const carrusel = document.getElementById('testimoniosCarrusel');
-  const testimonios = carrusel?.querySelectorAll('[data-testimonio]');
-  const indicadores = carrusel?.querySelectorAll('[data-indicador]');
-  let currentIndex = 0;
-
-  function mostrarTestimonio(index: number) {
-    testimonios?.forEach((testimonio, i) => {
-      testimonio.classList.toggle('opacity-100', i === index);
-      testimonio.classList.toggle('opacity-0', i !== index);
-    });
-
-    indicadores?.forEach((indicador, i) => {
-      indicador.classList.toggle('bg-gray-800', i === index);
-      indicador.classList.toggle('bg-gray-300', i !== index);
-    });
+<style>
+  .testimonial-slide {
+    width: 100%;
   }
 
-  // Cambio automático
-  setInterval(() => {
-    currentIndex = (currentIndex + 1) % (testimonios?.length || 1);
-    mostrarTestimonio(currentIndex);
-  }, 5000);
+  [data-indicador] {
+    @apply bg-gray-300 dark:bg-gray-600;
+  }
 
-  // Manejo de clicks en indicadores
+  [data-indicador].active {
+    @apply bg-green-300 scale-125;
+  }
+</style>
+
+<script>
+  const carrusel = document.getElementById('testimoniosCarrusel');
+  const testimonialsContainer = carrusel?.querySelector('.testimonials-container') as HTMLElement;
+  const testimonios = carrusel?.querySelectorAll('[data-testimonio]') as NodeListOf<HTMLElement>;
+  const indicadores = carrusel?.querySelectorAll('[data-indicador]') as NodeListOf<HTMLElement>;
+  const prevBtn = carrusel?.querySelector('#prevBtn') as HTMLElement;
+  const nextBtn = carrusel?.querySelector('#nextBtn') as HTMLElement;
+  let intervalId: ReturnType<typeof setInterval>;
+
+  let currentIndex = 0;
+
+  function updateSlide(index: number) {
+    if (!testimonialsContainer || !testimonios) return;
+    
+    // Asegurarse de que el índice esté dentro de los límites
+    currentIndex = (index + testimonios.length) % testimonios.length;
+    
+    // Actualizar la posición del carrusel
+    const translateX = -currentIndex * 100;
+    testimonialsContainer.style.transform = `translateX(${translateX}%)`;
+    
+    // Actualizar indicadores
+    indicadores?.forEach((indicador, i) => {
+      indicador.classList.toggle('active', i === currentIndex);
+    });
+}
+
+function startAutoPlay() {
+    stopAutoPlay(); // Detener el intervalo existente si lo hay
+    intervalId = setInterval(() => {
+        updateSlide(currentIndex + 1);
+    }, 5000);
+}
+
+function stopAutoPlay() {
+    if (intervalId) {
+        clearInterval(intervalId);
+    }
+}
+
+  // Event Listeners
+  prevBtn?.addEventListener('click', () => {
+    updateSlide(currentIndex - 1);
+    stopAutoPlay();
+    startAutoPlay();
+  });
+
+  nextBtn?.addEventListener('click', () => {
+    updateSlide(currentIndex + 1);
+    stopAutoPlay();
+    startAutoPlay();
+  });
+
   indicadores?.forEach((indicador, index) => {
     indicador.addEventListener('click', () => {
-      currentIndex = index;
-      mostrarTestimonio(currentIndex);
+      updateSlide(index);
+      stopAutoPlay();
+      startAutoPlay();
     });
   });
+
+  // Iniciar el carrusel
+  updateSlide(0);
+  startAutoPlay();
+
+  // Pausar la reproducción automática cuando el usuario interactúa con el carrusel
+  carrusel?.addEventListener('mouseenter', stopAutoPlay);
+  carrusel?.addEventListener('mouseleave', startAutoPlay);
 </script>
