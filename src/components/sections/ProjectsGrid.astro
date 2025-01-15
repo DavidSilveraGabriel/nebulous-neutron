@@ -3,20 +3,27 @@ interface Project {
   title: string;
   description: string;
   image: string;
-  github?: string;
-  link?: string;
   tags: string[];
+  link?: string;
+  github?: string;
 }
 
 interface Props {
-  layout?: 'grid' | 'list' | 'carousel';
-  projects: Project[];
+  layout?: 'grid' | 'carousel' | 'list';
+  projects?: Project[];
 }
 
 const { 
   layout = 'grid',
-  projects
-} = Astro.props as Props;
+  projects = []
+} = Astro.props;
+
+// Colores inspirados en Gemini
+const gradients = [
+  'from-blue-500/10 to-purple-500/10',
+  'from-teal-500/10 to-blue-500/10',
+  'from-purple-500/10 to-pink-500/10',
+];
 ---
 
 <section id="projects" class="py-20">
@@ -27,8 +34,8 @@ const {
     <p class="text-center text-gray-600 dark:text-gray-400 mb-16 max-w-2xl mx-auto">
       Exploring the intersection of AI, machine learning, and technology innovation
     </p>
-
-    <div class:list={`
+    
+    <div class={`
       ${layout === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : ''}
       ${layout === 'list' ? 'space-y-8' : ''}
       ${layout === 'carousel' ? 'flex overflow-x-auto snap-x snap-mandatory -mx-4 px-4 py-4 space-x-6' : ''}
@@ -38,49 +45,48 @@ const {
           class={`
             group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden
             border border-gray-100 dark:border-gray-700
-            hover:shadow-lg hover:shadow-purple-500/10
+            hover:shadow-xl hover:shadow-purple-500/5
             transition-all duration-300 ease-out
             ${layout === 'carousel' ? 'w-80 flex-shrink-0 snap-center' : ''}
-            project-card animate-on-scroll
+            animate-on-scroll
           `}
-          style={{ '--animation-delay': `${index * 150}ms` }}
-          role="listitem"
-          aria-labelledby={`project-title-${index}`}
+          style={`animation-delay: ${index * 150}ms`}
         >
-          <div class="relative w-full pt-[56.25%] bg-gray-100 dark:bg-gray-900 overflow-hidden">
-              <a href={project.github || project.link || '#'} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="absolute inset-0 w-full h-full"
-                aria-label={`View project: ${project.title}`}
-              >
-              <div class="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900"></div>
+          {/* Gradient overlay background */}
+          <div class={`absolute inset-0 bg-gradient-to-br ${gradients[index % gradients.length]} opacity-50`}></div>
+          
+          {/* Project image container with fixed aspect ratio */}
+          <div class="relative w-full pt-[56.25%]"> {/* 16:9 aspect ratio */}
+            <a href={project.github || project.link || '#'} 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="absolute inset-0">
               <img 
                 src={project.image} 
                 alt={project.title}
-                class="absolute inset-0 w-full h-full object-cover transition-all duration-500
-                      group-hover:scale-[1.02] group-hover:brightness-[0.95]"
+                class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/20 to-transparent 
-                        opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {/* Overlay gradient on hover */}
+              <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/50 to-transparent 
+                          opacity-0 group-hover:opacity-100 transition-all duration-300">
               </div>
-              </a>
+            </a>
           </div>
+          
+          {/* Project details */}
           <div class="p-6 relative">
-            <h3 id={`project-title-${index}`} class="text-xl font-semibold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
               {project.title}
             </h3>
             <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
               {project.description}
             </p>
             <div class="flex flex-wrap gap-2">
-              {project.tags.map((tag, tagIndex) => (
-                <span 
-                    key={tagIndex}
-                    class="px-3 py-1 text-sm rounded-full
-                           bg-blue-50 dark:bg-blue-900/20
+              {project.tags.map(tag => (
+                <span class="px-3 py-1 text-sm rounded-full
+                           bg-gradient-to-r from-blue-500/10 to-purple-500/10
                            text-blue-700 dark:text-blue-300
-                           border border-blue-100 dark:border-blue-800">
+                           border border-blue-200 dark:border-blue-800">
                   {tag}
                 </span>
               ))}
@@ -93,33 +99,25 @@ const {
 </section>
 
 <style>
-  .project-card {
+  /* Asegura que las cards tengan la misma altura mínima */
+  article {
     display: flex;
     flex-direction: column;
     height: 100%;
-    -webkit-backface-visibility: hidden;
-    -moz-backface-visibility: hidden;
-    -webkit-transform: translate3d(0, 0, 0);
-    -moz-transform: translate3d(0, 0, 0);
   }
 
-    .p-6 {
+  /* Hace que la descripción ocupe el espacio disponible */
+  .p-6 {
     flex: 1;
     display: flex;
     flex-direction: column;
   }
 
-  img {
-    backface-visibility: hidden;
-    transform: translateZ(0);
-    -webkit-font-smoothing: subpixel-antialiased;
-  }
-
+  /* Animación suave para los elementos */
   .animate-on-scroll {
     opacity: 0;
     transform: translateY(20px);
     animation: fadeInUp 0.6s ease-out forwards;
-    animation-delay: var(--animation-delay);
   }
 
   @keyframes fadeInUp {
