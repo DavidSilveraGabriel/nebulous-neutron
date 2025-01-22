@@ -5,61 +5,62 @@ const navItems = [
   { name: 'Services', path: '/#services' },
   { name: 'Projects', path: '/#projects' },
   { name: 'Testimonies', path: '/#testimoniosCarrusel' },
-  
   { name: 'Blog', path: '/blog' },
   { name: 'Docs', path: '/docs' },
-  
 ];
 
-// Obtener la ruta actual
 const currentPath = Astro.url.pathname;
 ---
 
 <header class="fixed w-full top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
-      <!-- Logo -->
       <a href="/" class="flex items-center space-x-2">
-        <!--<span class="text-xl font-bold text-gray-900 dark:text-white">DAVID</span>-->
-        <img src="/icono-black.png" class="logo-icon">
+        <div class="relative w-8 h-8">
+          <img
+            src="/icono-black-no-bg.png"
+            class="absolute inset-0 w-full h-full transition-opacity duration-300 dark:opacity-0"
+            alt="Logo light"
+          />
+          <img
+            src="/icono-white-no-bg.png"
+            class="absolute inset-0 w-full h-full transition-opacity duration-300 opacity-0 dark:opacity-100"
+            alt="Logo dark"
+          />
+        </div>
+        <div class="flex space-x-2">
+          <span class="text-xl font-bold text-gray-900 dark:text-white">SILVERA</span>
+          <span class="text-xl font-bold text-gray-900 dark:text-white">DAVID</span>
+        </div>
       </a>
 
-      <!-- Navigation -->
       <nav class="hidden md:flex items-center justify-between flex-1 px-16">
-        <div></div> <!-- Spacer -->
+        <div></div>
         <div class="flex items-center space-x-8">
-          {navItems.slice(0,3).map(item => {
-            return (
-              <a 
-                href={item.path}
-                class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300"
-              >
-                {item.name}
-              </a>
-            );
-          })}
+          {navItems.slice(0, 3).map(item => (
+            <a
+              href={item.path}
+              class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300"
+            >
+              {item.name}
+            </a>
+          ))}
         </div>
         <div class="flex items-center space-x-8">
-          <a 
-            href={navItems[3].path}
-            class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300"
-          >
-            {navItems[3].name}
-          </a>
-          <!--docs-->
-          <a 
-            href={navItems[4].path}
-            class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300"
-          >
-            {navItems[4].name}
-          </a>
+          {navItems.slice(3).map(item => (
+            <a
+              href={item.path}
+              class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300"
+            >
+              {item.name}
+            </a>
+          ))}
           <ThemeIcon />
         </div>
       </nav>
-      
-      <!-- Mobile menu button -->
-      <button 
-        type="button" 
+
+      <button
+        type="button"
         class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
         aria-controls="mobile-menu"
         aria-expanded="false"
@@ -73,8 +74,7 @@ const currentPath = Astro.url.pathname;
     </div>
   </div>
 
-  <!-- Mobile menu -->
-  <div class="md:hidden hidden" id="mobile-menu">
+  <div class="md:hidden hidden transition-all duration-300" id="mobile-menu">
     <div class="px-2 pt-2 pb-3 space-y-1">
       {navItems.map(item => (
         <a
@@ -89,7 +89,7 @@ const currentPath = Astro.url.pathname;
 </header>
 
 <script>
-  function setupMobileMenu() {
+  const setupMobileMenu = () => {
     const menuButton = document.getElementById('menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
     let isOpen = false;
@@ -100,12 +100,9 @@ const currentPath = Astro.url.pathname;
       e.stopPropagation();
       isOpen = !isOpen;
       mobileMenu.classList.toggle('hidden');
-      
-      // Actualizar el atributo aria-expanded
       menuButton.setAttribute('aria-expanded', isOpen.toString());
     });
 
-    // Cerrar menú al hacer clic fuera
     document.addEventListener('click', (e) => {
       if (isOpen && !menuButton.contains(e.target as Node) && !mobileMenu.contains(e.target as Node)) {
         isOpen = false;
@@ -113,21 +110,27 @@ const currentPath = Astro.url.pathname;
         menuButton.setAttribute('aria-expanded', 'false');
       }
     });
-  }
+  };
 
-  // Configurar el menú en la carga inicial
   setupMobileMenu();
-
-  // Reconfigurar el menú después de la navegación de Astro
   document.addEventListener('astro:page-load', setupMobileMenu);
 
-  // Manejar el desplazamiento suave cuando se carga la página con un hash
   window.addEventListener('load', () => {
     if (location.hash) {
-      const element = document.querySelector(location.hash);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      document.querySelector(location.hash)?.scrollIntoView({ behavior: 'smooth' });
     }
   });
 </script>
+
+<style>
+  #mobile-menu {
+    opacity: 1;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+  }
+
+  #mobile-menu:not(.hidden) {
+    max-height: 280px;
+  }
+</style>
