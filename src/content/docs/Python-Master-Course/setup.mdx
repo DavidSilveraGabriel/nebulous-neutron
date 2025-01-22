@@ -1,0 +1,272 @@
+---
+title: "⚙️ Setting Up Your Python Environment "
+description: "Learn how to install Python, manage packages, and set up your development environment."
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Steps } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { LinkButton } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="Python Installation" icon="download">
+    Detailed instructions on how to install Python on various operating systems.
+  </Card>
+  <Card title="Package Management" icon="box">
+    Introduction to pip and virtual environments for dependency management.
+  </Card>
+  <Card title="Development Tools" icon="settings">
+    Overview of popular IDEs, editors, and Git for a productive coding setup.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Note 📝">
+  A well-configured environment is crucial for a smooth Python development experience.
+</Aside>
+
+
+## Python Installation
+
+Before diving into Python coding, it's essential to set up a proper development environment. This section guides you through the necessary steps, including installing Python, managing packages, and configuring your preferred tools.
+
+The first step is to install Python on your machine. The installation process varies slightly depending on your operating system.
+
+### Installation on Windows
+
+<Steps>
+  <ol>
+    <li>Go to the [Official Python Website](https://www.python.org/downloads/) and download the latest version of Python for Windows.</li>
+    <li>Run the installer. **Make sure to check the "Add Python to PATH" option** during the installation. This allows you to run Python from the command line.</li>
+    <li>Complete the installation.</li>
+    <li>To verify the installation, open the Command Prompt and type `python --version`. You should see the installed Python version printed on the console.</li>
+    </ol>
+</Steps>
+
+### Installation on macOS
+
+<Steps>
+    <ol>
+        <li>Go to the [Official Python Website](https://www.python.org/downloads/) and download the latest version of Python for macOS.</li>
+        <li>Run the installer and follow the on-screen instructions.</li>
+        <li>Verify your installation. Open Terminal and type `python3 --version`. If you have Python 2.7 installed by default, using `python` command might give you Python 2.</li>
+    </ol>
+</Steps>
+
+### Installation on Linux
+
+Linux systems may have Python pre-installed, but it's often an older version. It's recommended to install the latest version using your distribution's package manager. Here are examples:
+
+<Tabs>
+    <TabItem label="Debian/Ubuntu" icon="terminal">
+        <Steps>
+             <ol>
+                 <li>Open a Terminal.</li>
+                 <li>Update the package list using `sudo apt update`.</li>
+                 <li>Install Python 3 using `sudo apt install python3 python3-pip`.</li>
+                 <li>Verify the installation with `python3 --version` and `pip3 --version`.</li>
+             </ol>
+        </Steps>
+    </TabItem>
+    <TabItem label="Fedora/CentOS" icon="terminal">
+        <Steps>
+            <ol>
+                <li>Open a Terminal.</li>
+                <li>Update the package list using `sudo dnf update`.</li>
+                <li>Install Python 3 using `sudo dnf install python3 python3-pip`.</li>
+                <li>Verify the installation with `python3 --version` and `pip3 --version`.</li>
+           </ol>
+        </Steps>
+    </TabItem>
+    <TabItem label="Arch Linux" icon="terminal">
+       <Steps>
+           <ol>
+                <li>Open a Terminal.</li>
+                <li>Install Python 3 using `sudo pacman -S python python-pip`.</li>
+                <li>Verify the installation with `python --version` and `pip --version`.</li>
+            </ol>
+       </Steps>
+    </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Pro Tip ✨">
+   If you are on Linux or Mac and want to try specific Python versions I recommend you use tools such as `pyenv`
+  or `asdf` which will help you to isolate your projects.
+</Aside>
+## Package Managers (pip)
+
+Python has a powerful package manager called `pip`.  It's used to install and manage external libraries and dependencies needed for your projects.
+
+### Installing packages with pip
+
+To install a package, use the `pip install` command followed by the package name. For example, to install the `requests` library:
+
+```bash
+pip install requests
+```
+
+To verify the installation, you can list the installed packages with:
+
+```bash
+pip list
+```
+
+### Virtual Environments
+
+When working on multiple Python projects, each project might require different versions of packages. Using virtual environments isolates the dependencies of each project, preventing conflicts and dependency issues.
+
+#### Creating a Virtual Environment
+    
+<Steps>
+   <ol>
+     <li>Open Terminal or Command Prompt and navigate to your project's root folder.</li>
+     <li>Run the command `python3 -m venv venv`.  This creates a directory named `venv` (you can choose a different name if you wish) that contains the isolated python environment.</li>
+    </ol>
+</Steps>
+Activate the environment:
+<Tabs>
+    <TabItem label="Linux/macOS" icon="terminal">
+    <p>Use the command `source venv/bin/activate` in the terminal.</p>
+    </TabItem>
+    <TabItem label="Windows" icon="terminal">
+        <p>Use the command `.\venv\Scripts\activate` in the Command Prompt.</p>
+    </TabItem>
+</Tabs>
+<p>
+You should now see the environment name `(venv)` shown on the terminal line. Any packages you install with `pip` will now be specific to this virtual environment.
+4. To deactivate, use the `deactivate` command in the terminal.
+</p>
+## IDEs and Editors
+
+Choosing the right development environment can significantly improve your productivity. Here are some of the most popular IDEs and editors for Python development:
+
+### VS Code
+
+<Steps>
+  <ol>
+        <li> [Download VS Code](https://code.visualstudio.com/download) for your operating system.</li>
+        <li> Install the Python extension by Microsoft to have support for linting, debugging, and code formatting.</li>
+        <li> Install additional extensions to improve your workflow and add extra funcionality as needed.</li>
+    </ol>
+</Steps>
+
+VS Code is a free, lightweight, and customizable code editor with a wide range of extensions. It is a great all-around option.
+
+### PyCharm
+
+<Steps>
+   <ol>
+       <li>[Download PyCharm](https://www.jetbrains.com/pycharm/download/) for your operating system.</li>
+       <li>Install the editor. Choose either the Professional or Community version. The community edition is free but will lack some advanced features.</li>
+        <li>Configure the Python interpreter to use the one you have installed.</li>
+   </ol>
+</Steps>
+
+PyCharm is a powerful and specialized IDE designed for Python development. It offers intelligent code completion, debugging tools, and support for web frameworks.
+
+### Jupyter Notebook / JupyterLab
+
+<Steps>
+   <ol>
+        <li>Install Jupyter with `pip install jupyterlab`.</li>
+        <li>Start Jupyter Lab with the command `jupyter lab` in the terminal. This will open a browser window.</li>
+        <li>Start creating your notebooks.</li>
+    </ol>
+</Steps>
+
+Jupyter Notebook and JupyterLab are excellent for data analysis, visualization, and interactive development. It also allows to write and render markdown documents.
+
+### Other Editors
+
+Other options include Sublime Text, Atom, and Vim. Choose the one that fits your workflow and preferences the best.
+
+<Aside type="tip" title="Tip ✨">
+  Start with one editor and stick to it until you feel comfortable enough to explore others. The right editor will improve your productivity and your overall coding experience.
+</Aside>
+
+## Basic Git for Development
+
+Git is a version control system that helps track changes in your code and collaborate with others. It is a very important tool that you should learn to use.
+
+<Steps>
+  <ol>
+    <li>
+    Download and install Git from the [official website](https://git-scm.com/downloads).
+    </li>
+        <li>
+        Configure git using the following commands in the terminal. These commands only need to be set once for each machine:
+             <Code code={`
+            git config --global user.name "Your Name"
+            git config --global user.email "your.email@example.com"
+            `} lang="bash" title="Git Configuration" />
+        </li>
+        <li>
+        Initialize a new git repository within your project's directory:
+          ```bash
+          git init
+          ```
+        </li>
+        <li>
+        Add your files to staging using:
+          ```bash
+          git add .
+          ```
+        </li>
+        <li>
+        Commit your changes using:
+            ```bash
+              git commit -m "Initial commit"
+            ```
+        </li>
+          <li>
+          (Optional) Create an account in Github or a similar git platform and create a new repository. Copy the git repository link and add it to your repository with:
+          ```bash
+             git remote add origin your_repository_link
+          ```
+          </li>
+        <li>
+        Finally, push your repository to your remote repository:
+            ```bash
+             git push -u origin main
+            ```
+        </li>
+      </ol>
+</Steps>
+
+It's crucial to commit your changes regularly, use descriptive commit messages, and utilize branching for feature development.
+
+<LinkButton
+  href="https://www.python.org/downloads/"
+  variant="primary"
+  icon="download"
+  iconPlacement="end"
+>
+  Download Python
+</LinkButton>
+
+<LinkButton
+  href="https://pip.pypa.io/en/stable/"
+  variant="secondary"
+  icon="box"
+  iconPlacement="start"
+>
+  pip Documentation
+</LinkButton>
+<LinkButton
+  href="https://code.visualstudio.com/"
+  variant="secondary"
+  icon="settings"
+  iconPlacement="end"
+>
+ VS Code Website
+</LinkButton>
+
+<LinkButton
+    href="https://git-scm.com/"
+    variant="secondary"
+    icon="git"
+    iconPlacement="start"
+>
+  Official Git Website
+</LinkButton>

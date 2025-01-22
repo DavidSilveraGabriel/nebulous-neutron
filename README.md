@@ -32,6 +32,7 @@ Este es un portfolio profesional construido con tecnologías modernas que muestr
 
 ## 📦 Estructura del Proyecto
 
+```bash 
 src/
 ├── components/
 │ ├── layout/
@@ -42,7 +43,7 @@ src/
 ├── pages/
 ├── styles/
 └── consts.ts
-
+``` 
 
 ## 🚀 Instalación y Uso
 
