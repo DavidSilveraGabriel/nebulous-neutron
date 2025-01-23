@@ -4,6 +4,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "strictNullChecks": true,
+    "types": ["astro/client"],
     "allowJs": true,
     "strict": true,
     "noImplicitAny": true,
@@ -12,8 +13,19 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    
+    "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "skipLibCheck": true
   },
+  
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
+
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

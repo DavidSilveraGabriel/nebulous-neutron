@@ -58,4 +58,11 @@ export default defineConfig({
   //  adapter: vercel({webAnalytics: {
   //    enabled: true,
   //  },})
+  vite: {
+    define: {
+      'import.meta.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
+      'import.meta.env.SUPABASE_KEY': JSON.stringify(process.env.SUPABASE_KEY)
+    }
+  }
+  
 });

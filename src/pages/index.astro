@@ -6,6 +6,9 @@ import ServicesSection from '../components/sections/ServicesSection.astro';
 import Testimonios from '../components/sections/Testimonies.astro';
 import BlogSection from '../components/sections/BlogSection.astro';
 
+//import ChatbotInterface from '../components/ui/ChatbotInterface.astro'
+
+import ChatUi from '@/components/chat/ChatUi.astro';
 import { getCollection } from "astro:content";
 
 const pageTitle = "David Silvera - Data Scientist & AI Developer";
@@ -41,7 +44,12 @@ import projects from '../data/projects.json';
     <ProjectsGrid projects={projects} layout="grid" />
     <!-- Sección de Posts Destacados -->
     <BlogSection />
-    <!-- Sección de elevenlabs -->
+    
+    <!-- Sección de chatbot -->
+    <ChatUi />
+     <!-- <ChatbotInterface />-->
+
+    <!--Sección de elevenlabs -->
     <!--<elevenlabs-convai agent-id="7NTtm6YZ0GTe9QD7FPud"></elevenlabs-convai><script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>-->
   </div>
 </Base>
