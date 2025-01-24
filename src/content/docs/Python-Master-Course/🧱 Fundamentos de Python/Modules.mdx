@@ -1,0 +1,183 @@
+---
+title: "Módulos y Paquetes en Python: Importación, Namespaces, Creación, requirements.txt y setup.py"
+description: "Un tutorial completo sobre módulos y paquetes en Python: cómo importarlos, crear tus propios módulos, entender namespaces y manejar dependencias con requirements.txt y setup.py."
+---
+
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="¡Organiza tu Código!" icon="blocks">
+    Aprende a dividir tu código en módulos y paquetes para una mejor organización y reutilización.
+  </Card>
+  <Card title="Manejo de Dependencias" icon="tool">
+   Descubre cómo `requirements.txt` y `setup.py` te ayudan a gestionar las dependencias de tus proyectos.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Importante 📝">
+    Los módulos y paquetes son esenciales para escribir código organizado, reutilizable y colaborativo.
+</Aside>
+
+# Módulos y Paquetes en Python: Organización y Reutilización de Código
+
+En este post, vamos a explorar en detalle cómo organizar tu código en Python utilizando módulos y paquetes. Los módulos te permiten dividir tu código en archivos separados y los paquetes te permiten organizar módulos en directorios. También aprenderás a gestionar dependencias con `requirements.txt` y a empaquetar tus proyectos con `setup.py`. Cubriremos:
+
+1.  **Importación y Namespaces:** Cómo importar módulos y usar namespaces para evitar conflictos.
+2.  **Creación de Módulos:** Cómo organizar tu propio código en archivos `.py`.
+3.  **`requirements.txt`:** Cómo gestionar dependencias de tu proyecto.
+4.  **`setup.py`:** Cómo empaquetar y distribuir tu código.
+
+## 1. Importación y Namespaces <Badge text="Usando Código de Otros" variant="tip" />
+
+La importación te permite usar código definido en otros archivos o bibliotecas. Python utiliza namespaces para organizar los nombres de los módulos y funciones, evitando conflictos.
+
+### Importación Básica
+
+```python
+import math  # Importa todo el módulo
+print(math.sqrt(16))  # Usa la función sqrt del módulo math
+```
+
+### Importar Nombres Específicos
+
+```python
+from math import sqrt, pi  # Importa nombres específicos del módulo
+print(sqrt(16))         # Usa directamente la función sqrt
+print(pi)
+```
+
+### Asignar un Alias a un Módulo
+```python
+import numpy as np  # Importa el módulo numpy asignándole el alias np
+print(np.array([1,2,3))
+```
+
+### Importar todo de un modulo (No recomendado)
+```python
+from math import *  # importa todo del modulo math, no recomendado porque pueden haber conflictos con variables locales.
+print(sqrt(16))
+```
+
+### Namespaces
+Los namespaces son espacios de nombres que organizan los identificadores de un programa, para evitar conflictos entre nombres.
+Python tiene cuatro tipos principales de namespaces:
+
+1. **Built-in:**  Contiene nombres predefinidos que son siempre accesibles (ej: print, len, type).
+2. **Global:** Contiene nombres definidos a nivel de módulo.
+3. **Local:** Contiene nombres definidos dentro de funciones.
+4. **Enclosing:** Contiene nombres definidos en el ámbito de funciones externas.
+
+## 2. Creación de Módulos <Badge text="Organiza tu Código" variant="note" />
+
+Un módulo es un archivo `.py` que contiene definiciones de funciones, variables y clases.
+
+### Pasos para Crear un Módulo
+1.  **Crea un Archivo `.py`:**  Por ejemplo, `mi_modulo.py`.
+2.  **Define Funciones, Clases o Variables:**  Dentro de `mi_modulo.py`.
+
+    ```python
+    # mi_modulo.py
+
+    def saludar(nombre):
+        print(f"Hola, {nombre}!")
+
+    def sumar(a, b):
+        return a + b
+
+    PI = 3.14159
+    ```
+3.  **Importa el Módulo en Otro Archivo:**  Utiliza `import mi_modulo` en otro archivo.
+    ```python
+    # main.py
+    import mi_modulo
+
+    mi_modulo.saludar("Juan")
+    resultado = mi_modulo.sumar(5, 3)
+    print(resultado)
+    print(mi_modulo.PI)
+    ```
+### Packages
+Un paquete es un directorio que contiene módulos y un archivo `__init__.py`, que puede estar vacío, se utiliza para identificar un directorio como paquete y poder importar sus modulos.
+Para usar un modulo dentro de un paquete, hay que importarlo usando el nombre del paquete como prefijo.
+```python
+from mipaquete.mimudulo import saludo # Importar el modulo saludo dentro del paquete mipaquete
+
+saludo("Pedro")
+
+```
+<Aside type="caution" title="Precaución ⚠️">
+    Evita nombres de módulos que coincidan con nombres de módulos estándar de Python para evitar confusiones y errores de importación.
+</Aside>
+
+## 3. `requirements.txt` <Badge text="Gestión de Dependencias" variant="success" size="large" />
+
+`requirements.txt` es un archivo que lista todas las dependencias de un proyecto Python, junto con sus versiones. Esto es útil para reproducir el mismo entorno de desarrollo en diferentes máquinas o entornos.
+
+### Cómo Crear un `requirements.txt`
+1.  **Instala pipreqs (si no lo tienes):**  `pip install pipreqs`
+2.  **Ejecuta pipreqs en el directorio del proyecto:** `pipreqs ./`
+    o tambien:  `pip freeze > requirements.txt`
+
+   Esto genera un archivo `requirements.txt` con las dependencias de tu proyecto.
+
+### Ejemplo de un `requirements.txt`
+
+requests==2.26.0 numpy==1.21.2 pandas==1.3.3
+
+
+### Instalar Dependencias con `requirements.txt`
+1.  **Navega al directorio del proyecto:**
+2.  **Ejecuta:** `pip install -r requirements.txt`
+
+    Esto instala todas las dependencias listadas en el archivo.
+
+## 4. `setup.py` <Badge text="Empaquetando tu Código" variant="tip" />
+
+`setup.py` es un script de Python que describe cómo empaquetar y distribuir tu proyecto, permitiendo crear paquetes que se pueden instalar y compartir fácilmente con otros.
+
+### Ejemplo Básico de `setup.py`
+```python
+# setup.py
+from setuptools import setup, find_packages
+
+setup(
+    name='mi_paquete',
+    version='0.1.0',
+    description='Descripción de mi paquete',
+    author='Tu Nombre',
+    author_email='tu@email.com',
+    packages=find_packages(),
+    install_requires=[
+        'requests',
+        'numpy',
+        'pandas',
+    ],
+)
+
+Campos Importantes en setup.py
+name: Nombre del paquete.
+version: Versión del paquete.
+description: Descripción del paquete.
+author: Nombre del autor.
+author_email: Email del autor.
+packages: Lista de los paquetes que se deben incluir, utiliza find_packages() para que se encuentren automáticamente.
+install_requires: Lista de las dependencias requeridas.
+Usando setup.py
+Navega al directorio del proyecto: donde está el archivo setup.py.
+Crea una distribución del paquete: python setup.py sdist bdist_wheel
+Instala el paquete: pip install dist/mi_paquete-0.1.0-py3-none-any.whl (o el archivo que corresponda).
+Distribuir tu paquete
+Subir a PyPI: Puedes subir tu paquete al PyPI (Python Package Index) para que otros puedan instalarlo usando pip.
+Conclusión
+Los módulos y paquetes son esenciales para organizar y reutilizar tu código en Python. En este post, exploramos cómo importar, crear módulos, gestionar dependencias con requirements.txt y empaquetar tu proyecto con setup.py. ¡Ahora tienes las herramientas para construir proyectos más grandes y complejos!
+
+En el próximo post, exploraremos programación orientada a objetos (POO).
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton href="/docs/Python-Master-Course/intro" variant="primary" icon="arrow-left" iconPlacement="start"
+
+Volver al Inicio del Curso

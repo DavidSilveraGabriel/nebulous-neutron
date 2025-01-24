@@ -1,0 +1,293 @@
+---
+title: "Programación Funcional en Python: map, filter, reduce, itertools, functools, Inmutabilidad y Decoradores Avanzados"
+description: "Un tutorial completo sobre Programación Funcional en Python: map, filter, reduce, itertools y functools, inmutabilidad y decoradores avanzados."
+---
+
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="¡Piensa en Funciones!" icon="function">
+    Aprende los conceptos fundamentales de la programación funcional en Python.
+  </Card>
+  <Card title="Reutilización y Composición" icon="arrows-left-right">
+    Explora cómo usar funciones como ciudadanos de primera clase para crear código más flexible y reutilizable.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Importante 📝">
+    La programación funcional te permite escribir código más conciso, modular y fácil de probar.
+</Aside>
+
+# Programación Funcional en Python: Abrazando la Inmutabilidad y la Composición
+
+En este post, exploraremos en detalle los conceptos clave de la programación funcional en Python. Aprenderás a usar funciones de orden superior como `map`, `filter` y `reduce`, las herramientas de `itertools` y `functools`, el concepto de inmutabilidad y cómo crear decoradores avanzados. Cubriremos:
+
+1.  **`map`, `filter`, `reduce`:** Funciones de orden superior para transformar y combinar datos.
+2.  **`itertools` y `functools`:** Módulos para iteraciones y funciones avanzadas.
+3.  **Inmutabilidad:** El concepto de datos que no se pueden modificar después de su creación.
+4.  **Decoradores Avanzados:**  Decoradores más complejos y con parámetros.
+
+## 1. `map`, `filter`, `reduce` <Badge text="Funciones de Orden Superior" variant="tip" />
+
+Las funciones `map`, `filter` y `reduce` son funciones de orden superior, es decir, reciben otras funciones como argumentos.
+
+### `map(function, iterable)`
+
+Aplica una función a cada elemento de un iterable y retorna un iterador con los resultados.
+
+```python
+numeros = [1, 2, 3, 4, 5]
+cuadrados = map(lambda x: x**2, numeros)
+print(list(cuadrados)) # [1, 4, 9, 16, 25]
+```
+
+### `filter(function, iterable)`
+Filtra los elementos de un iterable basándose en una función que retorna `True` o `False`, retorna un iterador con los elementos que cumplen la condicion.
+
+```python
+numeros = [1, 2, 3, 4, 5, 6]
+pares = filter(lambda x: x % 2 == 0, numeros)
+print(list(pares)) # [2, 4, 6]
+```
+
+### `reduce(function, iterable, initial)`
+Aplica una función de manera acumulativa a los elementos de un iterable, retorna un único valor. Es necesario importar `reduce` desde el módulo `functools`.
+
+```python
+from functools import reduce
+
+numeros = [1, 2, 3, 4]
+suma = reduce(lambda x, y: x + y, numeros)
+print(suma)  # 10
+
+producto = reduce(lambda x, y: x * y, numeros, 1) # El tercer parametro es el valor inicial
+print(producto) # 24
+```
+
+<Aside type="note" title="Nota 📝">
+   `map` y `filter` retornan iteradores, por lo que se debe usar list() o otra función similar para obtener una lista con los resultados.
+</Aside>
+
+## 2. `itertools` y `functools` <Badge text="Herramientas Funcionales" variant="note" />
+
+Los módulos `itertools` y `functools` proporcionan herramientas adicionales para la programación funcional.
+
+### `itertools`
+
+*   **`itertools.count(start, step)`:**  Crea un iterador que genera una secuencia infinita de números.
+
+    ```python
+    import itertools
+
+    contador = itertools.count(10, 2)
+    for i in range(5):
+        print(next(contador)) # 10 12 14 16 18
+    ```
+
+*   **`itertools.cycle(iterable)`:** Crea un iterador que itera infinitamente sobre un iterable.
+  ```python
+  import itertools
+
+  colores = itertools.cycle(["rojo", "verde", "azul")
+  for i in range(5):
+      print(next(colores)) # rojo, verde, azul, rojo, verde
+  ```
+
+*   **`itertools.repeat(element, times)`:** Crea un iterador que repite un elemento un numero de veces especificado.
+  ```python
+  import itertools
+  repeticiones = itertools.repeat("hola", 3)
+  for item in repeticiones:
+    print(item) # hola, hola, hola
+  ```
+
+*   **`itertools.chain(*iterables)`:**  Crea un iterador que concatena varios iterables.
+
+    ```python
+    import itertools
+
+    lista1 = [1, 2, 3]
+    lista2 = [4, 5, 6]
+    cadena = itertools.chain(lista1, lista2)
+    print(list(cadena)) # [1, 2, 3, 4, 5, 6]
+    ```
+
+*   **`itertools.product(*iterables, repeat=1)`:**  Crea un iterador que retorna los productos cartesianos de los iterables.
+
+    ```python
+    import itertools
+    lista1 = ["A", "B"]
+    lista2 = [1, 2]
+    productos = itertools.product(lista1, lista2)
+    print(list(productos)) # [('A', 1), ('A', 2), ('B', 1), ('B', 2)]
+
+    cartas = list(itertools.product(["corazon", "trebol", "diamante", "pica"], ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"] ))
+    print(f"Hay un total de {len(cartas)} cartas en una baraja") # Hay un total de 52 cartas en una baraja
+    ```
+*   **`itertools.combinations(iterable, r)`:**  Crea un iterador que retorna las combinaciones de tamaño `r` de un iterable.
+
+    ```python
+    import itertools
+    elementos = ["A", "B", "C", "D"]
+    combinaciones = itertools.combinations(elementos, 2)
+    print(list(combinaciones)) # [('A', 'B'), ('A', 'C'), ('A', 'D'), ('B', 'C'), ('B', 'D'), ('C', 'D')]
+    ```
+*   **`itertools.permutations(iterable, r)`:**  Crea un iterador que retorna las permutaciones de tamaño `r` de un iterable.
+    ```python
+    import itertools
+    elementos = ["A", "B", "C"]
+    permutaciones = itertools.permutations(elementos, 2)
+    print(list(permutaciones))  # [('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B')]
+    ```
+
+### `functools`
+
+*   **`functools.partial(function, *args, **kwargs)`:** Crea una nueva función con algunos argumentos predefinidos.
+
+    ```python
+    from functools import partial
+
+    def potencia(base, exponente):
+        return base ** exponente
+
+    cuadrado = partial(potencia, exponente=2)
+    cubo = partial(potencia, exponente=3)
+    print(cuadrado(5)) # 25
+    print(cubo(3)) # 27
+    ```
+*   **`functools.reduce(function, iterable, initializer=None)`:** (Ya lo vimos antes)
+
+*   **`functools.lru_cache(maxsize=None)`:**  Crea un decorador para almacenar en cache los resultados de una función, ahorrando recursos en llamadas repetidas.
+  ```python
+  import functools
+  import time
+  @functools.lru_cache(maxsize=None) # maxsize define el tamaño de la cache
+  def fibonacci(n):
+      if n<=1:
+        return n
+      return fibonacci(n-1) + fibonacci(n-2)
+
+  inicio = time.time()
+  print(fibonacci(30))
+  fin = time.time()
+  print(f"Tiempo de ejecucion: {fin-inicio}")
+
+  inicio = time.time()
+  print(fibonacci(30))
+  fin = time.time()
+  print(f"Tiempo de ejecucion: {fin-inicio}")
+    ```
+
+## 3. Inmutabilidad <Badge text="Datos que No Cambian" variant="success" size="large" />
+
+La inmutabilidad es un concepto central de la programación funcional que implica que los datos no se pueden modificar después de su creación.
+
+### Ventajas de la Inmutabilidad
+
+*   **Simplicidad:**  Reduce la complejidad del código al evitar efectos secundarios.
+*   **Concurrencia:** Facilita el uso de datos en entornos concurrentes sin problemas de sincronización.
+*   **Predicibilidad:** El comportamiento del código es más predecible, lo que facilita la depuración.
+### Datos Inmutables en Python
+*   Tuplas
+*   Strings
+*   Números
+*   Booleanos
+*   frozensets
+
+```python
+tupla = (1, 2, 3)
+# tupla[0] = 10 # Esto genera un error, las tuplas son inmutables
+
+cadena = "Hola"
+# cadena[0] = "M" # Esto genera un error, las cadenas son inmutables
+```
+Para simular la inmutabilidad en listas y diccionarios, se deben crear nuevas instancias al modificar un valor.
+```python
+lista = [1,2,3]
+nueva_lista = lista + [4] # genera una lista nueva
+print(lista) # [1, 2, 3]
+print(nueva_lista) # [1, 2, 3, 4]
+diccionario = {"a":1, "b":2}
+nuevo_diccionario = {**diccionario, "c":3} # genera un diccionario nuevo
+print(diccionario) # {'a': 1, 'b': 2}
+print(nuevo_diccionario) # {'a': 1, 'b': 2, 'c': 3}
+```
+
+## 4. Decoradores Avanzados <Badge text="Decorando con Poder" variant="tip" />
+
+Los decoradores avanzados permiten crear decoradores más flexibles y personalizables, incluyendo el uso de parámetros.
+
+### Decoradores con Parámetros
+Para crear decoradores con parámetros, se debe crear una función que retorna el decorador.
+
+```python
+def repetir(veces):
+    def decorador_repeticion(funcion):
+        def funcion_modificada(*args, **kwargs):
+            for _ in range(veces):
+               resultado = funcion(*args, **kwargs)
+            return resultado
+        return funcion_modificada
+    return decorador_repeticion
+
+@repetir(veces=3)
+def saludar(nombre):
+    print(f"Hola, {nombre}!")
+saludar("Maria")
+# Hola, Maria!
+# Hola, Maria!
+# Hola, Maria!
+```
+### Decoradores con estado
+Se puede usar closures para crear decoradores con estado
+```python
+import functools
+def contador_llamadas(funcion):
+  @functools.wraps(funcion)
+  def funcion_modificada(*args, **kwargs):
+      funcion_modificada.contador += 1
+      print(f"La funcion {funcion.__name__} ha sido llamada {funcion_modificada.contador} veces")
+      return funcion(*args, **kwargs)
+  funcion_modificada.contador = 0
+  return funcion_modificada
+@contador_llamadas
+def saludar(nombre):
+    print(f"Hola, {nombre}!")
+
+saludar("Sofia")
+saludar("Pedro")
+saludar("Carlos")
+
+#La funcion saludar ha sido llamada 1 veces
+#Hola, Sofia!
+#La funcion saludar ha sido llamada 2 veces
+#Hola, Pedro!
+#La funcion saludar ha sido llamada 3 veces
+#Hola, Carlos!
+```
+
+<Aside type="caution" title="Precaución ⚠️">
+   Utiliza los decoradores con estado con cuidado ya que pueden generar efectos secundarios.
+</Aside>
+
+## Conclusión
+
+La programación funcional es un paradigma poderoso para escribir código conciso, modular y reutilizable. En este post, exploramos `map`, `filter`, `reduce`, `itertools`, `functools`, la inmutabilidad y los decoradores avanzados. ¡Ahora puedes escribir código funcional más efectivo en Python!
+
+<Badge text="¡Sigue Funcionando!" variant="success" size="large" />
+
+En el próximo post, exploraremos concurrencia y paralelismo.
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton
+  href="/docs/Python-Master-Course/intro"
+  variant="primary"
+  icon="arrow-left"
+  iconPlacement="start"
+>
+  Volver al Inicio del Curso
+</LinkButton>

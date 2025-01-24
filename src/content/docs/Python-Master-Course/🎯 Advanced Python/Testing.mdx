@@ -1,0 +1,333 @@
+---
+title: "Testing en Python: Unit Testing con pytest, Mocking, TDD, Coverage e Integration Testing"
+description: "Un tutorial completo sobre testing en Python: Unit testing con pytest, Mocking, Test-Driven Development (TDD) básico, Coverage, e Integration Testing."
+---
+
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="¡Prueba tu Código!" icon="check-square">
+    Aprende a escribir tests para garantizar la calidad y fiabilidad de tu código en Python.
+  </Card>
+  <Card title="Testing en Profundidad" icon="search">
+   Explora las diferentes estrategias de testing: unit testing, mocking, TDD, coverage e integration testing.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Importante 📝">
+    El testing es esencial para construir aplicaciones robustas y libres de errores, y es parte fundamental de un buen proceso de desarrollo.
+</Aside>
+
+# Testing en Python: Asegurando la Calidad de tu Código
+
+En este post, exploraremos en detalle cómo realizar pruebas (testing) en Python. Aprenderás a realizar pruebas unitarias con `pytest`, a usar mocking para simular dependencias, a usar TDD, a medir la cobertura de tus tests y a realizar pruebas de integración. Cubriremos:
+
+1.  **Unit Testing con `pytest`:** Cómo escribir y ejecutar pruebas unitarias.
+2.  **Mocking:** Cómo simular dependencias para pruebas aisladas.
+3.  **Basic TDD:** Test-Driven Development: escribe las pruebas antes que el código.
+4.  **Coverage:** Cómo medir la cobertura de tus pruebas.
+5.  **Integration Testing:** Cómo probar la interacción entre diferentes componentes.
+
+## 1. Unit Testing con `pytest` <Badge text="Probando Unidades de Código" variant="tip" />
+
+Las pruebas unitarias verifican el comportamiento de unidades individuales de código, como funciones o clases, aisladamente. `pytest` es un framework popular y poderoso para realizar pruebas unitarias en Python.
+
+### Instalación de `pytest`
+
+```bash
+pip install pytest
+```
+
+### Escribir Pruebas con `pytest`
+*  Los tests deben estar en archivos que empiecen por `test_` o terminen en `_test.py`.
+*  Las funciones de test deben empezar con `test_`.
+*   `assert` se usa para verificar si una condición es verdadera.
+
+```python
+# test_calculadora.py
+def sumar(a, b):
+  return a + b
+
+def test_sumar():
+    assert sumar(2, 3) == 5
+    assert sumar(-1, 1) == 0
+    assert sumar(0, 0) == 0
+```
+### Ejecutar Pruebas con `pytest`
+Para ejecutar las pruebas, navega al directorio donde tienes tus archivos de prueba y ejecuta:
+
+```bash
+pytest
+```
+
+### Fixtures
+Las fixtures son funciones que preparan el entorno de prueba, por ejemplo crear datos o recursos antes de cada test, o despues que todos los tests terminan.
+*   Las fixtures se definen con el decorador `@pytest.fixture`.
+*  Las fixtures pueden ser usadas en varios tests si se pasan como argumento.
+*   El scope permite definir cuando se va a ejecutar las fixtures.
+
+```python
+import pytest
+#  test_fixtures.py
+@pytest.fixture(scope="session")
+def datos_iniciales():
+  print("Preparando datos iniciales")
+  return [1, 2, 3, 4, 5]
+
+@pytest.fixture(scope="function")
+def sumar_5():
+  print("preparando sumador de 5")
+  return lambda x: x+5
+
+def test_con_datos_iniciales(datos_iniciales):
+    assert len(datos_iniciales) == 5
+
+def test_con_sumador_5(sumar_5):
+    assert sumar_5(10) == 15
+    assert sumar_5(0) == 5
+```
+
+### Parametrización de Tests
+Se puede usar el decorador `@pytest.mark.parametrize` para ejecutar el mismo test con distintas entradas.
+
+```python
+import pytest
+# test_parametrizacion.py
+def multiplicar(a, b):
+  return a * b
+@pytest.mark.parametrize("a,b,resultado", [
+  (2, 3, 6),
+  (0, 5, 0),
+  (-1, -1, 1),
+])
+def test_multiplicar(a,b,resultado):
+   assert multiplicar(a,b) == resultado
+```
+
+### Marcas (Markers)
+Las marcas permiten categorizar los tests.
+Se pueden usar marcas personalizadas como el `@pytest.mark.integracion`.
+
+```python
+import pytest
+# test_marcas.py
+@pytest.mark.slow
+def test_lento():
+    print("Este es un test lento")
+
+@pytest.mark.integracion
+def test_integracion():
+    print("Este es un test de integración")
+```
+
+Para ejecutar tests con marcas especificas, se debe usar `pytest -m <marca>`.
+Ej: `pytest -m integracion`
+
+<Aside type="caution" title="Precaución ⚠️">
+    Escribe tests que sean fáciles de entender y mantener, utilizando buenos nombres y descripciones claras.
+</Aside>
+
+## 2. Mocking <Badge text="Simulando Dependencias" variant="note" />
+
+El mocking se utiliza para simular dependencias externas (bases de datos, APIs, etc.) durante las pruebas unitarias. Esto permite aislar la unidad de código que se está probando y evitar efectos secundarios. El módulo `unittest.mock` proporciona las herramientas para crear mocks.
+
+### Instalación
+
+No es necesario instalar ningún módulo adicional ya que el modulo `unittest.mock` esta incluido en la libreria estándar de python.
+
+### Creación de Mocks
+
+```python
+import unittest.mock
+
+def obtener_datos_externos(api_client):
+   respuesta = api_client.get("/datos")
+   return respuesta["data"]
+
+class MockApiClient:
+    def get(self, path):
+        return {"data": "Datos Mockeados"}
+def test_obtener_datos_externos():
+  api_client = MockApiClient()
+  datos = obtener_datos_externos(api_client)
+  assert datos == "Datos Mockeados"
+```
+Se puede usar `unittest.mock.Mock` para generar un mock de forma automatica
+
+```python
+import unittest.mock
+def obtener_datos_externos(api_client):
+   respuesta = api_client.get("/datos")
+   return respuesta["data"]
+def test_obtener_datos_externos():
+  mock_api_client = unittest.mock.Mock()
+  mock_api_client.get.return_value = {"data": "Datos Mockeados"}
+  datos = obtener_datos_externos(mock_api_client)
+  assert datos == "Datos Mockeados"
+```
+### Uso de `patch`
+El decorador `unittest.mock.patch` permite reemplazar un objeto con un mock durante la ejecución del test.
+
+```python
+import unittest.mock
+
+class ApiClient:
+    def get(self, path):
+        # Simulacion de llamada a una API externa
+        return {"data": "Datos de la API"}
+
+def obtener_datos_externos(api_client):
+    respuesta = api_client.get("/datos")
+    return respuesta["data"]
+
+@unittest.mock.patch("test_mock.ApiClient") # Mock del modulo y la clase
+def test_obtener_datos_externos(MockApiClient):
+    mock_api_client = MockApiClient.return_value
+    mock_api_client.get.return_value = {"data": "Datos Mockeados con patch"}
+    datos = obtener_datos_externos(ApiClient())
+    assert datos == "Datos Mockeados con patch"
+```
+
+<Aside type="tip" title="Consejo ✨">
+   Utiliza mocks para simular dependencias que no son relevantes para el test que estás ejecutando y aislar los tests.
+</Aside>
+
+## 3. Basic TDD (Test-Driven Development) <Badge text="Pruebas Primero" variant="success" size="large" />
+
+Test-Driven Development (TDD) es una metodología de desarrollo donde primero se escriben los tests y luego se escribe el código para que las pruebas pasen.
+
+### Pasos Básicos de TDD
+1.  **Escribir una prueba que falle:** Escribe un test para la nueva funcionalidad, pero asegurándote de que falla.
+2.  **Escribir el código mínimo para que la prueba pase:** Escribe el código que sea necesario para que el test pase.
+3.  **Refactorizar el código:** Mejora el código sin que los tests dejen de pasar.
+4.  **Repetir los pasos:** Repite este ciclo para cada nueva funcionalidad.
+
+### Ejemplo de TDD
+1. **Escribe la prueba que falla:**
+```python
+# test_tdd.py
+def test_crear_usuario():
+  usuario = crear_usuario("Juan", "juan@mail.com")
+  assert usuario["nombre"] == "Juan"
+  assert usuario["email"] == "juan@mail.com"
+```
+Al correr la prueba, esta fallara ya que aun no se ha creado la función `crear_usuario`.
+2. **Escribe el codigo minimo para que la prueba pase:**
+
+```python
+# tdd.py
+def crear_usuario(nombre, email):
+  return {"nombre": nombre, "email": email}
+```
+
+Al volver a ejecutar la prueba esta deberia pasar, lo que indica que el codigo minimo esta hecho.
+3. **Refactorizar el código:**
+Ahora que la prueba pasa, podemos mejorar el código, sin romper la prueba.
+```python
+# tdd.py
+class Usuario:
+  def __init__(self, nombre, email):
+    self.nombre = nombre
+    self.email = email
+
+def crear_usuario(nombre, email):
+   return Usuario(nombre, email).__dict__
+```
+Al volver a ejecutar la prueba, esta deberia seguir pasando.
+<Aside type="note" title="Nota 📝">
+    TDD puede ser mas lento en un inicio pero ayuda a escribir un mejor código desde el inicio con una cobertura de tests mas completa.
+</Aside>
+
+## 4. Coverage <Badge text="Midiendo la Cobertura" variant="tip" />
+
+La cobertura de pruebas es una medida de cuánto código se ejecuta cuando se ejecutan las pruebas. Una buena cobertura no garantiza que el código esté libre de errores, pero sí indica que una buena parte del código ha sido probada.
+
+### Instalación de `coverage`
+
+```bash
+pip install coverage
+```
+
+### Ejecutar Tests con `coverage`
+Para ejecutar pruebas y medir la cobertura, ejecuta:
+```bash
+coverage run -m pytest
+```
+### Generar reporte de cobertura
+
+Para generar un reporte HTML de la cobertura, ejecuta:
+```bash
+coverage html
+```
+Esto crea un directorio llamado `htmlcov` donde se encuentran los reportes.
+
+<Aside type="caution" title="Precaución ⚠️">
+    Una cobertura del 100% no garantiza que tu código no tenga errores, pero sí indica que tu código ha sido ejercitado por las pruebas.
+</Aside>
+
+## 5. Integration Testing <Badge text="Probando la Interacción" variant="note" />
+
+Las pruebas de integración verifican la interacción entre diferentes componentes o servicios. Estas pruebas son importantes para asegurar que los diferentes módulos o servicios funcionan correctamente en conjunto.
+
+### Estrategias para Pruebas de Integración
+*   Probar la comunicación entre componentes: Comprobar que los datos se transmiten correctamente entre distintos módulos.
+*   Probar las interacciones con bases de datos: verificar que la aplicación interactua con la base de datos de forma correcta.
+*   Probar las interacciones con APIs externas: simular llamadas a APIs externas.
+
+### Ejemplo de Pruebas de Integración
+```python
+# test_integracion.py
+import unittest.mock
+from integracion import obtener_datos_usuario, ApiClient, obtener_saldo_usuario
+
+def test_obtener_datos_usuario():
+   api_client_mock = unittest.mock.Mock()
+   api_client_mock.get.return_value = {"nombre":"Juan", "email":"juan@email.com"}
+   usuario = obtener_datos_usuario("123", api_client_mock)
+   assert usuario["nombre"] == "Juan"
+   assert usuario["email"] == "juan@email.com"
+def test_obtener_saldo_usuario():
+    api_client_mock = unittest.mock.Mock()
+    api_client_mock.get.return_value = {"saldo": 100}
+    saldo = obtener_saldo_usuario(123, api_client_mock)
+    assert saldo == 100
+```
+```python
+# integracion.py
+class ApiClient:
+   def get(self, path):
+    # Simulacion de una llamada a una api
+    pass
+def obtener_datos_usuario(usuario_id, api_client):
+    respuesta = api_client.get(f"/usuarios/{usuario_id}")
+    return respuesta
+def obtener_saldo_usuario(usuario_id, api_client):
+   respuesta = api_client.get(f"/usuarios/{usuario_id}/saldo")
+   return respuesta["saldo"]
+```
+
+<Aside type="tip" title="Consejo ✨">
+    Combina pruebas unitarias y de integración para asegurar que tanto las unidades de código como la interacción entre componentes son correctas.
+</Aside>
+
+## Conclusión
+
+El testing es un componente esencial del desarrollo de software. En este post, exploramos unit testing con `pytest`, mocking, TDD básico, coverage e integration testing. Ahora tienes las herramientas para escribir código de alta calidad y confiable.
+
+<Badge text="¡Sigue Probando!" variant="success" size="large" />
+
+En el próximo post, exploraremos optimización.
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton
+  href="/docs/Python-Master-Course/intro"
+  variant="primary"
+  icon="arrow-left"
+  iconPlacement="start"
+>
+  Volver al Inicio del Curso
+</LinkButton>

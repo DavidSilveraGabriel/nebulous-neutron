@@ -1,0 +1,221 @@
+---
+title: "Manejo de Errores en Python: try/except/finally, Excepciones Personalizadas, Logging y Debugging"
+description: "Un tutorial completo sobre manejo de errores en Python: try/except/finally, cómo crear excepciones personalizadas y cómo usar logging y debugging."
+---
+
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="¡Maneja los Errores!" icon="alert-triangle">
+    Aprende a manejar errores y excepciones de manera efectiva en Python.
+  </Card>
+  <Card title="Depura y Registra" icon="bug">
+    Descubre cómo el logging y debugging te ayudan a encontrar y corregir errores en tu código.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Importante 📝">
+    El manejo de errores es esencial para escribir código robusto y confiable.
+</Aside>
+
+# Manejo de Errores en Python: El Arte de Lidiar con lo Imprevisto
+
+En este post, exploraremos en detalle cómo manejar errores y excepciones en Python. Aprenderás a utilizar `try`/`except`/`finally` para capturar errores, crear tus propias excepciones y utilizar logging y debugging para encontrar y solucionar problemas en tu código. Cubriremos:
+
+1.  **`try`/`except`/`finally`:** Cómo capturar y manejar excepciones.
+2.  **Creación de Excepciones:** Cómo crear tus propias clases de excepción.
+3.  **Logging y Debugging:** Herramientas para rastrear y corregir errores.
+
+## 1. `try`/`except`/`finally` <Badge text="Capturando Errores" variant="tip" />
+
+La estructura `try`/`except`/`finally` se utiliza para capturar y manejar excepciones que pueden ocurrir durante la ejecución de un bloque de código.
+
+### Estructura `try`/`except`
+
+El bloque `try` contiene el código que puede generar una excepción. Si se produce una excepción, el bloque `except` correspondiente la captura y la maneja.
+
+```python
+try:
+    resultado = 10 / 0  # Esto genera una ZeroDivisionError
+except ZeroDivisionError:
+    print("¡No se puede dividir por cero!")
+```
+
+### Estructura `try`/`except` con Tipos de Excepciones Específicos
+Se pueden especificar distintos bloques `except` para distintos tipos de excepciones.
+
+```python
+try:
+  numero = int("Hola") # genera un ValueError
+  resultado = 10 / numero # puede generar un ZeroDivisionError
+except ValueError:
+  print("El valor introducido no es un número")
+except ZeroDivisionError:
+  print("No se puede dividir por cero")
+```
+
+### Estructura `try`/`except` con Bloque `else`
+Se puede incluir un bloque `else` que se ejecuta cuando el bloque `try` no produce ninguna excepción.
+
+```python
+try:
+  resultado = 10/2
+except ZeroDivisionError:
+  print("No se puede dividir por cero")
+else:
+  print(f"El resultado es {resultado}") # El resultado es 5.0
+```
+
+### Estructura `try`/`except`/`finally`
+
+El bloque `finally` se ejecuta siempre, tanto si se produce una excepción como si no, siendo muy útil para realizar tareas de limpieza y cierre de recursos.
+
+```python
+archivo = None
+try:
+    archivo = open("mi_archivo.txt", "r")
+    contenido = archivo.read()
+    print(contenido)
+except FileNotFoundError:
+    print("El archivo no se encuentra")
+finally:
+    if archivo:
+       archivo.close()
+```
+### Capturar múltiples excepciones en un solo bloque `except`
+
+```python
+try:
+    archivo = open("mi_archivo.txt", "r")
+    contenido = archivo.read()
+    print(contenido)
+except (FileNotFoundError, PermissionError) as error:
+    print(f"Error al abrir el archivo: {error}")
+```
+
+### Capturar cualquier excepción
+
+Se puede capturar cualquier tipo de excepción usando un `except` sin especificar el tipo de error.
+
+```python
+try:
+    numero = 10/0
+except Exception as e:
+    print(f"Ha ocurrido un error: {e}") # Ha ocurrido un error: division by zero
+```
+<Aside type="note" title="Nota 📝">
+   Es mejor capturar excepciones específicas en lugar de usar un bloque `except` genérico, para poder manejar cada tipo de error de forma adecuada.
+</Aside>
+
+## 2. Creación de Excepciones <Badge text="Tus Propias Excepciones" variant="note" />
+
+Python permite crear clases personalizadas de excepciones para manejar situaciones específicas de tu aplicación.
+
+### Pasos para Crear una Excepción Personalizada
+1.  **Crea una clase que herede de `Exception` o una de sus subclases:** (ej: `ValueError`).
+2.  **Define un constructor `__init__` que reciba un mensaje de error (opcional):**
+
+    ```python
+    class SaldoInsuficienteError(Exception):
+        def __init__(self, mensaje):
+            self.mensaje = mensaje
+            super().__init__(self.mensaje)
+
+    def retirar_dinero(saldo, cantidad):
+      if saldo < cantidad:
+        raise SaldoInsuficienteError("Saldo insuficiente")
+      else:
+         return saldo - cantidad
+
+    try:
+        saldo_restante = retirar_dinero(100,200)
+        print(saldo_restante)
+    except SaldoInsuficienteError as error:
+        print(f"Error al retirar dinero: {error}") # Error al retirar dinero: Saldo insuficiente
+    ```
+
+### Ventajas de las Excepciones Personalizadas
+*   **Código más claro:** Facilita la identificación de errores específicos de tu aplicación.
+*   **Manejo de errores más preciso:** Permite crear lógica específica para cada tipo de excepción.
+*   **Mensajes de error más informativos:** Facilita la depuración.
+
+## 3. Logging y Debugging <Badge text="Rastreando Errores" variant="success" size="large" />
+
+El logging y debugging son herramientas esenciales para rastrear, analizar y corregir errores en tu código.
+
+### Logging
+El módulo `logging` proporciona un sistema flexible para registrar información de diagnóstico y errores durante la ejecución de tu aplicación.
+
+*   **`logging.basicConfig(...)`:** Configura el registro básico (nivel, formato, archivo, etc.).
+*   **`logging.debug(mensaje)`:** Registra un mensaje de debug.
+*   **`logging.info(mensaje)`:** Registra un mensaje informativo.
+*   **`logging.warning(mensaje)`:** Registra un mensaje de advertencia.
+*   **`logging.error(mensaje)`:** Registra un mensaje de error.
+*   **`logging.critical(mensaje)`:** Registra un mensaje de error crítico.
+
+```python
+import logging
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.debug("Esto es un mensaje de debug")
+logging.info("Esto es un mensaje informativo")
+logging.warning("Esto es un mensaje de advertencia")
+logging.error("Esto es un mensaje de error")
+logging.critical("Esto es un mensaje de error crítico")
+
+try:
+  resultado = 10/0
+except Exception as e:
+    logging.error(f"Error al dividir: {e}")
+```
+
+### Debugging
+Python proporciona herramientas para depurar tu código y rastrear los errores de forma interactiva.
+
+*   **`print()` (para debugging simple):**  Útil para mostrar el valor de variables.
+
+    ```python
+    def sumar(a, b):
+        print(f"sumar: a={a}, b={b}")
+        resultado = a + b
+        print(f"sumar: resultado={resultado}")
+        return resultado
+    sumar(5,3)
+    ```
+*   **`breakpoint()`:** Inserta un punto de interrupción para iniciar el debugger.
+    ```python
+    def sumar(a, b):
+        breakpoint()
+        resultado = a + b
+        return resultado
+    sumar(5,3)
+    ```
+*   **`pdb` (Python Debugger):** Inicia el debugger de Python.
+    *   Ejecutar en consola: `python -m pdb tu_script.py`.
+    *   Comandos útiles: `n` (next), `s` (step), `c` (continue), `b` (breakpoint), `p` (print), `q` (quit).
+
+<Aside type="tip" title="Consejo ✨">
+   El logging es ideal para registrar eventos en aplicaciones en producción, mientras que el debugging es más útil durante el desarrollo para encontrar y corregir errores.
+</Aside>
+
+## Conclusión
+
+El manejo de errores es crucial para escribir código robusto y confiable. En este post, exploramos `try`/`except`/`finally`, creación de excepciones, logging y debugging. Ahora tienes las herramientas para manejar errores de manera efectiva y mantener tu código en buen estado.
+
+<Badge text="¡Sigue Protegiendo tu Código!" variant="success" size="large" />
+
+En el próximo post, exploraremos programación funcional.
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton
+  href="/docs/Python-Master-Course/intro"
+  variant="primary"
+  icon="arrow-left"
+  iconPlacement="start"
+>
+  Volver al Inicio del Curso
+</LinkButton>

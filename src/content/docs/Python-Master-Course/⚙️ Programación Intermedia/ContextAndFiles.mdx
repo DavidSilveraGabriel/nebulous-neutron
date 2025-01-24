@@ -1,0 +1,319 @@
+---
+title: "Manejo de Datos en Python: Contextos, Archivos, JSON, CSV, XML, Serialización y SQLite"
+description: "Un tutorial completo sobre manejo de datos en Python: contextos (with), archivos y directorios, JSON, CSV, XML, serialización y bases de datos SQLite."
+---
+
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="¡Maneja tus Datos!" icon="files">
+    Aprende a leer, escribir y organizar datos utilizando archivos, formatos y bases de datos.
+  </Card>
+  <Card title="Contextos y Persistencia" icon="save">
+    Descubre cómo usar `with`, serializar datos y trabajar con SQLite para gestionar la persistencia de datos.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Importante 📝">
+    El manejo de datos es fundamental para cualquier aplicación que necesite almacenar, leer y procesar información.
+</Aside>
+
+# Manejo de Datos en Python: Un Universo de Archivos, Formatos y Bases de Datos
+
+En este post, exploraremos en detalle cómo manejar datos en Python, utilizando archivos, formatos de datos y bases de datos. Aprenderás a leer, escribir, organizar y persistir información de manera eficiente. Cubriremos:
+
+1.  **Contextos (`with`):** Gestión segura de recursos.
+2.  **Archivos y Directorios:** Cómo interactuar con el sistema de archivos.
+3.  **JSON, CSV, XML:** Formatos de datos comunes.
+4.  **Serialización:** Cómo convertir objetos de Python en bytes.
+5.  **SQLite y Bases de Datos:**  Cómo usar bases de datos para almacenar datos estructurados.
+
+## 1. Contextos (`with`) <Badge text="Gestión Segura de Recursos" variant="tip" />
+
+El uso de contextos (`with`) garantiza que los recursos, como archivos o conexiones de bases de datos, se gestionen de manera segura y se liberen correctamente, incluso si ocurren errores.
+
+### El `with` para Archivos
+Al usar `with open(...)`, el archivo se cierra automáticamente cuando el bloque de código finaliza, incluso si hay excepciones.
+
+```python
+with open("mi_archivo.txt", "w") as archivo:
+    archivo.write("Hola, mundo!")
+
+# El archivo se cierra automáticamente aquí
+```
+### El `with` para la Gestión de Contextos Personalizados
+Se puede definir clases con los metodos `__enter__` y `__exit__` para poder utilizarlas como un contexto de gestion.
+
+```python
+class GestorContexto:
+   def __enter__(self):
+        print("Entrando en el contexto")
+        return self
+   def __exit__(self, exc_type, exc_value, traceback):
+       print("Saliendo del contexto")
+       if exc_type:
+          print("Se produjo una excepción")
+
+with GestorContexto() as contexto:
+    print("Dentro del contexto")
+    # raise Exception("error dentro del bloque with")
+#   Entrando en el contexto
+#   Dentro del contexto
+#   Saliendo del contexto
+```
+
+## 2. Archivos y Directorios <Badge text="Explorando el Sistema de Archivos" variant="note" />
+
+Python proporciona funciones y módulos para interactuar con el sistema de archivos, permitiendo crear, leer, escribir y eliminar archivos y directorios.
+
+### Manejo de Archivos
+
+*   **`open(nombre_archivo, modo)`:** Abre un archivo.
+
+    *   `"r"`: Modo de lectura.
+    *   `"w"`: Modo de escritura (sobreescribe si existe, crea si no).
+    *   `"a"`: Modo de escritura (añade al final del archivo).
+    *   `"x"`: Modo de creación exclusiva (falla si el archivo ya existe).
+    *   `"rb"`, `"wb"`, `"ab"`, `"xb"`: Modos binarios (para archivos no textuales).
+
+*   **`archivo.read()`:** Lee todo el contenido del archivo.
+*   **`archivo.readline()`:** Lee una línea del archivo.
+*   **`archivo.readlines()`:** Lee todas las líneas del archivo y las retorna como lista.
+*   **`archivo.write(texto)`:** Escribe texto en el archivo.
+*   **`archivo.writelines(lista_de_lineas)`:** Escribe una lista de líneas al archivo.
+*   **`archivo.close()`:** Cierra el archivo (mejor usar `with`).
+
+    ```python
+    # Escritura de archivo
+    with open("mi_archivo.txt", "w") as archivo:
+        archivo.write("Primera línea\n")
+        archivo.writelines(["Segunda línea\n", "Tercera línea\n"])
+
+    # Lectura de archivo
+    with open("mi_archivo.txt", "r") as archivo:
+         lineas = archivo.readlines()
+         print(lineas) # ['Primera línea\n', 'Segunda línea\n', 'Tercera línea\n']
+    ```
+### Manejo de Directorios
+El modulo `os` y `shutil` permiten manipular directorios.
+
+*   **`os.path.exists(path)`:** Verifica si existe el archivo o directorio en la ruta especificada.
+*   **`os.path.isdir(path)`:** Verifica si la ruta especificada es un directorio.
+*   **`os.path.isfile(path)`:** Verifica si la ruta especificada es un archivo.
+*   **`os.mkdir(nombre_directorio)`:** Crea un directorio.
+*  **`os.makedirs(nombre_directorio)`:** Crea un directorio de manera recursiva (crea también los directorios padres necesarios).
+*   **`os.listdir(path)`:** Retorna una lista de los archivos y directorios dentro de una ruta.
+*   **`os.path.join(path1, path2)`:**  Une dos o más rutas de forma compatible con el sistema operativo.
+*   **`os.rmdir(nombre_directorio)`:** Elimina un directorio vacio.
+*   **`shutil.rmtree(nombre_directorio)`:** Elimina un directorio y su contenido de manera recursiva.
+*   **`os.rename(nombre_viejo, nombre_nuevo)`:** Renombra un archivo o directorio.
+
+    ```python
+    import os
+    import shutil
+
+    if not os.path.exists("mi_directorio"):
+      os.mkdir("mi_directorio")
+    os.makedirs(os.path.join("mi_directorio","sub_directorio"), exist_ok=True)
+
+    print(os.listdir("mi_directorio")) #  ['sub_directorio']
+    print(os.path.isdir("mi_directorio")) # True
+    print(os.path.isfile("mi_directorio")) # False
+    # os.rmdir("mi_directorio") # lanza un error ya que mi_directorio no esta vacio.
+    shutil.rmtree("mi_directorio") # Elimina el directorio recursivamente
+    ```
+
+## 3. JSON, CSV, XML <Badge text="Formatos de Datos Comunes" variant="success" size="large" />
+
+Python tiene módulos para trabajar con formatos de datos comunes: JSON, CSV y XML.
+
+### JSON (JavaScript Object Notation)
+JSON es un formato de intercambio de datos ligero y fácil de leer.
+
+*   **`json.load(archivo)`:** Lee un archivo JSON y lo convierte a un objeto Python.
+*   **`json.loads(string)`:** Lee una string JSON y lo convierte a un objeto Python.
+*   **`json.dump(objeto, archivo)`:** Escribe un objeto Python en un archivo JSON.
+*   **`json.dumps(objeto)`:** Convierte un objeto Python a un string JSON.
+
+    ```python
+    import json
+
+    data = {
+        "nombre": "Juan",
+        "edad": 30,
+        "ciudad": "Madrid",
+        "hobbies": ["programar", "leer", "correr"]
+    }
+
+    # Escritura JSON
+    with open("datos.json", "w") as archivo:
+        json.dump(data, archivo, indent=4) #indent para formatear el json
+
+    # Lectura JSON
+    with open("datos.json", "r") as archivo:
+        data_leido = json.load(archivo)
+        print(data_leido)
+        # {'nombre': 'Juan', 'edad': 30, 'ciudad': 'Madrid', 'hobbies': ['programar', 'leer', 'correr']}
+    ```
+
+### CSV (Comma Separated Values)
+CSV es un formato simple para almacenar datos tabulares.
+
+*   **`csv.reader(archivo)`:** Crea un objeto lector CSV.
+*   **`csv.writer(archivo)`:** Crea un objeto escritor CSV.
+*   **`lector.writerow(lista_de_valores)`:** Escribe una fila en el archivo.
+*   **`lector.writerow(lista_de_valores)`:** Escribe una lista de valores como una fila.
+
+    ```python
+    import csv
+
+    # Escritura CSV
+    with open("datos.csv", "w", newline="") as archivo:
+        escritor = csv.writer(archivo)
+        escritor.writerow(["nombre", "edad", "ciudad"])
+        escritor.writerow(["Juan", 30, "Madrid"])
+        escritor.writerow(["Ana", 25, "Barcelona"])
+
+    # Lectura CSV
+    with open("datos.csv", "r") as archivo:
+        lector = csv.reader(archivo)
+        for fila in lector:
+            print(fila)
+        # ['nombre', 'edad', 'ciudad']
+        # ['Juan', '30', 'Madrid']
+        # ['Ana', '25', 'Barcelona']
+    ```
+
+### XML (eXtensible Markup Language)
+XML es un formato de datos más complejo y jerárquico.
+
+*   El modulo `xml.etree.ElementTree` es un modulo para usar xml
+*   **`ET.parse(archivo)`:**  Lee un archivo XML y lo convierte en un árbol.
+*   **`tree.getroot()`:**  Obtiene la raíz del árbol.
+*   **`element.findall(tag)`:** Busca elementos con el tag dado dentro de un elemento.
+*   **`element.get(attribute)`:** Obtiene el valor del atributo de un elemento.
+
+    ```python
+    import xml.etree.ElementTree as ET
+
+    # Archivo XML de ejemplo: datos.xml
+    """
+    <personas>
+        <persona nombre="Juan" edad="30" ciudad="Madrid" />
+        <persona nombre="Ana" edad="25" ciudad="Barcelona" />
+    </personas>
+    """
+
+    # Lectura XML
+    tree = ET.parse("datos.xml")
+    raiz = tree.getroot()
+    for persona in raiz.findall("persona"):
+        nombre = persona.get("nombre")
+        edad = persona.get("edad")
+        ciudad = persona.get("ciudad")
+        print(f"Nombre: {nombre}, Edad: {edad}, Ciudad: {ciudad}")
+       # Nombre: Juan, Edad: 30, Ciudad: Madrid
+       # Nombre: Ana, Edad: 25, Ciudad: Barcelona
+    ```
+
+## 4. Serialización <Badge text="Convirtiendo Objetos en Bytes" variant="tip" />
+
+La serialización es el proceso de convertir objetos de Python en bytes para poder almacenarlos en archivos o enviarlos a través de la red. La deserialización es el proceso inverso.
+
+### `pickle`
+El modulo `pickle` permite serializar y deserializar objetos de Python.
+
+*   **`pickle.dump(objeto, archivo)`:** Serializa un objeto y lo escribe en un archivo.
+*   **`pickle.load(archivo)`:** Lee un objeto serializado de un archivo y lo convierte en un objeto de Python.
+*   **`pickle.dumps(objeto)`:** Serializa un objeto y lo retorna como bytes.
+*   **`pickle.loads(bytes)`:** Deserializa bytes a un objeto Python.
+
+    ```python
+    import pickle
+
+    class Persona:
+        def __init__(self, nombre, edad):
+            self.nombre = nombre
+            self.edad = edad
+
+    persona = Persona("Juan", 30)
+
+    # Serialización
+    with open("persona.pickle", "wb") as archivo:
+        pickle.dump(persona, archivo)
+
+    # Deserialización
+    with open("persona.pickle", "rb") as archivo:
+        persona_leida = pickle.load(archivo)
+        print(persona_leida.nombre, persona_leida.edad)  # Juan 30
+    ```
+<Aside type="caution" title="Precaución ⚠️">
+     El módulo `pickle` es específico de Python y no se recomienda para compartir datos con otros lenguajes, ya que puede ser inseguro. Para compartir datos entre lenguajes, usa JSON.
+</Aside>
+
+## 5. SQLite y Bases de Datos <Badge text="Persistiendo Datos Estructurados" variant="note" />
+
+SQLite es una base de datos relacional ligera y autónoma que se puede utilizar en Python sin necesidad de instalar un servidor de base de datos.
+
+*   **`sqlite3.connect(nombre_base_de_datos)`:** Crea una conexión a una base de datos SQLite.
+*   **`conexion.cursor()`:** Crea un cursor que permite ejecutar comandos SQL.
+*   **`cursor.execute(sql)`:**  Ejecuta una consulta SQL.
+*   **`cursor.fetchall()`:** Obtiene todos los resultados de la consulta como lista de tuplas.
+*   **`cursor.fetchone()`:** Obtiene un resultado de la consulta como una tupla.
+*   **`conexion.commit()`:** Guarda los cambios realizados en la base de datos.
+*   **`conexion.close()`:** Cierra la conexión a la base de datos.
+
+```python
+import sqlite3
+
+# Conexión a la base de datos (crea la base si no existe)
+conexion = sqlite3.connect("mi_base_de_datos.db")
+cursor = conexion.cursor()
+
+# Crear tabla (si no existe)
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT,
+        edad INTEGER
+    )
+""")
+
+# Insertar datos
+cursor.execute("INSERT INTO usuarios (nombre, edad) VALUES (?, ?)", ("Juan", 30))
+cursor.execute("INSERT INTO usuarios (nombre, edad) VALUES (?, ?)", ("Ana", 25))
+
+# Guardar cambios
+conexion.commit()
+
+# Consultar datos
+cursor.execute("SELECT * FROM usuarios")
+usuarios = cursor.fetchall()
+print(usuarios)
+# [(1, 'Juan', 30), (2, 'Ana', 25)]
+
+# Cerrar conexión
+conexion.close()
+```
+
+## Conclusión
+
+El manejo de datos es fundamental para cualquier aplicación. En este post, exploramos contextos con `with`, archivos y directorios, JSON, CSV, XML, serialización con `pickle` y bases de datos SQLite. Ahora tienes las herramientas para gestionar tus datos de manera eficiente.
+
+<Badge text="¡Sigue Almacenando!" variant="success" size="large" />
+
+En el próximo post, exploraremos el manejo de errores con `try`/`except`.
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton
+  href="/docs/Python-Master-Course/intro"
+  variant="primary"
+  icon="arrow-left"
+  iconPlacement="start"
+>
+  Volver al Inicio del Curso
+</LinkButton>
