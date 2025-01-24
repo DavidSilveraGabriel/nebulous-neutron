@@ -1,0 +1,271 @@
+---
+title: "Tipado y Calidad de Código en Python: Type Hints Avanzados, mypy, Linting y Herramientas de Calidad"
+description: "Un tutorial completo sobre tipado y calidad de código en Python: Type hints avanzados, mypy, Linting con pylint y flake8, y herramientas para mejorar la calidad del código."
+---
+
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="¡Escribe Código de Calidad!" icon="shield-check">
+    Aprende a mejorar la legibilidad, mantenibilidad y robustez de tu código en Python.
+  </Card>
+  <Card title="Herramientas y Técnicas" icon="wrench">
+   Explora el uso de type hints, mypy, linters y otras herramientas para garantizar la calidad del código.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Importante 📝">
+   El tipado y la calidad de código son esenciales para crear aplicaciones robustas, mantenibles y colaborativas.
+</Aside>
+
+# Tipado y Calidad de Código en Python: Elevando el Estándar de tu Desarrollo
+
+En este post, exploraremos en detalle cómo mejorar el tipado y la calidad de tu código en Python. Aprenderás a usar type hints avanzados, la herramienta `mypy` para verificación de tipos, linters como `pylint` y `flake8` para detectar problemas de estilo, y otras herramientas para garantizar la calidad de tu código. Cubriremos:
+
+1.  **Type Hints Avanzados:** Cómo especificar tipos más complejos y precisos.
+2.  **`mypy`:** Cómo usar mypy para verificar tipos estáticamente.
+3.  **Linting (`pylint`, `flake8`):** Cómo usar linters para detectar problemas de estilo y errores.
+4.  **Herramientas de Calidad de Código:** Otras herramientas para mejorar la calidad de tu código.
+
+## 1. Type Hints Avanzados <Badge text="Tipos Precisos" variant="tip" />
+
+Los type hints (anotaciones de tipo) permiten especificar el tipo de datos de las variables, argumentos y valores de retorno de funciones. Python es un lenguaje de tipado dinámico, por lo que los type hints son opcionales, pero utilizarlos mejora la legibilidad, facilita la detección de errores y mejora la documentación.
+
+### Tipos Primitivos y Colecciones
+
+Ya vimos los tipos primitivos como `int`, `str`, `float`, `bool`. Python también tiene tipos para colecciones como `list`, `tuple`, `dict` y `set`.
+
+```python
+from typing import List, Tuple, Dict, Set
+
+def procesar_lista(lista: List[int]) -> List[int]:
+    return [x * 2 for x in lista]
+
+def obtener_datos(nombre: str, edad: int) -> Tuple[str, int]:
+    return (nombre, edad)
+
+def procesar_diccionario(diccionario: Dict[str, int]) -> int:
+    return sum(diccionario.values())
+
+def procesar_conjunto(conjunto: Set[str]) -> Set[str]:
+    return {x.upper() for x in conjunto}
+```
+
+### Tipos Opcionales (`Optional`)
+Se usa `Optional[tipo]` para indicar que una variable puede ser de un tipo dado o `None`.
+
+```python
+from typing import Optional
+
+def obtener_usuario(id: int) -> Optional[Dict[str, str]]:
+    if id == 123:
+        return {"nombre": "Juan", "email": "juan@mail.com"}
+    return None
+```
+
+### Tipos Union (`Union`)
+Se usa `Union[tipo1, tipo2]` para indicar que una variable puede ser de uno de los tipos especificados.
+
+```python
+from typing import Union
+
+def mostrar_valor(valor: Union[int, str]) -> None:
+    print(valor)
+```
+
+### Tipos Any
+Se usa `Any` cuando no se conoce el tipo de una variable.
+```python
+from typing import Any
+def procesar_dato(dato: Any) -> None:
+   print(dato)
+```
+
+### Tipos Alias
+Se puede crear un alias para tipos complejos.
+```python
+from typing import List, Tuple, Dict
+
+Coordenada = Tuple[float, float]
+ListaDeCoordenadas = List[Coordenada]
+
+def procesar_coordenadas(coordenadas: ListaDeCoordenadas) -> None:
+    for x,y in coordenadas:
+        print(f"x={x}, y={y}")
+```
+
+### Tipos Callable
+Se usa `Callable[[tipo1, tipo2, ...], tipo_retorno]` para indicar que un argumento es una función que debe recibir argumentos de los tipos especificados y retornar un valor del tipo especificado.
+
+```python
+from typing import Callable
+
+def aplicar_funcion(funcion: Callable[[int], int], valor: int) -> int:
+    return funcion(valor)
+
+def cuadrado(x: int) -> int:
+    return x**2
+
+print(aplicar_funcion(cuadrado, 5)) # 25
+```
+
+### Tipos TypeVar
+Se usa `TypeVar` para crear tipos genéricos.
+
+```python
+from typing import TypeVar, List
+
+T = TypeVar('T')
+
+def invertir_lista(lista: List[T]) -> List[T]:
+    return lista[::-1]
+print(invertir_lista([1,2,3,4)) # [4, 3, 2, 1]
+print(invertir_lista(["a","b","c"])) # ['c', 'b', 'a']
+```
+<Aside type="note" title="Nota 📝">
+   Los type hints son opcionales, pero usarlos mejora mucho la legibilidad, mantenibilidad y la detección de errores en tu código.
+</Aside>
+
+## 2. `mypy` <Badge text="Verificación Estática de Tipos" variant="note" />
+
+`mypy` es una herramienta que permite verificar los type hints estáticamente, detectando errores de tipo antes de ejecutar el código.
+
+### Instalación de `mypy`
+
+```bash
+pip install mypy
+```
+
+### Uso de `mypy`
+Para verificar tipos de un archivo, ejecuta:
+```bash
+mypy mi_archivo.py
+```
+Si hay errores, mypy los mostrara por consola.
+Si no hay errores mypy no retornara nada por consola.
+```python
+# Ejemplo con type hints
+from typing import List
+
+def sumar(lista: List[int]) -> int:
+  return sum(lista)
+# sumar(["a","b","c"]) # Mypy mostrara un error, ya que la lista debe ser de tipo entero
+
+# Ejemplo sin type hints
+def multiplicar(a,b):
+    return a*b
+#  mypy no mostrara errores con esta función
+
+```
+### Configurar `mypy`
+Puedes configurar mypy a traves de un archivo `mypy.ini`, que permite personalizar el comportamiento del linter, con flags y exclusiones.
+
+```ini
+[mypy]
+python_version = 3.10
+warn_return_any = True
+warn_unused_configs = True
+ignore_missing_imports = True
+
+[mypy-mi_modulo.*]
+disallow_untyped_defs = True
+```
+
+<Aside type="tip" title="Consejo ✨">
+    Utiliza `mypy` para detectar errores de tipo en tiempo de desarrollo, haciendo tu código más robusto y seguro.
+</Aside>
+
+## 3. Linting (`pylint`, `flake8`) <Badge text="Estilo y Errores" variant="success" size="large" />
+
+Los linters son herramientas que analizan tu código para detectar problemas de estilo, errores comunes y posibles vulnerabilidades. `pylint` y `flake8` son dos linters populares en Python.
+
+### `pylint`
+`pylint` es un linter muy completo que analiza el código en busca de errores, fallos de estilo y malas prácticas.
+* **Instalar pylint**
+   ```bash
+   pip install pylint
+   ```
+* Para ejecutar `pylint` en un archivo, ejecuta:
+    ```bash
+    pylint mi_archivo.py
+    ```
+*  `pylint` puede ser configurado por un archivo `pylintrc` en la misma carpeta del proyecto, o a través de la linea de comandos.
+*  `pylint` reporta mensajes con diferentes niveles de severidad.
+
+### `flake8`
+
+`flake8` es un linter más ligero que combina varios comprobadores de estilo y errores (como `pycodestyle`, que verifica PEP 8).
+* **Instalar `flake8`**
+   ```bash
+    pip install flake8
+    ```
+* Para ejecutar `flake8` en un archivo, ejecuta:
+    ```bash
+    flake8 mi_archivo.py
+    ```
+* `flake8` puede ser configurado por un archivo `.flake8` en la misma carpeta del proyecto.
+*  `flake8` reporta los errores de estilo, complejidad y errores con un código descriptivo.
+
+```python
+# Ejemplo para mostrar pylint y flake8
+def mi_funcion(parametro_a):
+    global variable_global
+    variable_global = 10 # Warning de pylint ya que no se define la variable.
+    if parametro_a == 10: # Error en flake8, ya que el espacio al rededor del == debe ser de un espacio por lado
+      return 20
+    elif parametro_a ==20:
+        return 40
+    else:
+        return 0
+```
+
+<Aside type="caution" title="Precaución ⚠️">
+    Configura los linters para que se ajusten a tus preferencias y al estilo de tu proyecto. No todos los warnings son errores, pero es mejor revisarlos para tomar una decisión.
+</Aside>
+
+## 4. Herramientas de Calidad de Código <Badge text="Mejora Continua" variant="tip" />
+
+Además de linters y type checkers, existen otras herramientas que te pueden ayudar a mejorar la calidad de tu código:
+
+*   **`black`:** Un formateador de código que aplica automáticamente las reglas de PEP 8.
+    *   Instalar con `pip install black`.
+    *   Ejecutar `black mi_archivo.py` para formatear el archivo.
+    *   Es recomendable usarlo en conjunto con los linters.
+
+*   **`isort`:**  Un formateador de importaciones que ordena las importaciones de forma consistente.
+    *  Instalar con `pip install isort`.
+    * Ejecutar con `isort mi_archivo.py` para ordenar las importaciones.
+
+*   **`bandit`:** Una herramienta para encontrar vulnerabilidades de seguridad.
+    *  Instalar con `pip install bandit`.
+    * Ejecutar con `bandit -r mi_proyecto` para analizar el proyecto.
+
+*   **`radon`:** Una herramienta para medir la complejidad del código.
+    *  Instalar con `pip install radon`.
+    * Ejecutar con `radon cc mi_proyecto` para analizar la complejidad del proyecto.
+
+*   **`vulture`:** Una herramienta para encontrar código no utilizado.
+    *  Instalar con `pip install vulture`.
+    * Ejecutar con `vulture mi_proyecto` para analizar el proyecto.
+
+## Conclusión
+
+El tipado y la calidad de código son cruciales para escribir código mantenible, robusto y colaborativo. En este post, exploramos type hints avanzados, `mypy`, linting con `pylint` y `flake8`, y otras herramientas de calidad. ¡Ahora tienes las herramientas para elevar el estándar de tu desarrollo en Python!
+
+<Badge text="¡Sigue Mejorando!" variant="success" size="large" />
+
+En el próximo post, exploraremos estructuras de datos y algoritmos avanzados.
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton
+  href="/docs/Python-Master-Course/intro"
+  variant="primary"
+  icon="arrow-left"
+  iconPlacement="start"
+>
+  Volver al Inicio del Curso
+</LinkButton>

@@ -1,0 +1,464 @@
+---
+title: "Desarrollo Web con Django: Patrón MVT, ORM, Interfaz de Administración y Templates"
+description: "Un tutorial completo sobre desarrollo web con Django: Patrón MVT, ORM, interfaz de administración y cómo usar templates para crear páginas web dinámicas."
+---
+
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="¡Django a Fondo!" icon="code-square">
+    Sumérgete en el framework Django y domina el desarrollo de aplicaciones web complejas y escalables en Python.
+  </Card>
+  <Card title="Arquitectura, Datos y Presentación" icon="layers">
+    Explora el patrón MVT, el ORM, la interfaz de administración y el poder de los templates con ejemplos y explicaciones detalladas.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Importante 📝">
+   Django es uno de los frameworks web más populares y completos de Python, fundamental para el desarrollo web moderno.
+</Aside>
+
+# Desarrollo Web con Django: Un Análisis Detallado para la Construcción de Aplicaciones Web Poderosas
+
+En este post, profundizaremos en el framework Django, explorando el patrón MVT (Model-View-Template), el ORM (Object-Relational Mapper), la interfaz de administración y los templates, pero con un mayor nivel de detalle. Este tutorial te proporcionará una comprensión sólida y práctica de cómo crear aplicaciones web robustas y escalables con Django. Cubriremos:
+
+1.  **Patrón MVT (Model-View-Template):**  Una exploración profunda de la arquitectura de Django.
+2.  **ORM (Object-Relational Mapper):**  Cómo usar los modelos para interactuar con bases de datos y realizar consultas complejas.
+3.  **Interfaz de Administración:**  Personalización y uso avanzado de la interfaz de administración de Django.
+4.  **Templates:**  Uso avanzado de templates para crear páginas web dinámicas y reutilizables.
+
+## 1. Patrón MVT (Model-View-Template): La Arquitectura de Django al Detalle <Badge text="Entendiendo la Estructura" variant="tip" />
+
+El patrón MVT es la base de la arquitectura de Django. Comprender cómo interactúan sus componentes es esencial para construir aplicaciones web bien organizadas y fáciles de mantener.
+
+### Componentes del MVT en Profundidad
+
+*   **Model:**
+    *   Los modelos se definen como clases que heredan de `django.db.models.Model` y representan las tablas de la base de datos.
+    * Cada atributo del modelo representa una columna en la tabla, y se define usando los campos de Django como `CharField`, `IntegerField`, `FloatField`, `TextField`, `EmailField`, etc.
+    * Además de los campos, los modelos pueden contener métodos que definen la lógica de negocio asociada a los datos.
+
+    ```python
+    # models.py
+    from django.db import models
+
+    class Producto(models.Model):
+        nombre = models.CharField(max_length=200)
+        precio = models.FloatField()
+        descripcion = models.TextField()
+        fecha_creacion = models.DateTimeField(auto_now_add=True)
+        def __str__(self):
+          return self.nombre
+        def descuento(self):
+          return self.precio * 0.1
+    class Cliente(models.Model):
+        nombre = models.CharField(max_length=200)
+        email = models.EmailField(unique=True)
+        edad = models.IntegerField()
+        def get_age_group(self):
+            if self.edad < 18:
+              return "Menor de Edad"
+            elif self.edad < 60:
+                return "Adulto"
+            else:
+                return "Adulto Mayor"
+
+    ```
+*   **View:**
+    *   Las vistas son funciones de Python que reciben la petición (HttpRequest), procesan la petición y retornan una respuesta (HttpResponse).
+    *  Las vistas pueden interactuar con los modelos para obtener datos desde la base de datos o guardar datos en ella, realizar cualquier logica de negocio y seleccionar el template que se debe renderizar.
+    *  Las vistas suelen utilizar funciones auxiliares para obtener datos, manipular datos, o realizar alguna otra tarea específica.
+
+    ```python
+    # views.py
+    from django.shortcuts import render, get_object_or_404
+    from .models import Producto, Cliente
+
+    def listar_productos(request):
+        productos = Producto.objects.all()
+        return render(request, "listar_productos.html", {"productos": productos})
+
+    def crear_producto(request):
+         if request.method == "POST":
+           nombre = request.POST.get("nombre")
+           precio = request.POST.get("precio")
+           descripcion = request.POST.get("descripcion")
+           Producto.objects.create(nombre=nombre, precio=precio, descripcion=descripcion)
+           return render(request, "crear_producto.html", {"message": "Producto creado"})
+         return render(request, "crear_producto.html")
+
+    def detalle_producto(request, producto_id):
+        producto = get_object_or_404(Producto, pk=producto_id)
+        return render(request, "detalle_producto.html", {"producto": producto})
+    ```
+*   **Template:**
+    *   Los templates son archivos HTML que contienen etiquetas especiales para renderizar datos dinámicos y aplicar lógica de presentación.
+    *   Django utiliza su propio lenguaje de templates, que permite incrustar variables de Python usando `{{ variable }}`.
+    *  También se pueden usar tags para realizar operaciones como bucles, condicionales, etc. usando `{% tag %}`.
+    *   Los templates pueden heredar de otros templates y definir bloques para reutilizar código.
+
+    ```html
+    {# templates/listar_productos.html #}
+    {% extends "base.html" %}
+    {% block title %}Lista de Productos{% endblock %}
+    {% block content %}
+      <h1>Lista de Productos</h1>
+      <ul>
+        {% for producto in productos %}
+             <li>
+               <a href="{% url 'detalle_producto' producto.id %}">{{ producto.nombre }}</a>
+              </li>
+        {% endfor %}
+    </ul>
+    {% endblock %}
+    ```
+
+    ```html
+     {# templates/detalle_producto.html #}
+    {% extends "base.html" %}
+    {% block title %}Detalle del Producto{% endblock %}
+    {% block content %}
+    <h1>{{ producto.nombre }}</h1>
+    <p>Precio: {{ producto.precio }}</p>
+    <p>Descripción: {{ producto.descripcion }}</p>
+    <p>Descuento: {{ producto.descuento }}</p>
+    {% endblock %}
+    ```
+
+### urls.py
+
+* En el archivo `urls.py` se asocian las rutas (urls) con las funciones `views`.
+* Usar la función `path()` para definir rutas que coincidan con un `path` fijo o usando regex.
+* Usar la función `include()` para incluir rutas de otro archivo `urls.py`.
+* Se pueden nombrar las rutas para utilizarlas en los templates usando la etiqueta `{% url 'nombre_ruta' param1 param2 %}`.
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("", views.pagina_principal, name="pagina_principal"),
+    path("productos", views.listar_productos, name="listar_productos"),
+    path("productos/<int:producto_id>", views.detalle_producto, name="detalle_producto"),
+    path("productos/crear/", views.crear_producto, name="crear_producto")
+]
+```
+### Flujo de la Petición en Detalle
+1.  El usuario hace una petición a través del navegador.
+2.  El servidor Django recibe la petición y la direcciona al manejador de URLs (en `urls.py`).
+3.  El manejador de URLs identifica la vista asociada a la URL solicitada y ejecuta la función de vista.
+4.  La función de vista interactúa con el modelo para obtener o modificar datos.
+5.  La función de vista selecciona el template apropiado y le pasa los datos obtenidos del modelo y de la request.
+6.  El template es renderizado utilizando la información proporcionada por la vista.
+7. Django envia una respuesta al navegador (HttpResponse).
+
+## 2. ORM (Object-Relational Mapper): Consultas Avanzadas y Relaciones <Badge text="Dominando el Acceso a la Base de Datos" variant="note" />
+
+El ORM de Django permite realizar consultas complejas y gestionar relaciones entre modelos de forma sencilla.
+
+### Consultas Avanzadas
+*  `Model.objects.filter(condicion1, condicion2)`: Obtiene objetos que cumplan todas las condiciones.
+* `Model.objects.filter(condicion1 | condicion2)`:  Obtiene objetos que cumplan al menos una condición.
+* `Model.objects.exclude(condicion)`: Obtiene objetos que no cumplan una condición.
+* `Model.objects.order_by(campo)`: Ordena los resultados.
+*  `Model.objects.values(campo1, campo2)`:  Obtiene diccionarios con los valores de los campos especificados.
+*  `Model.objects.count()`: Retorna la cantidad de objetos de la tabla.
+*  `Model.objects.first()`: Retorna el primer objeto.
+* `Model.objects.all()[:10]`: Retorna los primeros 10 objetos.
+
+```python
+# views.py
+from django.shortcuts import render
+from .models import Producto, Cliente
+
+def listar_productos(request):
+     productos_caros = Producto.objects.filter(precio__gte=100, nombre__icontains="producto").order_by("nombre").values("nombre", "precio")
+     productos_baratos = Producto.objects.exclude(precio__gte=50).count()
+     primer_producto = Producto.objects.first()
+     productos_limitados = Producto.objects.all()[:10]
+     return render(request,"listar_productos.html", {
+       "productos_caros": productos_caros,
+       "productos_baratos": productos_baratos,
+       "primer_producto": primer_producto,
+       "productos_limitados":productos_limitados
+      })
+```
+*  `campo__gt`, `campo__gte`, `campo__lt`, `campo__lte`: para comparar si el valor del campo es mayor, mayor o igual, menor o menor o igual.
+*  `campo__contains`: Para buscar si un campo contiene un valor (distingue mayúsculas y minúsculas)
+* `campo__icontains`: Para buscar si un campo contiene un valor (no distingue mayúsculas y minúsculas)
+*  `campo__startswith`: Para buscar si un campo empieza por un valor.
+*   `campo__endswith`: Para buscar si un campo termina por un valor.
+*  `campo__isnull`: Para buscar si el valor de un campo es nulo.
+
+### Relaciones entre Modelos
+*   **ForeignKey:** Define una relación uno a muchos entre dos modelos.
+*   **ManyToManyField:** Define una relación muchos a muchos entre dos modelos.
+*  **OneToOneField:** Define una relación uno a uno.
+```python
+from django.db import models
+
+class Categoria(models.Model):
+  nombre = models.CharField(max_length=200)
+class Producto(models.Model):
+  nombre = models.CharField(max_length=200)
+  precio = models.FloatField()
+  descripcion = models.TextField()
+  categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+
+class Pedido(models.Model):
+  fecha = models.DateTimeField(auto_now_add=True)
+  productos = models.ManyToManyField(Producto)
+
+class Usuario(models.Model):
+  nombre = models.CharField(max_length=200)
+  email = models.EmailField()
+  perfil = models.OneToOneField("Perfil", on_delete=models.CASCADE)
+
+class Perfil(models.Model):
+   bio = models.CharField(max_length=500)
+```
+
+```python
+# views.py
+from django.shortcuts import render
+from .models import Producto, Pedido, Usuario
+
+def listar_productos(request):
+  producto = Producto.objects.first()
+  pedido = Pedido.objects.first()
+  usuario = Usuario.objects.first()
+  return render(request, "listar_productos.html", {
+    "producto": producto,
+    "pedido":pedido,
+    "usuario": usuario
+  })
+```
+```html
+ {# templates/listar_productos.html #}
+  {% extends "base.html" %}
+  {% block title %}Lista de Productos{% endblock %}
+  {% block content %}
+    <h1>Datos del producto, pedido y usuario</h1>
+     {% if producto %}
+       <p>El producto es: {{ producto.nombre }} de la categoria {{ producto.categoria.nombre }} </p>
+      {% endif %}
+       {% if pedido %}
+        <p>El primer pedido tiene los siguientes productos :
+         {% for prod in pedido.productos.all %}
+            {{ prod.nombre }},
+         {% endfor %}
+        </p>
+      {% endif %}
+       {% if usuario %}
+        <p>El usuario: {{ usuario.nombre }} tiene el perfil:  {{usuario.perfil.bio}}</p>
+      {% endif %}
+  {% endblock %}
+```
+<Aside type="caution" title="Precaución ⚠️">
+  Utiliza las relaciones entre modelos de forma adecuada para modelar tus datos de manera eficiente.
+</Aside>
+
+## 3. Interfaz de Administración: Personalización y Uso Avanzado <Badge text="Administrando tus Datos" variant="tip" />
+
+La interfaz de administración de Django se puede personalizar para adaptarse a las necesidades específicas de tu aplicación.
+
+### Personalización de la Interfaz de Administración
+*   Usar `ModelAdmin` para personalizar la interfaz de administración de un modelo.
+*   `list_display`:  Define los campos que se mostrarán en la lista de objetos.
+*   `list_filter`:  Define los campos que se podrán usar para filtrar la lista de objetos.
+*  `search_fields`:  Define los campos por los que se podrá buscar.
+*   `fields` o `fieldsets`: Define el orden y organización de los campos en la pagina de detalle.
+```python
+# admin.py
+from django.contrib import admin
+from .models import Producto, Cliente
+
+class ProductoAdmin(admin.ModelAdmin):
+  list_display = ("nombre", "precio", "categoria")
+  list_filter = ("categoria",)
+  search_fields = ("nombre", "descripcion")
+  # fields = ("nombre", "precio", "categoria") # para definir el orden de los campos a mostrar en el formulario de detalle
+  fieldsets = (
+    ("Datos generales", {
+     "fields": ("nombre", "precio")
+    }),
+      ("Datos adicionales", {
+     "fields": ("categoria", "descripcion")
+    }),
+  )
+
+admin.site.register(Producto, ProductoAdmin)
+
+class ClienteAdmin(admin.ModelAdmin):
+   list_display = ("nombre", "email","edad", "get_age_group")
+   list_filter = ("edad", )
+   search_fields = ("nombre", "email")
+admin.site.register(Cliente, ClienteAdmin)
+```
+
+### Acciones Personalizadas
+*   Definir acciones que se pueden ejecutar desde la lista de objetos.
+```python
+# admin.py
+from django.contrib import admin
+from .models import Producto
+
+def aplicar_descuento(modeladmin, request, queryset):
+   for producto in queryset:
+      producto.precio = producto.precio * 0.9
+      producto.save()
+aplicar_descuento.short_description = "Aplicar descuento del 10%"
+
+class ProductoAdmin(admin.ModelAdmin):
+  list_display = ("nombre", "precio", "categoria")
+  actions = [aplicar_descuento]
+  ...
+admin.site.register(Producto, ProductoAdmin)
+```
+
+<Aside type="note" title="Nota 📝">
+    La interfaz de administración de Django es muy flexible y se puede personalizar para adaptarse a las necesidades de tu aplicación.
+</Aside>
+
+## 4. Templates: Herencia, Tags y Filtros Avanzados <Badge text="Páginas Web Dinámicas y Reutilizables" variant="tip" />
+
+Los templates de Django ofrecen herramientas avanzadas para crear páginas web dinámicas y reutilizables.
+
+### Herencia de Templates
+*  Utilizar la etiqueta `{% extends "base.html" %}` para extender de otro template base, permitiendo reutilizar el header, footer y otras partes comunes de la pagina.
+* Se pueden definir bloques usando `{% block nombre %}{% endblock %}` que pueden ser remplazados por otros templates.
+
+### Tags
+*  `{% if condicion %}` , `{% elif condicion %}`, `{% else %}`, `{% endif %}` : Para condicionales.
+*   `{% for item in lista %}` , `{% endfor %}` : Para bucles.
+*   `{% url 'nombre_ruta' param1 param2 %}` : Para generar urls a partir de los nombres de las rutas.
+* `{% include "template.html" %}` : Para incluir otro template.
+*  `{% static 'path_a_un_archivo_estatico' %}` : Para generar la url a un archivo estatico.
+
+### Filtros
+*   Los filtros permiten transformar variables dentro de los templates antes de mostrarlas.
+*   `{{ variable | filtro }}` : Aplica un filtro a una variable.
+*   `{{ variable | filtro:argumento }}`: Aplica un filtro a una variable con argumentos.
+
+#### Filtros comunes
+* `lower`, `upper`: Convierte a minúsculas o mayúsculas.
+*   `title`: Convierte a formato título.
+* `truncatewords:n` : Recorta el texto a n palabras
+*   `date:"formato"`: Formatea la fecha con el formato indicado.
+* `default:"valor"`:  Si la variable no existe, usa el valor por defecto.
+*   `join:"cadena"`: Une una lista con una cadena.
+* `slice:"inicio:fin"`:  Recorta una lista.
+```html
+{# templates/detalle_producto.html #}
+    {% extends "base.html" %}
+    {% block title %}Detalle del Producto{% endblock %}
+    {% block content %}
+        <h1>{{ producto.nombre|upper }}</h1>
+        <p>Precio: {{ producto.precio|default:"0.00" }}</p>
+        <p>Descripción: {{ producto.descripcion|truncatewords:20}}</p>
+        <p>Fecha de creación: {{ producto.fecha_creacion|date:"Y-m-d H:i:s"}}</p>
+    {% endblock %}
+```
+### Context Processors
+*   Los context processors permiten añadir variables al contexto de todos los templates.
+* Se definen en `settings.py`  la lista de `TEMPLATE/OPTIONS/context_processors`
+*   Se pueden crear context processors que retornen un diccionario con las variables que se van a usar en los templates.
+```python
+# context_processors.py
+from datetime import datetime
+def global_variables(request):
+   return {
+      "fecha_actual": datetime.now(),
+      "mensaje_bienvenida": "Bienvenido a mi sitio!"
+   }
+# settings.py
+TEMPLATES = [
+  {
+      "BACKEND": "django.template.backends.django.DjangoTemplates",
+      "DIRS": [BASE_DIR / 'templates'],
+      "APP_DIRS": True,
+      "OPTIONS": {
+          "context_processors": [
+              'django.template.context_processors.debug',
+              'django.template.context_processors.request',
+              'django.contrib.auth.context_processors.auth',
+              'django.contrib.messages.context_processors.messages',
+               'mi_app.context_processors.global_variables'
+          ],
+      },
+  },
+]
+```
+```html
+{# templates/base.html #}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+  <nav>
+    <a href="/">Inicio</a>
+    <a href="/productos">Productos</a>
+  </nav>
+  <p>{{ mensaje_bienvenida }}  ( {{ fecha_actual}} )</p>
+  {% block content %}
+  {% endblock %}
+</body>
+</html>
+```
+### Archivos Estáticos
+*  Usar la etiqueta  `{% load static %}` para cargar los archivos estáticos.
+* Usar la etiqueta `{% static 'path_al_archivo' %}`  para generar la url a un archivo estatico
+* Se definen la ruta de los archivos estáticos en `settings.py`
+
+```html
+ {# templates/base.html #}
+ {% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}{% endblock %}</title>
+   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <nav>
+    <a href="/">Inicio</a>
+    <a href="/productos">Productos</a>
+  </nav>
+  {% block content %}
+  {% endblock %}
+  <script src="{% static 'js/scripts.js' %}"></script>
+</body>
+</html>
+```
+
+```python
+# settings.py
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+```
+
+## Conclusión
+
+Django es un framework robusto y completo para desarrollar aplicaciones web. En este post, exploramos el patrón MVT, el ORM con consultas complejas y relaciones, la interfaz de administración personalizada y el uso avanzado de templates. ¡Ahora tienes las herramientas para construir aplicaciones web escalables, robustas y bien organizadas con Django!
+
+<Badge text="¡Sigue Desarrollando con Django!" variant="success" size="large" />
+
+En el próximo post, exploraremos el framework Flask.
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton
+  href="/docs/Python-Master-Course/intro"
+  variant="primary"
+  icon="arrow-left"
+  iconPlacement="start"
+>
+  Volver al Inicio del Curso
+</LinkButton>

@@ -1,0 +1,220 @@
+---
+title: "Conceptos Teóricos en Programación: Complejidad Algorítmica, Recursión, Memoización y Paradigmas de Programación"
+description: "Un tutorial completo sobre conceptos teóricos en programación: Complejidad Algorítmica (notación Big O), Recursión y Memoización, y Paradigmas de Programación (funcional, orientado a objetos, imperativo)."
+---
+
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="¡Teoría de la Programación!" icon="book-open">
+    Aprende los conceptos teóricos fundamentales para entender cómo funciona el software.
+  </Card>
+  <Card title="Análisis y Diseño" icon="cpu">
+    Explora la complejidad algorítmica, la recursión, la memorización y los paradigmas de programación.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Importante 📝">
+    Los conceptos teóricos son esenciales para escribir código eficiente, mantenible y escalable.
+</Aside>
+
+# Conceptos Teóricos en Programación: La Base de Todo Desarrollo
+
+En este post, exploraremos en detalle conceptos teóricos clave en programación. Aprenderás sobre complejidad algorítmica (notación Big O), recursión y memoización, y los diferentes paradigmas de programación (funcional, orientado a objetos e imperativo). Cubriremos:
+
+1.  **Complejidad Algorítmica (Notación Big O):** Cómo analizar la eficiencia de los algoritmos.
+2.  **Recursión y Memoización:** Cómo resolver problemas de forma recursiva y evitar cálculos repetidos.
+3.  **Paradigmas de Programación:**  Diferencias entre programación funcional, orientada a objetos e imperativa.
+
+## 1. Complejidad Algorítmica (Notación Big O) <Badge text="Analizando la Eficiencia" variant="tip" />
+
+La complejidad algorítmica es una medida de cuánto tiempo o memoria necesita un algoritmo para resolver un problema en función del tamaño de la entrada. La notación Big O se utiliza para describir esta complejidad de forma asintótica, ignorando constantes y términos de menor orden.
+
+### Complejidad Temporal
+Describe cuánto tiempo tarda un algoritmo en función del tamaño de la entrada.
+
+*   **O(1) - Complejidad Constante:** El tiempo de ejecución no depende del tamaño de la entrada.
+    ```python
+    def obtener_primer_elemento(lista):
+      return lista[0]
+    ```
+*   **O(log n) - Complejidad Logarítmica:** El tiempo de ejecución crece logarítmicamente con el tamaño de la entrada. Ej: Búsqueda binaria.
+    ```python
+    def busqueda_binaria(lista, valor):
+        izquierda = 0
+        derecha = len(lista) -1
+        while izquierda <= derecha:
+            medio = (izquierda + derecha) // 2
+            if lista[medio] == valor:
+                return medio
+            elif lista[medio] < valor:
+                izquierda = medio + 1
+            else:
+                derecha = medio -1
+        return -1
+    ```
+*   **O(n) - Complejidad Lineal:** El tiempo de ejecución crece linealmente con el tamaño de la entrada. Ej: Recorrer una lista.
+
+    ```python
+    def encontrar_maximo(lista):
+        maximo = lista[0]
+        for elemento in lista:
+            if elemento > maximo:
+                maximo = elemento
+        return maximo
+    ```
+
+*   **O(n log n) - Complejidad Loglineal:**  El tiempo de ejecución crece como n multiplicado por el logaritmo de n. Ej: Mergesort, quicksort.
+    ```python
+    # Ver algoritmos de ordenamiento en un post anterior
+    ```
+
+*   **O(n^2) - Complejidad Cuadrática:** El tiempo de ejecución crece cuadráticamente con el tamaño de la entrada. Ej: Recorrer una matriz o un bucle anidado dentro de otro.
+    ```python
+    def encontrar_duplicados(lista):
+        duplicados = []
+        for i in range(len(lista)):
+          for j in range(i + 1, len(lista)):
+             if lista[i] == lista[j:
+                 duplicados.append(lista[i])
+        return duplicados
+    ```
+
+*   **O(2^n) - Complejidad Exponencial:** El tiempo de ejecución crece exponencialmente con el tamaño de la entrada.
+    ```python
+    def fibonacci_recursivo(n):
+        if n <= 1:
+            return n
+        return fibonacci_recursivo(n-1) + fibonacci_recursivo(n-2)
+    ```
+### Complejidad Espacial
+Describe cuánta memoria necesita un algoritmo en función del tamaño de la entrada.
+*   **O(1) - Complejidad Constante:** La memoria utilizada no depende del tamaño de la entrada.
+*   **O(n) - Complejidad Lineal:** La memoria utilizada crece linealmente con el tamaño de la entrada.
+
+<Aside type="note" title="Nota 📝">
+   La notación Big O es una herramienta esencial para comparar la eficiencia de los algoritmos.
+</Aside>
+
+## 2. Recursión y Memoización <Badge text="Soluciones Recursivas y Eficientes" variant="note" />
+
+La recursión es una técnica para resolver problemas mediante la definición de un caso base y una llamada recursiva a la misma función. La memoización es una técnica para optimizar funciones recursivas almacenando los resultados de las llamadas.
+
+### Recursión
+
+Una función recursiva se llama a si misma con un caso más simple del problema hasta alcanzar un caso base.
+
+```python
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n - 1)
+```
+
+### Memoización
+*   Almacenar los resultados de las llamadas recursivas para evitar recalculos.
+*   Implementar con diccionarios o con el decorador `functools.lru_cache`.
+
+```python
+import functools
+@functools.lru_cache(maxsize=None)
+def fibonacci_memo(n):
+  if n <= 1:
+        return n
+  return fibonacci_memo(n-1) + fibonacci_memo(n-2)
+print(fibonacci_memo(100)) # Usando memoizacion el calculo es mas rapido
+```
+
+### Ventajas de la Recursión
+*   Soluciones simples e intuitivas para algunos problemas.
+*   Código más conciso y legible.
+
+### Limitaciones de la Recursión
+*   Posibilidad de generar errores por recursion profunda (Stack Overflow).
+*   Puede ser más lenta en comparación con soluciones iterativas sin usar memoizacion.
+
+<Aside type="caution" title="Precaución ⚠️">
+    Utiliza la recursión con cuidado y considera usar memoización para optimizar funciones recursivas con subproblemas repetidos.
+</Aside>
+
+## 3. Paradigmas de Programación <Badge text="Diferentes Enfoques para Programar" variant="success" size="large" />
+
+Un paradigma de programación es un estilo o enfoque para construir software. Python soporta múltiples paradigmas de programación.
+
+### Programación Imperativa
+*   Se centra en cómo hacer las cosas.
+*   Define los pasos y el flujo de control.
+* Utiliza variables y bucles para modificar el estado del programa.
+*  Ej: C, Java.
+
+```python
+# Ejemplo en Python
+lista = [1,2,3]
+for i in range(len(lista)):
+    lista[i] = lista[i] * 2
+```
+
+### Programación Orientada a Objetos (POO)
+*  Se centra en los datos (objetos) y sus operaciones.
+* Utiliza clases, objetos, herencia, encapsulamiento y polimorfismo.
+*  Organiza el código en torno a los objetos.
+*  Ej: Java, C++, C#, Python.
+
+```python
+# Ejemplo en Python
+class Rectangulo:
+   def __init__(self, base, altura):
+        self.base = base
+        self.altura = altura
+
+   def calcular_area(self):
+      return self.base*self.altura
+```
+
+### Programación Funcional
+*   Se centra en la evaluación de funciones y la transformación de datos.
+* Utiliza funciones puras (sin efectos secundarios) y evitan estados mutables.
+* Utiliza la composición de funciones como mecanismo principal de construcción del código.
+* Ej: Haskell, Lisp.
+
+```python
+# Ejemplo en Python
+from functools import reduce
+
+lista = [1,2,3]
+resultado = list(map(lambda x: x*2, lista))
+suma = reduce(lambda x, y: x + y, resultado)
+```
+### Comparación de Paradigmas
+
+| Paradigma        | Énfasis                 |  Estado      |  Efectos Secundarios   |  Ejemplos                         |
+|-----------------|-------------------------|-------------|------------------------|-----------------------------------|
+| Imperativa       |  Cómo hacer las cosas     |  Mutable    |  Frecuentes             |  C, Java                            |
+| Orientada a Obj | Objetos y sus interacciones  | Mutable |  Menos frecuentes, pero presentes | Java, C++, Python                    |
+| Funcional       |  Evaluación de funciones  | Inmutable  | Evitados                | Haskell, Lisp, Python (parcialmente)  |
+<Aside type="tip" title="Consejo ✨">
+   Cada paradigma tiene sus ventajas y desventajas, y la elección del paradigma adecuado depende del problema a resolver.
+</Aside>
+
+## Conclusión
+
+Los conceptos teóricos son la base para entender y escribir código de calidad. En este post, exploramos la complejidad algorítmica, la recursión y memoización, y los paradigmas de programación. ¡Ahora tienes una base sólida para diseñar algoritmos eficientes y entender diferentes enfoques para programar!
+
+<Badge text="¡Sigue Pensando!" variant="success" size="large" />
+
+En el próximo post, exploraremos Data Science y Machine Learning básico.
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton
+  href="/docs/Python-Master-Course/intro"
+  variant="primary"
+  icon="arrow-left"
+  iconPlacement="start"
+>
+  Volver al Inicio del Curso
+</LinkButton>

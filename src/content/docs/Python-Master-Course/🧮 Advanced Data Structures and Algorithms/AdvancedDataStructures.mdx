@@ -1,0 +1,240 @@
+---
+title: "Estructuras de Datos Avanzadas en Python: Árboles, Grafos, Tries, Heaps y Colas de Prioridad"
+description: "Un tutorial completo sobre estructuras de datos avanzadas en Python: Árboles (binarios, AVL, etc.), Grafos y sus representaciones, Tries, y Heaps y colas de prioridad."
+---
+
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="¡Estructuras de Datos Expertas!" icon="grid">
+    Aprende a usar estructuras de datos más complejas para resolver problemas avanzados.
+  </Card>
+  <Card title="Organización y Eficiencia" icon="layout-split">
+    Explora árboles, grafos, tries y heaps para almacenar y acceder a datos de manera eficiente.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Importante 📝">
+  Las estructuras de datos avanzadas son esenciales para optimizar algoritmos y resolver problemas complejos.
+</Aside>
+
+# Estructuras de Datos Avanzadas en Python: Más Allá de Listas y Diccionarios
+
+En este post, exploraremos en detalle estructuras de datos más avanzadas que las listas y diccionarios. Aprenderás sobre árboles, grafos, tries, heaps y colas de prioridad. Cubriremos:
+
+1.  **Árboles (binarios, AVL, etc.):** Estructuras jerárquicas para datos ordenados.
+2.  **Grafos y sus Representaciones:** Estructuras para representar relaciones entre objetos.
+3.  **Tries:** Estructuras de datos para búsquedas eficientes de strings.
+4.  **Heaps y Colas de Prioridad:**  Estructuras para manejar elementos con prioridad.
+
+## 1. Árboles (binarios, AVL, etc.) <Badge text="Estructuras Jerárquicas" variant="tip" />
+
+Los árboles son estructuras de datos jerárquicas compuestas por nodos y aristas. Cada nodo tiene un valor y puede tener cero o más hijos.
+
+### Árboles Binarios
+*  Cada nodo tiene como máximo dos hijos (izquierdo y derecho).
+*  Se usan para implementar estructuras como árboles de búsqueda binaria.
+
+```python
+class NodoBinario:
+    def __init__(self, valor):
+        self.valor = valor
+        self.izquierda = None
+        self.derecha = None
+
+raiz = NodoBinario(10)
+raiz.izquierda = NodoBinario(5)
+raiz.derecha = NodoBinario(15)
+
+```
+### Árboles de Búsqueda Binaria (BST)
+* Los valores menores van a la izquierda y los valores mayores a la derecha.
+* Operaciones de busqueda, inserción y eliminación en un tiempo logarítmico promedio.
+
+```python
+class NodoBST:
+    def __init__(self, valor):
+        self.valor = valor
+        self.izquierda = None
+        self.derecha = None
+
+def insertar(raiz, valor):
+    if raiz is None:
+      return NodoBST(valor)
+    if valor < raiz.valor:
+        raiz.izquierda = insertar(raiz.izquierda, valor)
+    else:
+        raiz.derecha = insertar(raiz.derecha, valor)
+    return raiz
+
+def buscar(raiz, valor):
+    if raiz is None or raiz.valor == valor:
+      return raiz
+    if valor < raiz.valor:
+      return buscar(raiz.izquierda, valor)
+    return buscar(raiz.derecha, valor)
+
+raiz = None
+raiz = insertar(raiz, 10)
+raiz = insertar(raiz, 5)
+raiz = insertar(raiz, 15)
+print(buscar(raiz,15).valor)
+```
+### Árboles AVL
+*  Son árboles de búsqueda binaria auto balanceados.
+* Mantienen una altura balanceada para garantizar un tiempo de búsqueda logarítmico en el peor caso.
+* Las operaciones de rotación permiten mantener el balance del árbol.
+*  Implementar un AVL es más complejo.
+
+<Aside type="note" title="Nota 📝">
+  Los árboles binarios son la base de muchas estructuras de datos y algoritmos de búsqueda y ordenamiento. Los árboles AVL son más complejos pero mas eficientes en el peor caso.
+</Aside>
+
+## 2. Grafos y sus Representaciones <Badge text="Relaciones Entre Objetos" variant="note" />
+
+Los grafos son estructuras de datos que representan relaciones entre objetos (nodos o vértices) mediante conexiones (aristas).
+
+### Matriz de Adyacencia
+*  Una matriz donde cada fila y columna representan un nodo del grafo.
+* Si hay una arista entre el nodo i y el nodo j la matriz tendra un valor distinto a 0 en la posición [i,j], si el grafo es no ponderado la posición sera 1, si el grafo es ponderado la posición tendrá el peso de la arista.
+* Para grafos no dirigidos la matriz será simétrica.
+*  Ideal para grafos densos (con muchas conexiones).
+```python
+# Matriz de adyacencia para un grafo de 4 nodos
+matriz_adyacencia = [
+    [0, 1, 0, 1],
+    [1, 0, 1, 0],
+    [0, 1, 0, 1],
+    [1, 0, 1, 0]
+]
+```
+
+### Listas de Adyacencia
+*  Un diccionario donde cada clave es un nodo y su valor es una lista de nodos adyacentes.
+*   Ideal para grafos dispersos (con pocas conexiones)
+```python
+# Listas de adyacencia para el mismo grafo
+listas_adyacencia = {
+    0: [1, 3],
+    1: [0, 2],
+    2: [1, 3],
+    3: [0, 2]
+}
+```
+
+### Grafos Dirigidos y No Dirigidos
+* En los grafos dirigidos las aristas tienen dirección (ej:  `a->b` no es lo mismo que `b->a` ).
+*  En los grafos no dirigidos las aristas no tienen dirección (ej: `a-b` es lo mismo que `b-a` ).
+### Grafos Ponderados y No Ponderados
+* En los grafos ponderados las aristas tienen pesos o costes.
+*  En los grafos no ponderados las aristas no tienen pesos.
+
+<Aside type="caution" title="Precaución ⚠️">
+  La elección de la representación de un grafo depende de la densidad del grafo y de las operaciones que se van a realizar.
+</Aside>
+
+## 3. Tries <Badge text="Búsqueda Eficiente de Strings" variant="success" size="large" />
+
+Los tries (o árboles de prefijos) son estructuras de datos para almacenar strings, haciendo que las búsquedas de prefijos sean muy rápidas. Cada nodo representa un caracter del string y las aristas representan las conexiones entre caracteres.
+
+### Implementación Básica de un Trie
+
+```python
+class NodoTrie:
+    def __init__(self):
+        self.hijos = {}
+        self.fin_de_palabra = False
+
+class Trie:
+    def __init__(self):
+       self.raiz = NodoTrie()
+
+    def insertar(self, palabra):
+        nodo = self.raiz
+        for caracter in palabra:
+            if caracter not in nodo.hijos:
+                nodo.hijos[caracter] = NodoTrie()
+            nodo = nodo.hijos[caracter
+        nodo.fin_de_palabra = True
+    def buscar(self, palabra):
+         nodo = self.raiz
+         for caracter in palabra:
+            if caracter not in nodo.hijos:
+                return False
+            nodo = nodo.hijos[caracter]
+         return nodo.fin_de_palabra
+trie = Trie()
+trie.insertar("hola")
+trie.insertar("mundo")
+print(trie.buscar("hola")) # True
+print(trie.buscar("hol")) # False
+print(trie.buscar("mundo")) # True
+print(trie.buscar("munda")) # False
+```
+
+### Usos Comunes de Tries
+*   Autocompletado de texto.
+*  Búsqueda de palabras con prefijos comunes.
+* Diccionarios para juegos como scrabble.
+
+<Aside type="tip" title="Consejo ✨">
+    Utiliza tries cuando necesites búsquedas rápidas de strings y especialmente cuando necesites encontrar palabras por prefijo.
+</Aside>
+
+## 4. Heaps y Colas de Prioridad <Badge text="Elementos con Prioridad" variant="note" />
+
+Los heaps (montículos) son árboles binarios completos que mantienen una propiedad de orden. Las colas de prioridad son estructuras que utilizan heaps para obtener elementos con mayor prioridad.
+
+### Heaps (Min-Heap y Max-Heap)
+* En un min-heap el nodo padre siempre es menor o igual que sus hijos, mientras que en un max-heap el nodo padre es mayor o igual que sus hijos.
+*  Se implementan generalmente con listas, donde la raíz se encuentra en el índice 0 y la posición de los hijos de un nodo `i` estan en `2*i+1` y `2*i+2`.
+*   Permiten obtener el elemento mínimo (min-heap) o máximo (max-heap) en tiempo constante.
+
+###  Colas de Prioridad
+*   El modulo `heapq` implementa colas de prioridad.
+*   `heapq.heappush(heap, item)`: Añade un elemento al heap.
+*   `heapq.heappop(heap)`: Obtiene y elimina el elemento de menor valor del heap.
+* `heapq.heapify(lista)`: Convierte una lista en un heap.
+
+```python
+import heapq
+
+cola_prioridad = []
+heapq.heappush(cola_prioridad, 3)
+heapq.heappush(cola_prioridad, 1)
+heapq.heappush(cola_prioridad, 5)
+print(cola_prioridad) # [1, 3, 5]
+print(heapq.heappop(cola_prioridad)) # 1
+print(heapq.heappop(cola_prioridad)) # 3
+print(heapq.heappop(cola_prioridad)) # 5
+```
+### Usos Comunes de Heaps y Colas de Prioridad
+*   Implementar algoritmos de búsqueda y ordenamiento.
+* Gestionar tareas con prioridades.
+*   Implementar colas para eventos.
+
+<Aside type="caution" title="Precaución ⚠️">
+   Los heaps son eficientes para obtener los elementos con mayor o menor prioridad de forma rápida.
+</Aside>
+
+## Conclusión
+
+Las estructuras de datos avanzadas son fundamentales para resolver problemas complejos de manera eficiente. En este post, exploramos árboles, grafos, tries, heaps y colas de prioridad. ¡Ahora tienes las herramientas para manejar datos de manera más sofisticada!
+
+<Badge text="¡Sigue Explorando!" variant="success" size="large" />
+
+En el próximo post, exploraremos algoritmos avanzados.
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton
+  href="/docs/Python-Master-Course/intro"
+  variant="primary"
+  icon="arrow-left"
+  iconPlacement="start"
+>
+  Volver al Inicio del Curso
+</LinkButton>

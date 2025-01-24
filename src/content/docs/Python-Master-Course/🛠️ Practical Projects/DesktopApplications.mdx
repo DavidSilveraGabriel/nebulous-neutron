@@ -1,0 +1,259 @@
+---
+title: "Aplicaciones de Escritorio en Python: PyQt/PySide y Tkinter"
+description: "Un tutorial completo sobre cómo crear aplicaciones de escritorio (GUI) en Python utilizando PyQt/PySide y Tkinter."
+---
+
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="¡Construye Apps de Escritorio!" icon="monitor">
+    Aprende a crear aplicaciones de escritorio (GUI) en Python utilizando PyQt/PySide y Tkinter.
+  </Card>
+  <Card title="Interfaces Gráficas" icon="layout">
+    Explora cómo usar estas librerías para diseñar interfaces de usuario (GUIs) interactivas y funcionales.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Importante 📝">
+    Las aplicaciones de escritorio son esenciales para crear software que interactúe con el usuario a través de una interfaz gráfica (GUI).
+</Aside>
+
+# Aplicaciones de Escritorio en Python: Diseñando Interfaces Gráficas Interactivas
+
+En este post, exploraremos en detalle cómo crear aplicaciones de escritorio (GUI) en Python utilizando dos librerías populares: PyQt/PySide y Tkinter. Aprenderás a diseñar interfaces gráficas, a implementar eventos y a conectar la lógica de tu aplicación con la interfaz de usuario. Cubriremos:
+
+1.  **PyQt/PySide:** Cómo crear aplicaciones de escritorio con Qt.
+2.  **Tkinter:** Cómo crear aplicaciones de escritorio usando la librería Tk.
+
+## 1. PyQt/PySide <Badge text="El Poder de Qt" variant="tip" />
+
+PyQt y PySide son librerías que permiten crear aplicaciones de escritorio utilizando el framework Qt, que proporciona una amplia gama de widgets y herramientas para crear interfaces gráficas. PyQt es una librería de terceros y PySide es la librería oficial de Qt para Python.
+
+### Instalación de PyQt/PySide
+* **PyQt**: `pip install PyQt6` o `pip install PyQt5`.
+* **PySide**: `pip install PySide6` o `pip install PySide2`.
+
+### Creación de una Ventana Básica con PyQt/PySide
+
+* Crear una instancia de la clase `QApplication`.
+*  Crear una instancia de la clase `QMainWindow` para la ventana principal.
+* Usar `show()` para mostrar la ventana.
+```python
+# PyQt6
+from PyQt6.QtWidgets import QApplication, QMainWindow
+import sys
+app = QApplication(sys.argv) # Crea una instancia de la aplicacion
+window = QMainWindow() # Crea la ventana principal
+window.setWindowTitle("Mi Aplicación PyQt6")
+window.setGeometry(100, 100, 600, 400) # define la posición y el tamaño de la ventana
+window.show()
+app.exec()
+```
+```python
+# PySide6
+from PySide6.QtWidgets import QApplication, QMainWindow
+import sys
+app = QApplication(sys.argv) # Crea una instancia de la aplicacion
+window = QMainWindow() # Crea la ventana principal
+window.setWindowTitle("Mi Aplicación PySide6")
+window.setGeometry(100, 100, 600, 400) # define la posición y el tamaño de la ventana
+window.show()
+app.exec()
+```
+
+### Añadir Widgets a la Ventana
+
+* Crear instancias de los widgets (ej: `QLabel`, `QPushButton`, `QLineEdit`, etc) y agregarlos a la ventana.
+* Se deben crear instancias de la clase `QWidget` o crear un `Layout` para agregar widgets a la ventana.
+```python
+# PyQt6
+from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget
+import sys
+
+app = QApplication(sys.argv)
+window = QMainWindow()
+window.setWindowTitle("Mi Aplicación PyQt6 con widgets")
+window.setGeometry(100, 100, 600, 400)
+# Crear widgets
+label = QLabel("Hola Mundo", window)
+label.move(100, 50) # Posiciona el widget en la ventana
+button = QPushButton("Click me!", window)
+button.move(100, 100)
+# Definir Layout (maneja la posición de los widgets)
+layout = QVBoxLayout()
+layout.addWidget(label)
+layout.addWidget(button)
+
+central_widget = QWidget() # widget donde se define el layout
+central_widget.setLayout(layout)
+window.setCentralWidget(central_widget) # define el widget central como layout de la ventana
+window.show()
+app.exec()
+```
+```python
+# PySide6
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget
+import sys
+
+app = QApplication(sys.argv)
+window = QMainWindow()
+window.setWindowTitle("Mi Aplicación PySide6 con widgets")
+window.setGeometry(100, 100, 600, 400)
+# Crear widgets
+label = QLabel("Hola Mundo", window)
+label.move(100, 50) # Posiciona el widget en la ventana
+button = QPushButton("Click me!", window)
+button.move(100, 100)
+# Definir Layout (maneja la posición de los widgets)
+layout = QVBoxLayout()
+layout.addWidget(label)
+layout.addWidget(button)
+
+central_widget = QWidget() # widget donde se define el layout
+central_widget.setLayout(layout)
+window.setCentralWidget(central_widget) # define el widget central como layout de la ventana
+window.show()
+app.exec()
+```
+### Eventos
+* Conectar funciones a eventos como el click del ratón.
+*   Conectar señales (signals) de los widgets a funciones (slots).
+```python
+# PyQt6
+from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget
+import sys
+from PyQt6.QtCore import Qt
+
+def boton_click():
+   print("Boton Clicked!")
+
+app = QApplication(sys.argv)
+window = QMainWindow()
+window.setWindowTitle("Mi Aplicación PyQt6 con eventos")
+window.setGeometry(100, 100, 600, 400)
+
+button = QPushButton("Click me!", window)
+button.clicked.connect(boton_click) # conectar el evento click a la funcion
+# Definir Layout
+layout = QVBoxLayout()
+layout.addWidget(button)
+central_widget = QWidget()
+central_widget.setLayout(layout)
+window.setCentralWidget(central_widget)
+window.show()
+app.exec()
+```
+```python
+# PySide6
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget
+import sys
+from PySide6.QtCore import Qt
+
+def boton_click():
+   print("Boton Clicked!")
+
+app = QApplication(sys.argv)
+window = QMainWindow()
+window.setWindowTitle("Mi Aplicación PySide6 con eventos")
+window.setGeometry(100, 100, 600, 400)
+
+button = QPushButton("Click me!", window)
+button.clicked.connect(boton_click) # conectar el evento click a la funcion
+# Definir Layout
+layout = QVBoxLayout()
+layout.addWidget(button)
+central_widget = QWidget()
+central_widget.setLayout(layout)
+window.setCentralWidget(central_widget)
+window.show()
+app.exec()
+
+```
+
+###  Qt Designer
+*  Qt designer permite crear la interfaz de forma visual, y luego usar el archivo `.ui` con la herramienta `pyuic` para generar el código.
+```bash
+# PyQt6
+pyuic6 -x main_window.ui -o main_window.py # convierte el archivo main_window.ui en el archivo python main_window.py
+```
+```bash
+# PySide6
+pyside6-uic -x main_window.ui -o main_window.py # convierte el archivo main_window.ui en el archivo python main_window.py
+```
+<Aside type="note" title="Nota 📝">
+   PyQt/PySide son librerías muy potentes para crear aplicaciones de escritorio complejas y personalizadas, pero su curva de aprendizaje puede ser más alta que la de Tkinter.
+</Aside>
+
+## 2. Tkinter <Badge text="Una Librería Simple y Clásica" variant="note" />
+
+Tkinter es una librería para crear aplicaciones de escritorio incluida en la librería estándar de Python, lo que la hace muy fácil de usar y no requiere instalación adicional.
+
+### Creación de una Ventana Básica con Tkinter
+*  Crear una instancia de la clase `Tk()` para la ventana principal.
+*  Usar `mainloop()` para ejecutar la ventana.
+```python
+import tkinter as tk
+
+window = tk.Tk() # Crea la ventana principal
+window.title("Mi Aplicación Tkinter")
+window.geometry("600x400") # define el tamaño de la ventana
+
+window.mainloop() # ejecuta la ventana
+```
+### Añadir Widgets a la Ventana
+
+* Crear instancias de los widgets (ej: `Label`, `Button`, `Entry`, etc) y usarlos con el metodo `pack()`, `grid()` o `place()` para definir sus posiciones.
+```python
+import tkinter as tk
+
+window = tk.Tk()
+window.title("Mi Aplicación Tkinter con widgets")
+window.geometry("600x400")
+# Crear widgets
+label = tk.Label(window, text="Hola Mundo")
+label.pack() # agrega el widget a la ventana
+button = tk.Button(window, text="Click me!")
+button.pack()
+window.mainloop()
+```
+### Eventos
+*  Definir una función que se ejecuta cuando se produce un evento.
+* Utilizar el atributo `command` de los widgets, para conectar a eventos como el click del raton
+```python
+import tkinter as tk
+
+def boton_click():
+  print("Boton Clicked!")
+
+window = tk.Tk()
+window.title("Mi Aplicación Tkinter con eventos")
+window.geometry("600x400")
+button = tk.Button(window, text="Click me!", command=boton_click) # conecta la función al evento click
+button.pack()
+window.mainloop()
+```
+<Aside type="note" title="Nota 📝">
+   Tkinter es más simple que PyQt/PySide y más fácil de aprender, pero puede ser más limitado en cuanto a funcionalidades y personalización.
+</Aside>
+
+## Conclusión
+
+Las aplicaciones de escritorio son fundamentales para interactuar con el usuario. En este post, exploramos PyQt/PySide y Tkinter, aprendiendo a crear interfaces gráficas interactivas. ¡Ahora tienes las herramientas para construir aplicaciones de escritorio en Python!
+
+<Badge text="¡Sigue Creando Apps!" variant="success" size="large" />
+
+En el próximo post, exploraremos la automatización con Python.
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton
+  href="/docs/Python-Master-Course/intro"
+  variant="primary"
+  icon="arrow-left"
+  iconPlacement="start"
+>
+  Volver al Inicio del Curso
+</LinkButton>

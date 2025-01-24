@@ -1,0 +1,264 @@
+---
+title: "Aplicaciones de Línea de Comandos en Python: Click, Typer y Rich para TUIs"
+description: "Un tutorial completo sobre cómo crear aplicaciones de línea de comandos (CLI) en Python utilizando Click, Typer y Rich para mejorar la experiencia del usuario en la terminal (TUI)."
+---
+
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="¡Crea CLIs Poderosas!" icon="terminal">
+    Aprende a construir aplicaciones de línea de comandos (CLI) eficientes y fáciles de usar en Python.
+  </Card>
+  <Card title="Interfaces de Usuario en la Terminal" icon="layout">
+    Explora cómo Click y Typer simplifican la creación de CLIs y cómo Rich mejora la experiencia del usuario en la terminal (TUI).
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Importante 📝">
+    Las aplicaciones de línea de comandos (CLIs) son herramientas muy útiles para automatizar tareas y realizar operaciones rápidas en la terminal.
+</Aside>
+
+# Aplicaciones de Línea de Comandos en Python: Click, Typer y Rich para una Experiencia de Usuario en la Terminal Superior
+
+En este post, exploraremos en detalle cómo crear aplicaciones de línea de comandos (CLIs) en Python utilizando tres librerías populares: Click, Typer y Rich. Aprenderás cómo simplificar la creación de CLIs con Click y Typer, y cómo mejorar la experiencia del usuario en la terminal (TUI) utilizando Rich. Cubriremos:
+
+1.  **Click:** Un framework para crear CLIs con argumentos y opciones.
+2.  **Typer:**  Un framework para crear CLIs con type hints y soporte para subcomandos.
+3.  **Rich:** Una librería para crear interfaces de usuario en la terminal (TUIs) con estilos y colores.
+
+## 1. Click <Badge text="CLIs con Argumentos y Opciones" variant="tip" />
+
+Click es un framework para crear CLIs que simplifica la definición de argumentos, opciones y subcomandos, haciendo el proceso más rápido y fácil.
+
+### Instalación
+
+```bash
+pip install click
+```
+
+### Creación de una CLI Básica
+* Utilizar el decorador `@click.command()` para indicar que una funcion es un comando.
+* Utilizar el decorador `@click.argument()`  para especificar argumentos obligatorios.
+* Utilizar el decorador `@click.option()` para especificar opciones opcionales.
+*  Utilizar `click.echo()` para imprimir mensajes por consola.
+```python
+import click
+
+@click.command()
+@click.argument('nombre')
+@click.option('--edad', '-e', default=0, help="Edad del usuario")
+@click.option('--ciudad', '-c', help="Ciudad del usuario")
+def saludar(nombre, edad, ciudad):
+    click.echo(f"Hola {nombre}!")
+    if edad > 0:
+      click.echo(f"Tienes {edad} años")
+    if ciudad:
+        click.echo(f"Y vives en {ciudad}")
+
+if __name__ == '__main__':
+    saludar()
+```
+
+### Subcomandos
+*  Se definen subcomandos con decoradores `@cli.command()`.
+*   Se usa `@click.group()` para definir la función principal.
+```python
+import click
+
+@click.group()
+def cli():
+  pass
+@cli.command()
+@click.argument('nombre')
+def saludar(nombre):
+    click.echo(f"Hola {nombre}!")
+@cli.command()
+@click.argument('nombre')
+def despedir(nombre):
+   click.echo(f"Adiós {nombre}!")
+if __name__ == '__main__':
+    cli()
+
+```
+### Tipos de Argumentos y Opciones
+*  Click infiere los tipos de datos de argumentos y opciones por defecto, pero se pueden especificar manualmente.
+* Tipos como `click.INT`, `click.FLOAT`, `click.BOOL` permiten validar los tipos de datos.
+```python
+import click
+@click.command()
+@click.argument('numero', type=click.INT)
+@click.option('--texto', type=click.STRING, default="hola")
+@click.option('--flag', is_flag=True, default=False)
+def prueba(numero, texto, flag):
+    click.echo(f"El numero es {numero}")
+    click.echo(f"El texto es {texto}")
+    click.echo(f"El flag es {flag}")
+if __name__ == '__main__':
+    prueba()
+```
+### Ejecutar la CLI
+Para ejecutar la CLI creada con Click, ejecuta el archivo python directamente desde la consola:
+```bash
+python mi_cli.py nombre_del_usuario --edad 25 --ciudad Madrid
+```
+<Aside type="note" title="Nota 📝">
+Click es muy útil para crear CLIs de forma sencilla, con funcionalidades para argumentos, opciones, y subcomandos.
+</Aside>
+
+## 2. Typer <Badge text="CLIs con Type Hints y Subcomandos" variant="note" />
+
+Typer es un framework para crear CLIs que se basa en type hints y simplifica la creación de subcomandos, haciendo el proceso mas rápido y flexible.
+
+### Instalación
+
+```bash
+pip install typer
+```
+
+### Creación de una CLI con Typer
+*  Usar el decorador `@typer.run` para iniciar la aplicación.
+* Los argumentos y opciones se definen como argumentos de la función con type hints.
+```python
+import typer
+
+def saludar(nombre: str, edad: int = 0, ciudad: str = None):
+  print(f"Hola {nombre}")
+  if edad > 0:
+    print(f"Tienes {edad} años")
+  if ciudad:
+    print(f"Y vives en {ciudad}")
+
+if __name__ == "__main__":
+    typer.run(saludar)
+```
+### Subcomandos con Typer
+*  Crear instancias de la clase `typer.Typer()` y usarla como decorador para las funciones que son subcomandos.
+```python
+import typer
+
+app = typer.Typer()
+@app.command()
+def saludar(nombre: str):
+    print(f"Hola {nombre}!")
+
+@app.command()
+def despedir(nombre: str):
+    print(f"Adiós {nombre}!")
+
+if __name__ == "__main__":
+  app()
+```
+### Type Hints
+*   Typer utiliza los type hints para validar los argumentos y opciones de las funciones automaticamente.
+* Permite definir valores por defecto y ayuda a documentar la API.
+
+```python
+import typer
+
+def prueba(numero: int, texto: str = "hola", flag: bool = False):
+    print(f"El numero es {numero}")
+    print(f"El texto es {texto}")
+    print(f"El flag es {flag}")
+
+if __name__ == "__main__":
+    typer.run(prueba)
+```
+
+### Ejecutar la CLI
+Para ejecutar la CLI creada con Typer, ejecuta el archivo python directamente desde la consola:
+```bash
+python mi_cli.py nombre_del_usuario --edad 25 --ciudad Madrid
+```
+<Aside type="note" title="Nota 📝">
+   Typer facilita la creación de CLIs gracias a la utilizacion de type hints y ofrece soporte de subcomandos.
+</Aside>
+
+## 3. Rich para TUIs <Badge text="Interfaces de Usuario en la Terminal" variant="success" size="large" />
+
+Rich es una librería para crear interfaces de usuario en la terminal (TUIs) con estilos, colores, tablas y otros componentes para mejorar la experiencia del usuario.
+
+### Instalación
+
+```bash
+pip install rich
+```
+
+### Impresión con Estilo
+*  Usar `rich.print` para imprimir mensajes por consola con estilos.
+* Rich permite utilizar Markdown para definir estilos.
+
+```python
+from rich import print
+
+print("[bold red]Esto es un texto[/bold red con [italic blueestilo[/italic blue] y [underline]subrayado[/underline]!")
+print("[green]Mensaje con [bold]verde[/bold] y [italic]italica[/italic][/green]")
+```
+### Tablas
+*  Usar `rich.table.Table` para crear tablas formateadas.
+* Añadir columnas con `table.add_column(header)`
+* Añadir filas con `table.add_row(data)`.
+
+```python
+from rich.console import Console
+from rich.table import Table
+
+console = Console()
+table = Table(title="Lista de usuarios")
+table.add_column("Nombre", style="cyan", no_wrap=True)
+table.add_column("Edad", style="green")
+table.add_column("Ciudad", style="blue")
+table.add_row("Juan", "30", "Madrid")
+table.add_row("Maria", "25", "Barcelona")
+table.add_row("Pedro", "40", "Valencia")
+console.print(table)
+```
+
+### Progress Bars
+* Utilizar `rich.progress.Progress` para crear barras de progreso.
+
+```python
+import time
+from rich.progress import Progress
+
+with Progress() as progress:
+  task1 = progress.add_task("Descargando...", total=100)
+  task2 = progress.add_task("Procesando...", total=100)
+  while not progress.finished:
+      progress.update(task1, advance=1)
+      progress.update(task2, advance=0.5)
+      time.sleep(0.1)
+```
+
+### Otros Componentes de Rich
+*   **Console:** Permite controlar la salida de texto a la terminal.
+*   **Panel:** Permite crear paneles para agrupar contenido.
+*   **Tree:**  Permite crear estructuras de árbol.
+*   **Markdown:** Permite renderizar código markdown en la terminal.
+*   **Syntax:** Permite resaltar la sintaxis de código.
+*   **Prompt:** Permite pedir información al usuario de forma interactiva.
+
+<Aside type="tip" title="Consejo ✨">
+    Utiliza Rich para crear interfaces de usuario en la terminal que sean visualmente atractivas y fáciles de entender.
+</Aside>
+
+## Conclusión
+
+Las aplicaciones de línea de comandos (CLIs) son herramientas poderosas para automatizar tareas y realizar operaciones de forma rápida y eficiente. En este post, exploramos Click, Typer y Rich. ¡Ahora tienes las herramientas para crear CLIs más funcionales y con mejor experiencia de usuario!
+
+<Badge text="¡Sigue Creando CLIs!" variant="success" size="large" />
+
+En el próximo post, exploraremos aplicaciones de escritorio.
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton
+  href="/docs/Python-Master-Course/intro"
+  variant="primary"
+  icon="arrow-left"
+  iconPlacement="start"
+>
+  Volver al Inicio del Curso
+</LinkButton>
