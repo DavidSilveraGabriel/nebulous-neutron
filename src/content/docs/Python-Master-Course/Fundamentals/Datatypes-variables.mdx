@@ -1,0 +1,271 @@
+---
+title: "Tipos de Datos y Variables en Python: Números, Strings, Booleanos y Más"
+description: "Un tutorial completo sobre los tipos de datos fundamentales en Python: números, strings, booleanos, None y cómo manipularlos."
+---
+
+import { Card, CardGrid  } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="¡Sumérgete en los Datos!" icon="database">
+    Aprende a manejar los diferentes tipos de datos en Python, la base de todo programa.
+  </Card>
+  <Card title="Manipulación Avanzada" icon="tool">
+    Explora métodos de strings, formateo y expresiones regulares básicas.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Importante 📝">
+    Entender los tipos de datos es fundamental para escribir código eficiente y sin errores.
+</Aside>
+
+# Tipos de Datos y Variables en Python: La Base de Todo Programa
+
+En este post, vamos a explorar en detalle los tipos de datos y variables en Python. Estos son los bloques de construcción fundamentales para cualquier programa. Vamos a cubrir:
+
+1.  **Números:** Enteros, decimales, complejos y decimales de alta precisión.
+2.  **Strings y Manipulación de Texto:** Métodos, formateo y expresiones regulares básicas.
+3.  **Booleanos y Operadores Lógicos:** El mundo de verdadero y falso.
+4.  **`None`:**  Un tipo de dato especial para representar la ausencia de valor.
+
+## 1. Números en Python <Badge text="El Mundo Numérico" variant="tip" />
+
+Python ofrece varios tipos de números, cada uno con sus propias características:
+
+*   **`int` (Enteros):** Números sin parte decimal.
+
+    ```python
+    entero = 10
+    entero_negativo = -5
+    ```
+
+*   **`float` (Decimales):** Números con parte decimal.
+
+    ```python
+    decimal = 3.14
+    decimal_negativo = -2.71
+    ```
+
+*   **`complex` (Números Complejos):** Números con parte real e imaginaria.
+
+    ```python
+    complejo = 2 + 3j  # 2 es la parte real, 3 es la parte imaginaria
+    ```
+
+*   **`decimal.Decimal` (Decimales de Alta Precisión):** Para cálculos financieros y otros casos que requieren alta precisión.
+
+    ```python
+    from decimal import Decimal
+
+    decimal_alta_precision = Decimal('0.1') + Decimal('0.2') # Evita errores de punto flotante
+    ```
+
+### Operaciones con Números
+
+Python soporta las operaciones aritméticas estándar:
+
+*   Suma (`+`)
+*   Resta (`-`)
+*   Multiplicación (`*`)
+*   División (`/`)
+*   División entera (`//`)
+*   Módulo (`%`)
+*   Potencia (`**`)
+
+```python
+a = 10
+b = 3
+print(a + b)   # 13
+print(a - b)   # 7
+print(a * b)   # 30
+print(a / b)   # 3.333...
+print(a // b)  # 3
+print(a % b)   # 1
+print(a ** b)  # 1000
+```
+
+## 2. Strings y Manipulación de Texto <Badge text="Cadenas de Caracteres" variant="note" />
+
+Un string es una secuencia de caracteres. En Python, los strings son inmutables (no se pueden cambiar una vez creados).
+
+```python
+cadena_simple = 'Hola mundo'
+cadena_doble = "Esto es una cadena"
+cadena_multilinea = """
+Esto es una
+cadena
+en varias lineas
+"""
+```
+
+### Métodos de Strings
+
+Python ofrece muchos métodos para manipular strings:
+
+*   **`.upper()`:** Convierte a mayúsculas.
+*   **`.lower()`:** Convierte a minúsculas.
+*   **`.strip()`:** Elimina espacios en blanco al inicio y al final.
+*   **`.replace()`:** Reemplaza una subcadena por otra.
+*   **`.split()`:** Divide la cadena en una lista de subcadenas.
+*   **`.join()`:** Une una lista de cadenas en una sola cadena.
+*   **`.find()`:** Busca una subcadena y retorna el índice de inicio.
+*   **`.startswith()`:** Verifica si la cadena comienza con una subcadena dada.
+*   **`.endswith()`:** Verifica si la cadena termina con una subcadena dada.
+
+```python
+cadena = "  Hola, Mundo!   "
+print(cadena.upper())     # "  HOLA, MUNDO!   "
+print(cadena.lower())     # "  hola, mundo!   "
+print(cadena.strip())     # "Hola, Mundo!"
+print(cadena.replace("Mundo", "Python")) # "  Hola, Python!   "
+print(cadena.split(","))  # ['  Hola', ' Mundo!   ']
+
+lista_palabras = ['Hola', 'mundo']
+print(" ".join(lista_palabras)) # "Hola mundo"
+
+print(cadena.find("Mundo")) # 8
+print(cadena.startswith(" ")) # True
+print(cadena.endswith(" ")) # True
+```
+
+### Formateo de Strings
+
+Hay varias maneras de formatear strings en Python:
+
+*   **Concatenación:** Usando el operador `+` (menos eficiente).
+*   **`%` Formateo (antiguo):** Sintaxis similar a `printf` de C.
+
+    ```python
+    nombre = "Ana"
+    edad = 25
+    print("Hola, %s. Tienes %d años." % (nombre, edad))
+    ```
+
+*   **`.format()` Método:** Más flexible que la concatenación.
+
+    ```python
+    print("Hola, {}. Tienes {} años.".format(nombre, edad))
+    print("Hola, {nombre_usuario}. Tienes {edad_usuario} años.".format(nombre_usuario=nombre, edad_usuario=edad))
+    ```
+
+*   **`f-strings` (Python 3.6+):** La manera más legible y eficiente.
+
+    ```python
+    print(f"Hola, {nombre}. Tienes {edad} años.")
+    ```
+
+### Expresiones Regulares Básicas
+
+Las expresiones regulares son patrones que se usan para buscar y manipular texto. Para usarlas en Python, necesitas el módulo `re`.
+
+```python
+import re
+patron = r"Hola"
+texto = "Hola, mundo! Hola otra vez!"
+
+resultado = re.findall(patron, texto) # Busca todas las ocurrencias
+print(resultado) # ['Hola', 'Hola']
+
+resultado = re.search(patron, texto) # Busca la primera ocurrencia
+print(resultado.start()) #0
+print(resultado.end())   #4
+```
+
+*   **`re.findall()`:** Busca todas las coincidencias del patrón.
+*   **`re.search()`:** Busca la primera coincidencia.
+*   **`re.sub()`:** Sustituye coincidencias por otra cadena.
+*   **`re.split()`:** Divide la cadena en una lista de subcadenas usando un patrón.
+
+<Aside type="caution" title="Precaución ⚠️">
+    Las expresiones regulares pueden ser complejas al principio, pero son muy poderosas para manipular texto.
+</Aside>
+
+## 3. Booleanos y Operadores Lógicos <Badge text="Verdadero o Falso" variant="success" size="large" />
+
+El tipo de dato booleano solo tiene dos valores posibles: `True` (verdadero) y `False` (falso).
+
+```python
+es_mayor_de_edad = True
+tiene_cuenta_bancaria = False
+```
+
+### Operadores Lógicos
+*   `and` (Y lógico): Retorna `True` solo si ambos operandos son `True`.
+*   `or` (O lógico): Retorna `True` si al menos uno de los operandos es `True`.
+*   `not` (NO lógico): Niega el valor del operando.
+
+```python
+edad = 20
+tiene_licencia = True
+
+print(edad >= 18 and tiene_licencia)   # True
+print(edad < 18 or tiene_licencia)     # True
+print(not tiene_licencia)             # False
+```
+
+### Operadores de Comparación
+*   `==` (Igual a)
+*   `!=` (Diferente a)
+*   `>` (Mayor que)
+*   `<` (Menor que)
+*   `>=` (Mayor o igual a)
+*   `<=` (Menor o igual a)
+
+```python
+a = 5
+b = 10
+print(a == b)  # False
+print(a != b)  # True
+print(a > b)   # False
+print(a < b)   # True
+```
+
+## 4. `None` <Badge text="La Ausencia de Valor" variant="note" />
+
+`None` es un tipo de dato especial que representa la ausencia de valor. Es útil para indicar que una variable no tiene un valor asignado.
+
+```python
+nombre = None
+resultado = None
+```
+
+<Aside type="tip" title="Cuándo usar None ✨">
+    Usa `None` para inicializar variables que aún no tienen un valor específico o para indicar que una función no retorna nada útil.
+</Aside>
+
+### Ejemplos de uso
+*   Inicializar variables.
+*   Indicar que una función no retorna un valor explícito.
+*   Verificar si una variable tiene un valor asignado.
+
+```python
+def funcion_sin_retorno():
+  print("Hola")
+  return None;
+
+resultado = funcion_sin_retorno()
+
+if resultado is None:
+   print("La funcion no retorno nada")
+```
+
+## Conclusión
+
+Conocer los tipos de datos y cómo manipularlos es esencial para cualquier programador. En este post, exploramos los tipos de datos básicos en Python: números, strings, booleanos y `None`, y cómo trabajar con ellos. ¡Ahora tienes las bases para seguir aprendiendo!
+
+<Badge text="¡Sigue Explorando!" variant="success" size="large" />
+
+En el próximo post, exploraremos estructuras de datos.
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+<LinkButton
+  href="/docs/Python-Master-Course/intro"
+  variant="primary"
+  icon="arrow-left"
+  iconPlacement="start"
+>
+  Volver al Inicio del Curso
+</LinkButton>
