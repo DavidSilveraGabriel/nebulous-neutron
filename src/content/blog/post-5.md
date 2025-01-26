@@ -7,7 +7,7 @@ tags: ["data science", "datasets", "data acquisition", "resources", "machine lea
 image:
     url: "https://miro.medium.com/v2/resize:fit:828/format:webp/1*EmcM8EGaq7oFxfVpTwehNQ.jpeg"
     alt: "Data science dataset sources illustration"
-featured: True
+featured: true
 ---
 
 # Top 5 Websites to Obtain Datasets for Your Data Science Projects

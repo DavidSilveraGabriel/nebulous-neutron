@@ -1,3 +1,4 @@
+//src/utils/trackChatbotInteraction.ts
 import { createClient } from '@supabase/supabase-js'
 
 async function trackChatbotInteraction(params: {

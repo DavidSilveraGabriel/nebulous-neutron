@@ -7,7 +7,7 @@ image:
     alt: "Data in a mirrow"
 description: "A detailed exploration of data preprocessing techniques including cleaning, normalizing, and feature engineering with practical Python code examples"
 tags: ["python", "data science", "data preprocessing", "machine learning", "data cleaning"]
-featured: False
+featured: false
 ---
 
 # Comprehensive Guide to Data Preprocessing in Python

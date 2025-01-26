@@ -8,7 +8,7 @@ image:
     alt: 'NumPy logo with array visualization and code snippets'
 tags: ["python", "numpy", "numerical computing", "data science", "arrays", "broadcasting", "linear algebra"]
 
-featured: True
+featured: true
 ---
 
 ## Introduction

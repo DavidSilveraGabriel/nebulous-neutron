@@ -7,7 +7,7 @@ image:
     alt: "Pandas library logo with Python code in the background"
 pubDate: 2023-01-30
 tags: ["python", "pandas", "data analysis", "programming", "data science", "tutorial"]
-featured: True
+featured: true
 ---
 
 # A Beginner's Guide to Pandas for Data Manipulation

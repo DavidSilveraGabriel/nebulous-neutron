@@ -7,7 +7,7 @@ image:
     url: "/imgs/sssd.png"
     alt: "Abstract image of interconnected circuits representing the complexity of AI"
 tags: ["artificial intelligence", "ai agents", "machine learning", "deep learning", "automation", "future technology", "ai tools", "ai opportunities"]
-featured: True
+featured: true
 ---
 
 # Unleashing the Power of AI: Intelligent Agents Transforming the World

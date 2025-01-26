@@ -7,7 +7,7 @@ image:
     alt: "Abstract representation of artificial intelligence, which looks suspiciously like a brain…or a giant, sentient bowl of spaghetti."
 pubDate: 2024-12-18
 tags: ["artificial intelligence", "technology", "future", "AGI", "ethics", "machine learning", "AI revolution", "technological advancement", "robot overlords", "existential dread", "sentient toasters"]
-featured: True
+featured: true
 ---
 
 

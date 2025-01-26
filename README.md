@@ -61,6 +61,44 @@ npm run dev
 
 4. Construir para producción:
 
+### embedding creations for supabase
+```SQL 
+
+-- Habilitar extensión pgvector
+create extension if not exists vector;
+
+-- Tabla principal de embeddings
+create table content_embeddings (
+  id uuid primary key default gen_random_uuid(),
+  file_path text not null unique,
+  content text not null,
+  embeddings vector(768) not null,
+  metadata jsonb,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Índice para búsqueda por similitud
+create index content_embeddings_embedding_idx
+  on content_embeddings
+  using ivfflat (embeddings vector_cosine_ops)
+  with (lists = 100);
+
+-- Trigger para actualizar automáticamente updated_at
+create or replace function update_modified_column()
+returns trigger as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$ language plpgsql;
+
+create trigger update_content_embeddings_modtime
+before update on content_embeddings
+for each row
+execute procedure update_modified_column();
+``` 
+
 
 ## 💼 Servicios Ofrecidos
 

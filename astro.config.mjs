@@ -1,6 +1,7 @@
 // @ts-check 
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
+import nodejs from '@astrojs/node';
 
 import preact from "@astrojs/preact";
 import react from '@astrojs/react';
@@ -60,9 +61,15 @@ export default defineConfig({
   //  },})
   vite: {
     define: {
-      'import.meta.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
-      'import.meta.env.SUPABASE_KEY': JSON.stringify(process.env.SUPABASE_KEY)
+      'process.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
+      'process.env.SUPABASE_KEY': JSON.stringify(process.env.SUPABASE_KEY),
+      'process.env.GEMINI_API_KEY': JSON.stringify(process.env.GEMINI_API_KEY)
     }
-  }
+  },
+  output: 'server',
+  adapter: nodejs({
+    mode: 'standalone'
+  }),
+  
   
 });

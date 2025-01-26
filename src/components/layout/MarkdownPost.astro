@@ -7,7 +7,7 @@ import ReadingProgress from '../ui/ReadingProgress.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate,image, } = Astro.props;
+const { title, description, pubDate, image } = Astro.props;
 ---
 
 <Base title={title} description={description}>
@@ -24,7 +24,7 @@ const { title, description, pubDate,image, } = Astro.props;
 
       <!-- Article -->
       <article class="mx-auto">
-            {image && (
+        {image && (
           <div class="mb-8 not-prose">
             <img 
               src={image.url} 
@@ -39,7 +39,6 @@ const { title, description, pubDate,image, } = Astro.props;
         <header class="mb-8">
           <div class="flex items-center gap-2 text-black dark:text-gray-100 mb-4">
             <FormattedDate date={pubDate} />
-          
           </div>
           <h1 class="text-4xl font-bold mb-4">{title}</h1>
           {description && (
