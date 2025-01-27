@@ -6,7 +6,7 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
   <!-- Botón toggle -->
   <button
     id="chatbot-toggle"
-    class="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-xl cursor-pointer transition-all duration-300 hover:scale-110 flex items-center justify-center"
+    class="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-xl cursor-pointer transition-all duration-300 hover:scale-110 flex items-center justify-center z-[999]"
     aria-label="Abrir chat"
   >
     <svg class="w-6 h-6 text-white transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -16,9 +16,9 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
 
   <!-- Contenedor del Chat -->
   <div
-    id="chatbot-container"
-    class="fixed bottom-20 right-4 w-[95vw] md:w-96 h-[70vh] bg-gray-900 backdrop-blur-lg bg-opacity-95 text-white rounded-xl shadow-2xl opacity-0 translate-y-4 scale-95 origin-bottom-right transition-all duration-300 border border-white/10 pointer-events-none"
-  >
+        id="chatbot-container"
+        class="fixed bottom-20 right-4 w-[95vw] md:w-96 h-[70vh] bg-gray-900 backdrop-blur-lg bg-opacity-95 text-white rounded-xl shadow-2xl opacity-0 translate-y-4 scale-95 origin-bottom-right transition-all duration-300 border border-white/10 invisible"
+      >
     <div class="flex flex-col h-full pointer-events-auto">
       <!-- Header -->
       <div class="bg-gradient-to-r from-blue-600/30 to-purple-600/30 p-4 rounded-t-xl flex justify-between items-center">
@@ -183,10 +183,13 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
   const ui = {
     toggleChat: () => {
       chatState.isOpen = !chatState.isOpen;
+      localStorage.setItem('chatIsOpen', JSON.stringify(chatState.isOpen));
+
       if (elements.container) {
         elements.container.classList.toggle('opacity-0', !chatState.isOpen);
         elements.container.classList.toggle('translate-y-4', !chatState.isOpen);
         elements.container.classList.toggle('scale-95', !chatState.isOpen);
+        elements.container.classList.toggle('invisible', !chatState.isOpen); // Añadimos toggle de visibilidad
         elements.container.style.pointerEvents = chatState.isOpen ? 'auto' : 'none';
       }
       if (elements.toggleButton) {
@@ -196,6 +199,7 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
         elements.messagesContainer.scrollTop = elements.messagesContainer.scrollHeight;
       }
     },
+      
 
     addMessage: (role: string, content: string, sources: string[] = []) => {
       if (!elements.messagesContainer) return;
@@ -308,6 +312,21 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
   };
 
   const init = () => {
+    const savedState = localStorage.getItem('chatIsOpen');
+    if (savedState) {
+      chatState.isOpen = JSON.parse(savedState);
+    }
+    
+    if (elements.container) {
+      elements.container.classList.toggle('opacity-0', !chatState.isOpen);
+      elements.container.classList.toggle('translate-y-4', !chatState.isOpen);
+      elements.container.classList.toggle('scale-95', !chatState.isOpen);
+      elements.container.classList.toggle('invisible', !chatState.isOpen); // Añadimos estado inicial de visibilidad
+      elements.container.style.pointerEvents = chatState.isOpen ? 'auto' : 'none';
+    }
+    if (elements.toggleButton) {
+    elements.toggleButton.classList.toggle('rotate-45', chatState.isOpen);
+    }
     elements.toggleButton?.addEventListener('click', ui.toggleChat);
     elements.closeButton?.addEventListener('click', ui.toggleChat);
     

@@ -50,6 +50,11 @@
      scroll-behavior: smooth;
    }
    
+  :target {
+    padding-top: 200px; /* Ajusta este valor a la altura de tu header */
+    margin-top: -123px;  /* Ajusta este valor a la altura de tu header */
+  }  
+   
    body {
      margin: 0;
      width: 100%;

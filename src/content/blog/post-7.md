@@ -7,7 +7,6 @@ image:
     url: '/imgs/sss.png'
     alt: 'A minimalist, slightly abstract image representing the passage of time and the interconnectedness of technology'
 tags: ["artificial intelligence", "technology", "reflection", "year in review", "future", "ethics", "2024", "2025","technological advancement", "AI progress"]
-
 featured: false
 ---
 

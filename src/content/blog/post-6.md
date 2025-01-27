@@ -7,7 +7,6 @@ image:
     url: 'https://numpy.org/images/numpy-image.jpg'
     alt: 'NumPy logo with array visualization and code snippets'
 tags: ["python", "numpy", "numerical computing", "data science", "arrays", "broadcasting", "linear algebra"]
-
 featured: true
 ---
 

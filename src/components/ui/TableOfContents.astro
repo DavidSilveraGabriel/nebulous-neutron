@@ -7,7 +7,7 @@
 
 <script>
 /**
- * Genera una tabla de contenidos dinámica para encabezados H2 y H3 en un artículo.
+ * Genera una tabla de contenidos dinámica para encabezados H1, H2 y H3 en un artículo.
  * 
  * Características:
  * - Genera enlaces para cada encabezado
@@ -17,8 +17,8 @@
  * - Compatibilidad con Astro
  */
  function buildTableOfContents() {
-  // Selecciona todos los encabezados H2 y H3 dentro del elemento 'article'
-  const headings = document.querySelectorAll('article h2, article h3');
+  // Selecciona todos los encabezados H1, H2 y H3 dentro del elemento 'article'
+  const headings = document.querySelectorAll('article h1, article h2, article h3');
   
   // Obtiene el contenedor de la tabla de contenidos
   const tocContainer = document.getElementById('table-of-contents');
@@ -29,6 +29,10 @@
   // Limpiar contenido previo
   tocContainer.innerHTML = '';
   
+    // Obtener la altura del header
+    const header = document.querySelector('header');
+    const headerHeight = header ? header.offsetHeight : 70; // Altura por defecto
+
   // Generar enlaces para cada encabezado
   headings.forEach((heading) => {
     // Crear un enlace para cada encabezado
@@ -49,11 +53,16 @@
       dark:text-gray-400 
       hover:text-primary-600 
       dark:hover:text-primary-400 
-      ${level === 'h3' ? 'pl-4' : ''}
+      ${level === 'h3' ? 'pl-4' : level === 'h2' ? 'pl-2' : ''}
     `;
     
     tocContainer.appendChild(link);
+    
+    // Type assertion to HTMLElement
+    (heading as HTMLElement).style.paddingTop = `${headerHeight}px`;
+    (heading as HTMLElement).style.marginTop = `-${headerHeight}px`;
   });
+
 
   // Configurar observador de intersección para resaltar el encabezado activo
   const observer = new IntersectionObserver(

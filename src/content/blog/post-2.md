@@ -10,7 +10,7 @@ tags: ["astro", "blogging", "learning in public", "successes"]
 featured: true
 ---
 
-# Introduction
+## Introduction
 
 Markdown is a popular lightweight markup language that has become the standard for writing content on the web. Whether you're creating a blog post, a document, or a readme file, markdown provides a simple and efficient way to format your text. Its plain text syntax makes it easy to read and write, and it eliminates the need for complex and time-consuming formatting in a word processor.
 
