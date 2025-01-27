@@ -1,15 +1,15 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import BlogPost from '../../components/layout/MarkdownPost.astro';
-import { getEntryBySlug } from 'astro:content';
+
 export const prerender = true;
+
 // Obtener los posts de la colección 'blog'
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: { post },
-    prerender: true // 👈 ¡Clave para resolver el error!
   }));
 }
 
