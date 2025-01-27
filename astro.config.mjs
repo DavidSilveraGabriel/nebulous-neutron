@@ -7,7 +7,7 @@ import preact from "@astrojs/preact";
 import react from '@astrojs/react';
 import icon from "astro-icon";
 
-import vercel from "@astrojs/vercel/serverless";
+import vercel from "@astrojs/vercel";
 
 
 import mdx from '@astrojs/mdx';

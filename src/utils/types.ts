@@ -7,6 +7,11 @@ export interface LogEntry {
   sources: string[];
   error?: string;
   metadata?: Record<string, unknown>;
+  use_rag?: boolean;
+  context_count?: number;
+  processed_time?: number;
+  max_similarity?: number;
+
 }
 
 export interface ChatMessage {
@@ -24,4 +29,21 @@ export interface APIResponse {
   response: string;
   sources: string[];
   error?: string;
+}
+
+export interface DebugLog {
+  timestamp: string;
+  stage: 'decision' | 'embedding' | 'search' | 'generation';
+  data: any;
+  metadata?: {
+    queryHash?: string;
+    contextHash?: string;
+  };
+}
+
+export interface ErrorLog {
+  code: string;
+  context: any;
+  stack?: string;
+  severity: 'low' | 'medium' | 'critical';
 }
