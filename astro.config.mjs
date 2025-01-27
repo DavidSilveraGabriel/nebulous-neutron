@@ -56,9 +56,9 @@ export default defineConfig({
      mdx()
   ],
   //  output: "server",
-  //  adapter: vercel({webAnalytics: {
-  //    enabled: true,
-  //  },})
+    adapter: vercel({webAnalytics: {
+      enabled: true,
+    },}),
   vite: {
     define: {
       'process.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
@@ -67,9 +67,5 @@ export default defineConfig({
     }
   },
   output: 'server',
-  adapter: nodejs({
-    mode: 'standalone'
-  }),
-  
   
 });
