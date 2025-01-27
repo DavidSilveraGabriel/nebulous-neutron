@@ -204,9 +204,12 @@ function stopAutoPlay() {
   });
 
   // Iniciar el carrusel
-  updateSlide(0);
-  startAutoPlay();
-
+    updateSlide(0);
+    startAutoPlay();
+    document.addEventListener('astro:page-load', () => {
+    updateSlide(0);
+    startAutoPlay();
+  });
   // Pausar la reproducción automática cuando el usuario interactúa con el carrusel
   carrusel?.addEventListener('mouseenter', stopAutoPlay);
   carrusel?.addEventListener('mouseleave', startAutoPlay);

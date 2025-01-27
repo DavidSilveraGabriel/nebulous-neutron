@@ -312,6 +312,12 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
   };
 
   const init = () => {
+    if (elements.container) {
+    elements.container.classList.remove('opacity-0', 'translate-y-4', 'scale-95');
+  }
+    // Limpiar listeners previos
+    elements.toggleButton?.removeEventListener('click', ui.toggleChat);
+    elements.closeButton?.removeEventListener('click', ui.toggleChat);
     const savedState = localStorage.getItem('chatIsOpen');
     if (savedState) {
       chatState.isOpen = JSON.parse(savedState);
@@ -379,6 +385,7 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
       chatState.history.forEach(msg => ui.addMessage(msg.role, msg.content, msg.sources));
     }
   };
+  document.addEventListener('astro:page-load', init);
 
   window.addEventListener('DOMContentLoaded', init);
 </script>
