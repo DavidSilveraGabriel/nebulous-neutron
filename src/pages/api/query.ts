@@ -43,13 +43,14 @@ export const POST: APIRoute = async ({ request }) => {
         console.log('[API] Iniciando obtención de embeddings');
         const embeddingStart = Date.now();
         const embedding = await getEmbedding(message);
+        console.log(`[API] Embeddings obtenidos: ${embedding}`);
         
         // Checkpoint: Validación de embeddings
         if (!embedding || embedding.length !== 768) {
           throw new Error(`Embedding inválido. Longitud: ${embedding?.length}`);
         }
         
-        console.log(`[API] Embeddings obtenidos (${Date.now() - embeddingStart}ms) - Muestra: [${embedding.slice(0, 3).join(', ')}...]`);
+        //console.log(`[API] Embeddings obtenidos (${Date.now() - embeddingStart}ms) - Muestra: [${embedding.slice(0, 3).join(', ')}...]`);
 
         // 4. Búsqueda semántica
         const searchStart = Date.now();
