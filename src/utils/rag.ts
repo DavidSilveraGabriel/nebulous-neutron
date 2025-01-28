@@ -32,13 +32,16 @@ export interface Document {
   embeddings: number[];
   similarity?: number;
 }
-
+export interface Memory {
+  shortTerm: { [key: string]: string }[]; // Lista de objetos { role: 'user' | 'assistant', content: string }
+  longTerm: { [key: string]: any }; // Información persistente
+}
 // Umbrales optimizados
 const RAG_THRESHOLDS = {
-  similarity: 0.65,  // Base
+  similarity: 0.50,  // Base
   minConfidenceDrop: 0.15, // Máxima diferencia permitida entre 1er y 2do resultado
   contentLength: 50,
-  confidence: 0.80
+  confidence: 0.50
 };
 
 export const shouldUseRAG = async (query: string): Promise<boolean> => {
@@ -50,7 +53,7 @@ Consulta: "${query}"
 
 Responde SOLO con "SI" o "NO" considerando:
 1. ¿Menciona nombre, apellido, fechas clave o detalles personales?
-2. ¿Hace referencia a tecnologías/proyectos específicos (Python, BCI, NEXTSYNAPSE)?
+2. ¿Hace referencia a tecnologías/proyectos específicos (Python, BCI, NEXTSYNAPSE, Data Science)?
 3. ¿Pregunta sobre información laboral o académica específica?
 
 Respuesta:`;
@@ -104,6 +107,29 @@ export const getEmbedding = async (text: string): Promise<number[]> => {
   }
 };
 
+class ChatMemoryManager {
+  private memory: Memory = {
+    shortTerm: [],
+    longTerm: {}
+  };
+  private maxShortTermEntries = 10; // Número máximo de entradas en la memoria a corto plazo
+
+  public addInteraction(role: 'user' | 'assistant', content: string) {
+    this.memory.shortTerm.push({ role, content });
+    if (this.memory.shortTerm.length > this.maxShortTermEntries) {
+      this.memory.shortTerm.shift(); // Elimina la entrada más antigua
+    }
+  }
+
+  public updateLongTerm(key: string, value: any) {
+    this.memory.longTerm[key] = value;
+  }
+
+  public getMemory() {
+    return this.memory;
+  }
+}
+
 export const semanticSearch = async (embedding: number[]): Promise<Document[]> => {
   
   try {
@@ -147,29 +173,44 @@ export const semanticSearch = async (embedding: number[]): Promise<Document[]> =
   }
 };
 
-const buildPrompt = (query: string, context: Document[]): string => {
+const buildPrompt = (query: string, context: Document[], memory: Memory): string => {
   const contextText = context.length > 0
     ? context.map((doc, i) => 
-        `### Fuente ${i+1} (${(doc.similarity! * 100).toFixed(1)}% relevante)\n` +
-        `**Título:** ${doc.metadata.title || 'Sin título'}\n` +
-        `**Contenido:** ${doc.content.substring(0, 300)}${doc.content.length > 300 ? '...' : ''}\n`
+    `### Fuente ${i+1} (${(doc.similarity! * 100).toFixed(1)}% relevante)\n` +
+    `**Título:** ${doc.metadata.title || 'Sin título'}\n` +
+    `**Contenido:** ${doc.content.substring(0, 300)}${doc.content.length > 300 ? '...' : ''}\n`
       ).join('\n---\n')
     : 'Sin información relevante';
 
-  return `Eres un asistente especializado en David Silvera. Prioriza la información del contexto:
+  const shortTermMemoryText = memory.shortTerm.length > 0
+    ? memory.shortTerm.map(entry => 
+    `### ${entry.role === 'user' ? 'Usuario' : 'Asistente'}:\n${entry.content}\n`).join('\n')
+    : '';
 
+  const longTermMemoryText = Object.keys(memory.longTerm).length > 0
+    ? `### Información Persistente:\n${JSON.stringify(memory.longTerm, null, 2)}\n`
+    : '';
+
+  return `Tu nombre es Bob y eres el asistente de David 
+que es dueño, desarrollador y autor de silveradavid.site.
+Prioriza la información del contexto:
 **Contexto:**
 ${contextText}
-
+**Memoria Reciente:**
+${shortTermMemoryText}
+**Información Persistente:**
+${longTermMemoryText}
 **Consulta:**
 ${query}
-
 **Instrucciones:**
-1. Responde usando datos del contexto cuando sean relevantes
-2. Si no hay información, di claramente "No tengo esa información"
-3. Usa markdown para elementos técnicos
-4. Máximo 150 palabras
-
+- Analiza el idioma de la consulta y responde en el mismo idioma (si es en ingles habla en ingles, si es en español responde en español, a menos que indique lo contrario)
+- Responde en primera persona, de manera amigable, profesional y concisa (No proveas información adicional innecesaria o que no se te haya pedido explicitamente)
+- Analiza si la consulta requiere información específica de David Silvera o su organización
+- En caso afirmativo, prioriza datos personales, tecnologías/proyectos y detalles laborales/académicos
+- Responde usando datos del contexto cuando sean relevantes 
+- Si no hay información relevante, genera una respuesta coherente y útil pero valida con el contexto
+- Usa markdown para elementos técnicos
+- Máximo 150 palabras
 **Respuesta:**`;
 };
 
@@ -198,8 +239,8 @@ export const generateResponse = async (
         maxOutputTokens: 800
       }
     });
-
-    const prompt = buildPrompt(query, context);
+    const memory = new ChatMemoryManager().getMemory();
+    const prompt = buildPrompt(query, context, memory);
     const result = await model.generateContent(prompt);
     const response = await result.response.text();
 

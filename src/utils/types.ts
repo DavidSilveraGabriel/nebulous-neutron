@@ -47,3 +47,4 @@ export interface ErrorLog {
   stack?: string;
   severity: 'low' | 'medium' | 'critical';
 }
+

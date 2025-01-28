@@ -341,6 +341,12 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
         elements.sendButton.disabled = !(e.target as HTMLInputElement).value.trim();
       }
     });
+    elements.input?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey && elements.sendButton && !elements.sendButton.disabled) {
+            e.preventDefault(); // Prevenir el salto de línea
+            elements.sendButton.dispatchEvent(new Event('click')); // Simular clic en el botón de envío
+        }
+    });
 
     elements.sendButton?.addEventListener('click', async () => {
       if (!elements.input || !elements.sendButton) return;

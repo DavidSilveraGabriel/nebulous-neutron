@@ -75,7 +75,7 @@ export const POST: APIRoute = async ({ request }) => {
     const result = await generateResponse(message, context, []);
     console.log(`[API] Respuesta generada (${Date.now() - generationStart}ms)`, {
       responseLength: result.response.length,
-      sources: result.sources
+      sources: result.sources || ["Data Base"]
     });
 
     // 6. Logging final
