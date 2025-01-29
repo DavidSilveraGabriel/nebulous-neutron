@@ -14,6 +14,7 @@ export const logQuery = async (entry: LogEntry) => {
       metadata: {
         user_agent: entry.metadata?.userAgent,
         ip: entry.metadata?.ip,
+        session_id : entry.metadata?.session_id,
         ...entry.metadata
       }
     });

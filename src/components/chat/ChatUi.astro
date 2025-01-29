@@ -265,30 +265,39 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
 
   const api = {
     sendQuery: async (query: string) => {
-      if (chatState.controller) chatState.controller.abort();
-      chatState.controller = new AbortController();
-
-      let retries = RETRY_CONFIG.maxRetries;
-      while (retries >= 0) {
-        try {
-          const response = await fetch(API_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: query }),
-            signal: chatState.controller.signal,
-          });
-
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          return await response.json();
-        } catch (error) {
-          if (retries === 0 || (error as Error).name === 'AbortError') throw error;
-          await new Promise(resolve => setTimeout(resolve, RETRY_CONFIG.baseDelay * (RETRY_CONFIG.maxRetries - retries + 1)));
-          retries--;
+        let sessionId = localStorage.getItem('chatSessionId');
+        if (!sessionId) {
+            sessionId = crypto.randomUUID();
+            localStorage.setItem('chatSessionId', sessionId);
         }
-      }
-      throw new Error('Max retries reached');
+
+        if (chatState.controller) chatState.controller.abort();
+        chatState.controller = new AbortController();
+
+        let retries = RETRY_CONFIG.maxRetries;
+        while (retries >= 0) {
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Session-ID': sessionId
+                    },
+                    body: JSON.stringify({ message: query })
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                if (retries === 0 || (error as Error).name === 'AbortError') throw error;
+                await new Promise(resolve => setTimeout(resolve, RETRY_CONFIG.baseDelay * (RETRY_CONFIG.maxRetries - retries + 1)));
+                retries--;
+            }
+        }
+        throw new Error('Max retries reached');
     }
   };
+
 
   const history = {
     load: () => {
@@ -341,6 +350,7 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
         elements.sendButton.disabled = !(e.target as HTMLInputElement).value.trim();
       }
     });
+    
     elements.input?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey && elements.sendButton && !elements.sendButton.disabled) {
             e.preventDefault(); // Prevenir el salto de línea
@@ -349,41 +359,45 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
     });
 
     elements.sendButton?.addEventListener('click', async () => {
-      if (!elements.input || !elements.sendButton) return;
-
-      const query = elements.input.value.trim();
-      if (!query) return;
-
-      elements.input.value = '';
-      elements.sendButton.disabled = true;
-
-      try {
-        ui.toggleLoading(true);
-        chatState.history.push({ role: 'user', content: query, sources: [], timestamp: Date.now() });
-        ui.addMessage('user', query);
-
-        ui.showTypingIndicator();
+        if (!elements.input || !elements.sendButton) return;
         
-        const { response, sources = [], error } = await api.sendQuery(query);
-        ui.removeTypingIndicator();
+        const query = elements.input.value.trim();
+        if (!query) return;
 
-        if (error) {
-          ui.addMessage('error', error);
-          chatState.history.push({ role: 'error', content: error, timestamp: Date.now() });
-        } else {
-          chatState.history.push({ role: 'assistant', content: response, sources, timestamp: Date.now() });
-          ui.addMessage('assistant', response, sources);
+        elements.sendButton.disabled = true;
+        elements.input.disabled = true;
+        
+         try {
+            ui.toggleLoading(true);
+            chatState.history.push({ role: 'user', content: query, sources: [], timestamp: Date.now() });
+            ui.addMessage('user', query);
+
+            ui.showTypingIndicator();
+            elements.input.value = '';
+             
+            const { response, sources = [], error } = await api.sendQuery(query);
+            
+            ui.removeTypingIndicator();
+            
+            if (error) {
+                ui.addMessage('error', error);
+                chatState.history.push({ role: 'error', content: error, timestamp: Date.now() });
+            } else {
+                chatState.history.push({ role: 'assistant', content: response, sources, timestamp: Date.now() });
+                ui.addMessage('assistant', response, sources);
+            }
+
+            history.save();
+         } catch (error) {
+             const errorMessage = error instanceof Error ? error.message : 'Error de conexión';
+            ui.addMessage('error', errorMessage);
+            utils.log('error', 'Chat error', error);
+        } finally {
+            ui.toggleLoading(false);
+            elements.sendButton.disabled = false;
+            elements.input.disabled = false;
         }
-
-        history.save();
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Error de conexión';
-        ui.addMessage('error', errorMessage);
-        utils.log('error', 'Chat error', error);
-      } finally {
-        ui.toggleLoading(false);
-      }
-    });
+      });
 
     // Cargar historial
     if (elements.messagesContainer) {

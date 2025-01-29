@@ -11,6 +11,7 @@ export interface LogEntry {
   context_count?: number;
   processed_time?: number;
   max_similarity?: number;
+  session_id?:string; // Added session_id
 
 }
 

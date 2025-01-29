@@ -8,7 +8,8 @@ export const POST: APIRoute = async ({ request }) => {
   const startTime = Date.now();
   let context: Document[] = [];
   let useRAGDecision = false;
-  
+  // Obtener sessionId de los headers
+  const sessionId = request.headers.get('X-Session-ID') || 'default-session';
   try {
     // 1. Validación inicial
     console.log('[API] Iniciando procesamiento de consulta');
@@ -72,15 +73,19 @@ export const POST: APIRoute = async ({ request }) => {
 
     // 5. Generación de respuesta
     const generationStart = Date.now();
-    const result = await generateResponse(message, context, []);
+    
+    const result = await generateResponse(message, context, sessionId); // Cambiar el tercer parámetro
     console.log(`[API] Respuesta generada (${Date.now() - generationStart}ms)`, {
       responseLength: result.response.length,
       sources: result.sources || ["Data Base"]
     });
+    console.log('[API] Sesión ID:', sessionId);
 
     // 6. Logging final
+    // En el logging final:
     await logQuery({
       ...result,
+      session_id: sessionId, // Agregar sessionId al log
       use_rag: useRAGDecision,
       context_count: context.length,
       processed_time: Date.now() - startTime

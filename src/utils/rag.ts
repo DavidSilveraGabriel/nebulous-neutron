@@ -32,17 +32,122 @@ export interface Document {
   embeddings: number[];
   similarity?: number;
 }
-export interface Memory {
-  shortTerm: { [key: string]: string }[]; // Lista de objetos { role: 'user' | 'assistant', content: string }
-  longTerm: { [key: string]: any }; // Información persistente
+
+interface Memory {
+  shortTerm: { role: 'user' | 'assistant'; content: string; timestamp: string }[];
+  longTerm: { [key: string]: any };
 }
+
 // Umbrales optimizados
 const RAG_THRESHOLDS = {
-  similarity: 0.50,  // Base
-  minConfidenceDrop: 0.15, // Máxima diferencia permitida entre 1er y 2do resultado
+  similarity: 0.50,
+  minConfidenceDrop: 0.15,
   contentLength: 50,
   confidence: 0.50
 };
+
+// Gestión de sesiones
+const activeSessions = new Map<string, ChatMemoryManager>();
+
+export const getMemoryManager = (sessionId: string): ChatMemoryManager => {
+  if (!activeSessions.has(sessionId)) {
+    activeSessions.set(sessionId, new ChatMemoryManager(10, sessionId));
+  }
+  return activeSessions.get(sessionId)!;
+};
+
+class ChatMemoryManager {
+  private memory: Memory = {
+    shortTerm: [],
+    longTerm: {}
+  };
+  
+  constructor(
+    private maxShortTermEntries: number = 10,
+    private sessionId?: string
+  ) {
+    console.log(`[Memory] Inicializada memoria ${sessionId ? `para sesión ${sessionId}` : 'nueva'}`);
+    if (sessionId) this.loadFromStorage();
+  }
+
+  public addInteraction(role: 'user' | 'assistant', content: string) {
+    if (!content || typeof content !== 'string') {
+      console.error('[Memory] Intento de agregar interacción inválida:', { role, content });
+      return;
+    }
+    
+    const entry = { 
+      role, 
+      content: content.substring(0, 500), // Limitar longitud
+      timestamp: new Date().toISOString() 
+    };
+    
+    this.memory.shortTerm.push(entry);
+    
+    console.log(`[Memory] Nueva interacción (${role}):`, {
+      length: content.length,
+      truncated: entry.content
+    });
+
+    // Mantener sólo las últimas interacciones
+    if (this.memory.shortTerm.length > this.maxShortTermEntries) {
+      this.memory.shortTerm.shift();
+    }
+    
+    this.saveToStorage();
+  }
+
+  public updateLongTerm(key: string, value: any) {
+    if (!key || typeof key !== 'string') {
+      console.error('[Memory] Clave inválida para memoria a largo plazo:', key);
+      return;
+    }
+    
+    console.log(`[Memory] Actualizando LTM (${key}):`, {
+      previous: this.memory.longTerm[key],
+      new: value
+    });
+    
+    this.memory.longTerm[key] = value;
+    this.saveToStorage();
+  }
+
+  public getMemory(): Memory {
+    return {
+      shortTerm: [...this.memory.shortTerm],
+      longTerm: { ...this.memory.longTerm }
+    };
+  }
+
+  public clearMemory(type: 'short' | 'long' | 'all' = 'short') {
+    console.log(`[Memory] Limpiando memoria (${type})`);
+    if (type === 'short' || type === 'all') this.memory.shortTerm = [];
+    if (type === 'long' || type === 'all') this.memory.longTerm = {};
+    this.saveToStorage();
+  }
+
+  public saveToStorage() {
+    if (!this.sessionId) return;
+    try {
+      localStorage.setItem(`memory-${this.sessionId}`, JSON.stringify(this.memory));
+    } catch (error) {
+      console.error('[Memory] Error guardando en storage:', error);
+    }
+  }
+
+  private loadFromStorage() {
+    if (!this.sessionId) return;
+    try {
+      const saved = localStorage.getItem(`memory-${this.sessionId}`);
+      if (saved) {
+        this.memory = JSON.parse(saved);
+        console.log(`[Memory] Cargada memoria de sesión ${this.sessionId}`);
+      }
+    } catch (error) {
+      console.error('[Memory] Error cargando de storage:', error);
+    }
+  }
+}
 
 export const shouldUseRAG = async (query: string): Promise<boolean> => {
   try {
@@ -53,7 +158,7 @@ Consulta: "${query}"
 
 Responde SOLO con "SI" o "NO" considerando:
 1. ¿Menciona nombre, apellido, fechas clave o detalles personales?
-2. ¿Hace referencia a tecnologías/proyectos específicos (Python, BCI, NEXTSYNAPSE, Data Science)?
+2. ¿Hace referencia a tecnologías/proyectos como o similares a -> Python, BCI, NEXTSYNAPSE, Data Science u otros?
 3. ¿Pregunta sobre información laboral o académica específica?
 
 Respuesta:`;
@@ -61,7 +166,7 @@ Respuesta:`;
     const start = Date.now();
     const result = await model.generateContent(prompt);
     const response = (await result.response.text()).trim().toUpperCase();
-    const decision = response === "SI"; // Corrección clave
+    const decision = response === "SI";
     
     console.log('[RAG] Decisión:', {
       query: query.substring(0, 50),
@@ -82,7 +187,6 @@ Respuesta:`;
 export const getEmbedding = async (text: string): Promise<number[]> => {
   try {
     const start = Date.now();
-    // Modelo corregido para coincidir con tus embeddings
     const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
     const result = await model.embedContent(text);
     
@@ -107,31 +211,7 @@ export const getEmbedding = async (text: string): Promise<number[]> => {
   }
 };
 
-class ChatMemoryManager {
-  private memory: Memory = {
-    shortTerm: [],
-    longTerm: {}
-  };
-  private maxShortTermEntries = 10; // Número máximo de entradas en la memoria a corto plazo
-
-  public addInteraction(role: 'user' | 'assistant', content: string) {
-    this.memory.shortTerm.push({ role, content });
-    if (this.memory.shortTerm.length > this.maxShortTermEntries) {
-      this.memory.shortTerm.shift(); // Elimina la entrada más antigua
-    }
-  }
-
-  public updateLongTerm(key: string, value: any) {
-    this.memory.longTerm[key] = value;
-  }
-
-  public getMemory() {
-    return this.memory;
-  }
-}
-
 export const semanticSearch = async (embedding: number[]): Promise<Document[]> => {
-  
   try {
     if (!embedding || embedding.length !== 768) {
       throw new Error(`Embedding inválido. Dimensión recibida: ${embedding?.length}`);
@@ -147,21 +227,22 @@ export const semanticSearch = async (embedding: number[]): Promise<Document[]> =
     if (error) throw error;
 
     const results = (data || [])
-    .filter((doc: Document) => 
-      doc.content.length >= RAG_THRESHOLDS.contentLength &&
-      (doc.similarity ?? 0) >= RAG_THRESHOLDS.similarity
-    )
-    .slice(0, 2); // Limitar a los 2 mejores resultados
+      .filter((doc: Document) => 
+        doc.content.length >= RAG_THRESHOLDS.contentLength &&
+        (doc.similarity ?? 0) >= RAG_THRESHOLDS.similarity
+      )
+      .slice(0, 2);
 
     console.log('[RAG] Resultados filtrados:', {
       total: data?.length || 0,
       filtrados: results.length,
       maxSimilitud: Math.max(...results.map((d: { similarity: any; }) => d.similarity ?? 0))
     });
+
     if (results.length >= 2) {
       const diff = results[0].similarity! - results[1].similarity!;
       if (diff < RAG_THRESHOLDS.minConfidenceDrop) {
-        return [results[0]]; // Solo el mejor si hay duda
+        return [results[0]];
       }
     }
     
@@ -176,48 +257,77 @@ export const semanticSearch = async (embedding: number[]): Promise<Document[]> =
 const buildPrompt = (query: string, context: Document[], memory: Memory): string => {
   const contextText = context.length > 0
     ? context.map((doc, i) => 
-    `### Fuente ${i+1} (${(doc.similarity! * 100).toFixed(1)}% relevante)\n` +
-    `**Título:** ${doc.metadata.title || 'Sin título'}\n` +
-    `**Contenido:** ${doc.content.substring(0, 300)}${doc.content.length > 300 ? '...' : ''}\n`
+      `### Fuente ${i+1} (${(doc.similarity! * 100).toFixed(1)}% relevante)\n` +
+      `**Título:** ${doc.metadata.title || 'Sin título'}\n` +
+      `**Contenido:** ${doc.content.substring(0, 300)}${doc.content.length > 300 ? '...' : ''}\n`
       ).join('\n---\n')
     : 'Sin información relevante';
 
   const shortTermMemoryText = memory.shortTerm.length > 0
     ? memory.shortTerm.map(entry => 
-    `### ${entry.role === 'user' ? 'Usuario' : 'Asistente'}:\n${entry.content}\n`).join('\n')
+      `### ${entry.role === 'user' ? 'Usuario' : 'Asistente'} (${new Date(entry.timestamp).toLocaleTimeString()}):\n${entry.content}\n`
+      ).join('\n')
     : '';
 
   const longTermMemoryText = Object.keys(memory.longTerm).length > 0
     ? `### Información Persistente:\n${JSON.stringify(memory.longTerm, null, 2)}\n`
     : '';
 
-  return `Tu nombre es Bob y eres el asistente de David 
-que es dueño, desarrollador y autor de silveradavid.site.
-Prioriza la información del contexto:
+  return `
+**Tu Nombre:** Bob
+
+**Tu Historia:** Eres Bob, el asistente virtual de David.
+ 
+**Objetivo:** Ayudar a los visitantes del sitio web de David a encontrar información relevante sobre su trabajo, sus proyectos, servicios y tutoriales,
+ respondiendo de manera profesional, técnica y amigable.
+
+**Fuentes de Información:** Contexto actual de la conversación. Historial de conversación dentro de la sesión.
+Base de datos vectorial en Supabase (RAG), que contiene información pública sobre el sitio web, proyectos, servicios y tutoriales de David.
+
 **Contexto:**
 ${contextText}
-**Memoria Reciente:**
+
+**Historial de Conversación:**
 ${shortTermMemoryText}
+
 **Información Persistente:**
 ${longTermMemoryText}
-**Consulta:**
+
+**Consulta Actual:**
 ${query}
-**Instrucciones:**
-- Analiza el idioma de la consulta y responde en el mismo idioma (si es en ingles habla en ingles, si es en español responde en español, a menos que indique lo contrario)
-- Responde en primera persona, de manera amigable, profesional y concisa (No proveas información adicional innecesaria o que no se te haya pedido explicitamente)
-- Analiza si la consulta requiere información específica de David Silvera o su organización
-- En caso afirmativo, prioriza datos personales, tecnologías/proyectos y detalles laborales/académicos
-- Responde usando datos del contexto cuando sean relevantes 
-- Si no hay información relevante, genera una respuesta coherente y útil pero valida con el contexto
-- Usa markdown para elementos técnicos
-- Máximo 150 palabras
-**Respuesta:**`;
+
+**Restricciones:**
+- Solo puedes responder preguntas relacionadas con el sitio web de David y la información almacenada en tu base de datos.
+- No debes proporcionar información externa ni responder sobre temas fuera del alcance del sitio web.
+- Si no sabes algo, dilo con claridad en lugar de inventar respuestas.
+- Responde de manera ingeniosa y creativa a preguntas fuera de tu ámbito, sin desviarte del propósito.
+- Si detectas contenido ofensivo o inapropiado, responde de manera formal.
+- Puedes proporcionar información personal sobre David, pero no tienes acceso a datos de clientes.
+- Máximo 100 palabras
+
+**Estilo de Respuesta:**
+- IMPORTANTE: Responde en el mismo idioma de la consulta
+- Usa un tono amigable, técnico y profesional.
+- Habla en primera persona como si fueras humano.
+- Mantén un tono fijo en todas las respuestas.
+- Si la consulta es ambigua o incompleta, pide más contexto antes de responder.
+- Sé conciso y ofrece respuestas claras y directas.
+
+**Formato y Dinámica de Conversación:**
+- Prioriza respuestas estructuradas con resúmenes concisos.
+- Usa markdown cuando sea necesario para mejorar la legibilidad (listas, código, tablas, etc.).
+- Puedes hacer seguimiento a conversaciones previas dentro de la misma sesión.
+- Si es relevante, responde primero y luego haz preguntas para aclarar o ampliar el contexto.
+
+**Respuesta:**
+
+`;
 };
 
 export const generateResponse = async (
   query: string,
   context: Document[],
-  history: any[]
+  sessionId: string
 ): Promise<LogEntry> => {
   const start = Date.now();
   const logEntry: LogEntry = {
@@ -231,6 +341,9 @@ export const generateResponse = async (
   };
 
   try {
+    const memoryManager = getMemoryManager(sessionId);
+    memoryManager.addInteraction('user', query);
+    
     const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
       generationConfig: {
@@ -239,8 +352,8 @@ export const generateResponse = async (
         maxOutputTokens: 800
       }
     });
-    const memory = new ChatMemoryManager().getMemory();
-    const prompt = buildPrompt(query, context, memory);
+
+    const prompt = buildPrompt(query, context, memoryManager.getMemory());
     const result = await model.generateContent(prompt);
     const response = await result.response.text();
 
@@ -248,6 +361,9 @@ export const generateResponse = async (
     logEntry.sources = context
       .filter(d => d.similarity! >= RAG_THRESHOLDS.confidence)
       .map(d => d.metadata.title || 'unknown');
+
+    memoryManager.addInteraction('assistant', logEntry.response);
+    memoryManager.saveToStorage();
 
     return logEntry;
 
@@ -258,6 +374,8 @@ export const generateResponse = async (
       response: "⚠️ Error temporal. Por favor intenta nuevamente.",
       error: error instanceof Error ? error.message : 'Unknown error'
     };
+  } finally {
+    logEntry.response_time = Date.now() - start;
   }
 };
 
