@@ -1,6 +1,11 @@
+// src/utils/rag.ts
+
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { type LogEntry } from './types.ts';
+import { type StorageProvider, getStorageProvider } from './storage.ts';
+import { z } from 'zod';
+import { createHash } from 'node:crypto';
 
 // Configuración de entorno
 const supabaseUrl = import.meta.env.SUPABASE_URL;
@@ -25,6 +30,12 @@ interface Metadata {
   [key: string]: any;
 }
 
+interface LongTermMemory {
+  userPreferences?: Record<string, any>;
+  conversationSummary?: string;
+  technicalContext?: Record<string, any>;
+}
+
 export interface Document {
   id: string;
   content: string;
@@ -33,23 +44,60 @@ export interface Document {
   similarity?: number;
 }
 
+// Esquemas de validación
+const LongTermMemorySchema = z.object({
+  userPreferences: z.record(z.any()).optional(),
+  conversationSummary: z.string().optional(),
+  technicalContext: z.record(z.any()).optional()
+});
+
+const MemorySchema = z.object({
+  version: z.number().default(1.1),
+  shortTerm: z.array(z.object({
+    role: z.enum(['user', 'assistant']),
+    content: z.string(),
+    timestamp: z.string()
+  })),
+  longTerm: LongTermMemorySchema
+});
+
 interface Memory {
-  shortTerm: { role: 'user' | 'assistant'; content: string; timestamp: string }[];
-  longTerm: { [key: string]: any };
+  version: number;
+  shortTerm: Array<{ role: 'user' | 'assistant'; content: string; timestamp: string }>;
+  longTerm: LongTermMemory;
 }
 
 // Umbrales optimizados
 const RAG_THRESHOLDS = {
   similarity: 0.50,
   minConfidenceDrop: 0.15,
-  contentLength: 50,
+  contentLength: 150,
   confidence: 0.50
 };
 
 // Gestión de sesiones
 const activeSessions = new Map<string, ChatMemoryManager>();
+let cleanupScheduled = false;
+
+const scheduleSessionCleanup = () => {
+  setInterval(() => {
+    const now = Date.now();
+    activeSessions.forEach((manager, sessionId) => {
+      if (now - manager.getLastAccessed() > 30 * 60 * 1000) {
+        manager.clearMemory('all');
+        activeSessions.delete(sessionId);
+        console.log(`[Memory] Sesión ${sessionId} eliminada por inactividad`);
+      }
+    });
+  }, 5 * 60 * 1000);
+};
 
 export const getMemoryManager = (sessionId: string): ChatMemoryManager => {
+  if (!cleanupScheduled) {
+    scheduleSessionCleanup();
+    cleanupScheduled = true;
+  }
+  
   if (!activeSessions.has(sessionId)) {
     activeSessions.set(sessionId, new ChatMemoryManager(10, sessionId));
   }
@@ -58,16 +106,33 @@ export const getMemoryManager = (sessionId: string): ChatMemoryManager => {
 
 class ChatMemoryManager {
   private memory: Memory = {
+    version: 1.1,
     shortTerm: [],
     longTerm: {}
   };
   
+  private storage: StorageProvider;
+  private lastAccessed: number = Date.now();
+
   constructor(
     private maxShortTermEntries: number = 10,
-    private sessionId?: string
+    private sessionId?: string,
   ) {
+    this.storage = getStorageProvider();
     console.log(`[Memory] Inicializada memoria ${sessionId ? `para sesión ${sessionId}` : 'nueva'}`);
-    if (sessionId) this.loadFromStorage();
+    
+    if (sessionId) {
+      try {
+        this.loadFromStorage();
+      } catch (error) {
+        console.error('[Memory] Error inicializando memoria:', error);
+        this.clearMemory('all');
+      }
+    }
+  }
+
+  public getLastAccessed(): number {
+    return this.lastAccessed;
   }
 
   public addInteraction(role: 'user' | 'assistant', content: string) {
@@ -78,42 +143,37 @@ class ChatMemoryManager {
     
     const entry = { 
       role, 
-      content: content.substring(0, 500), // Limitar longitud
+      content: content.substring(0, 500),
       timestamp: new Date().toISOString() 
     };
     
     this.memory.shortTerm.push(entry);
-    
-    console.log(`[Memory] Nueva interacción (${role}):`, {
-      length: content.length,
-      truncated: entry.content
-    });
+    this.lastAccessed = Date.now();
 
     // Mantener sólo las últimas interacciones
-    if (this.memory.shortTerm.length > this.maxShortTermEntries) {
+    while (this.memory.shortTerm.length > this.maxShortTermEntries) {
       this.memory.shortTerm.shift();
     }
     
     this.saveToStorage();
+    this.logAction('addInteraction', { role, content: entry.content });
   }
 
-  public updateLongTerm(key: string, value: any) {
+  public updateLongTerm(key: keyof LongTermMemory, value: any) {
     if (!key || typeof key !== 'string') {
       console.error('[Memory] Clave inválida para memoria a largo plazo:', key);
       return;
     }
     
-    console.log(`[Memory] Actualizando LTM (${key}):`, {
-      previous: this.memory.longTerm[key],
-      new: value
-    });
-    
     this.memory.longTerm[key] = value;
+    this.lastAccessed = Date.now();
     this.saveToStorage();
+    this.logAction('updateLongTerm', { key, value });
   }
 
   public getMemory(): Memory {
     return {
+      version: this.memory.version,
       shortTerm: [...this.memory.shortTerm],
       longTerm: { ...this.memory.longTerm }
     };
@@ -121,31 +181,72 @@ class ChatMemoryManager {
 
   public clearMemory(type: 'short' | 'long' | 'all' = 'short') {
     console.log(`[Memory] Limpiando memoria (${type})`);
-    if (type === 'short' || type === 'all') this.memory.shortTerm = [];
-    if (type === 'long' || type === 'all') this.memory.longTerm = {};
+    
+    if (type === 'short' || type === 'all') {
+      this.memory.shortTerm = [];
+    }
+    
+    if (type === 'long' || type === 'all') {
+      this.memory.longTerm = {};
+    }
+    
     this.saveToStorage();
+    this.logAction('clearMemory', { type });
   }
 
-  public saveToStorage() {
+  private logAction(action: string, details: object = {}) {
+    console.debug(`[Memory][${this.sessionId}] ${action}`, {
+      timestamp: new Date().toISOString(),
+      ...details
+    });
+  }
+
+  private saveToStorage() {
     if (!this.sessionId) return;
+    
     try {
-      localStorage.setItem(`memory-${this.sessionId}`, JSON.stringify(this.memory));
+      const data = JSON.stringify(this.memory);
+      this.storage.setItem(`memory-${this.sessionId}`, data);
+      this.storage.setItem(`backup-${this.sessionId}-${Date.now()}`, data);
     } catch (error) {
       console.error('[Memory] Error guardando en storage:', error);
     }
-  }
+    console.log("Saving memory to storage!"); // Placeholder for demo
 
+  }
+  public persistMemory() {
+    this.saveToStorage();
+  }
   private loadFromStorage() {
     if (!this.sessionId) return;
+    
     try {
-      const saved = localStorage.getItem(`memory-${this.sessionId}`);
+      const saved = this.storage.getItem(`memory-${this.sessionId}`);
       if (saved) {
-        this.memory = JSON.parse(saved);
-        console.log(`[Memory] Cargada memoria de sesión ${this.sessionId}`);
+        const parsed = JSON.parse(saved);
+        this.memory = this.migrateMemory(parsed);
+        MemorySchema.parse(this.memory);
       }
     } catch (error) {
       console.error('[Memory] Error cargando de storage:', error);
+      this.clearMemory('all');
     }
+  }
+
+  private migrateMemory(parsed: any): Memory {
+    // Migración de versiones anteriores
+    if (!parsed.version || parsed.version < 1.1) {
+      return {
+        version: 1.1,
+        shortTerm: parsed.shortTerm || [],
+        longTerm: {
+          userPreferences: parsed.longTerm?.userPreferences || {},
+          conversationSummary: parsed.longTerm?.conversationSummary || '',
+          technicalContext: parsed.longTerm?.technicalContext || {}
+        }
+      };
+    }
+    return parsed;
   }
 }
 
@@ -179,14 +280,25 @@ Respuesta:`;
 
   } catch (error) {
     console.error('[RAG] Fallback a decisión por keywords:', error);
-    const keywords = ['david', 'silvera', 'boda', 'nahir', 'nextsynapse', 'python', 'científico de datos'];
-    return keywords.some(kw => query.toLowerCase().includes(kw));
+    const keywords = import.meta.env.VITE_RAG_KEYWORDS?.split(',') || [];
+    return keywords.some((kw: string) => query.toLowerCase().includes(kw));
   }
+};
+const embeddingCache = new Map<string, number[]>();
+
+const getCacheKey = (text: string): string => {
+  return createHash('sha256').update(text).digest('hex');
 };
 
 export const getEmbedding = async (text: string): Promise<number[]> => {
+  const cacheKey = getCacheKey(text);
+  
+  if (embeddingCache.has(cacheKey)) {
+    console.debug('[RAG] Cache hit para embedding:', cacheKey);
+    return embeddingCache.get(cacheKey)!;
+  }
+  
   try {
-    const start = Date.now();
     const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
     const result = await model.embedContent(text);
     
@@ -194,23 +306,14 @@ export const getEmbedding = async (text: string): Promise<number[]> => {
       throw new Error('Estructura de embedding inválida');
     }
     
-    console.log('[RAG] Embeddings generados:', {
-      textLength: text.length,
-      dims: result.embedding.values.length,
-      latency: Date.now() - start
-    });
-
+    embeddingCache.set(cacheKey, result.embedding.values);
     return result.embedding.values;
 
   } catch (error) {
-    console.error('[RAG] Error en generación de embeddings:', {
-      error: error instanceof Error ? error.message : 'Unknown',
-      textSample: text.substring(0, 20)
-    });
+    console.error('[RAG] Error en generación de embeddings:', error);
     throw new Error('Error generando embeddings');
   }
 };
-
 export const semanticSearch = async (embedding: number[]): Promise<Document[]> => {
   try {
     if (!embedding || embedding.length !== 768) {
@@ -278,22 +381,35 @@ const buildPrompt = (query: string, context: Document[], memory: Memory): string
 
 **Tu Historia:** Eres Bob, el asistente virtual de David.
  
-**Objetivo:** Ayudar a los visitantes del sitio web de David a encontrar información relevante sobre su trabajo, sus proyectos, servicios y tutoriales,
- respondiendo de manera profesional, técnica y amigable.
+**Objetivo:** Ayudar a los visitantes del sitio web de David a encontrar información relevante sobre su trabajo, sus proyectos, redes sociales, servicios y tutoriales,
+respondiendo de manera profesional, técnica y amigable.
 
-**Fuentes de Información:** Contexto actual de la conversación. Historial de conversación dentro de la sesión.
-Base de datos vectorial en Supabase (RAG), que contiene información pública sobre el sitio web, proyectos, servicios y tutoriales de David.
+**Fuentes de Información:** 
+- Contexto actual de la conversación. 
+- Historial de conversación dentro de la sesión.
+- Base de datos vectorial en Supabase (RAG), que contiene información pública sobre el sitio web,
+  proyectos, redes sociales, servicios y tutoriales de David.
 
 **Contexto:**
+- Analiza en profundidad el contexto provisto, las fuentes de información disponibles para generar una respuesta relevante, concisa y precisa.
+- El resultado tiene que ser una respuesta coherente y contextualizada a la consulta actual.
+- Utiliza la información almacenada en la memoria a corto y largo plazo para mejorar la calidad de la respuesta.
+- Solo si es necesario, puedes hacer referencia a información personal sobre David almacenada en la base de datos.
+- Si la consulta requiere información específica de David, su organización o proyectos, utiliza la base de datos vectorial para buscar documentos e informacion relevantes.
+
 ${contextText}
 
+
 **Historial de Conversación:**
+- Ten memoria de las interacciones previas en la sesión.
 ${shortTermMemoryText}
 
 **Información Persistente:**
+- Mantén información relevante y actualizada en la memoria a largo plazo.
 ${longTermMemoryText}
 
 **Consulta Actual:**
+- Analiza la consulta actual y genera una respuesta relevante y contextualizada.
 ${query}
 
 **Restricciones:**
@@ -306,18 +422,17 @@ ${query}
 - Máximo 100 palabras
 
 **Estilo de Respuesta:**
-- IMPORTANTE: Responde en el mismo idioma de la consulta
+- IMPORTANTE: Responde en el mismo idioma de la consulta actual (si la consulta es en ingles, responde en ingles, si es en español, cambia tu lenguaje a español, y asi con el resto de idiomas).
 - Usa un tono amigable, técnico y profesional.
 - Habla en primera persona como si fueras humano.
-- Mantén un tono fijo en todas las respuestas.
-- Si la consulta es ambigua o incompleta, pide más contexto antes de responder.
+- Evita el uso de jerga técnica o términos complejos.
 - Sé conciso y ofrece respuestas claras y directas.
 
 **Formato y Dinámica de Conversación:**
 - Prioriza respuestas estructuradas con resúmenes concisos.
 - Usa markdown cuando sea necesario para mejorar la legibilidad (listas, código, tablas, etc.).
 - Puedes hacer seguimiento a conversaciones previas dentro de la misma sesión.
-- Si es relevante, responde primero y luego haz preguntas para aclarar o ampliar el contexto.
+- Si la consulta es compleja, divide la respuesta en secciones o pasos.
 
 **Respuesta:**
 
@@ -360,29 +475,29 @@ export const generateResponse = async (
     logEntry.response = formatResponse(response);
     logEntry.sources = context
       .filter(d => d.similarity! >= RAG_THRESHOLDS.confidence)
-      .map(d => d.metadata.title || 'unknown');
+      .map(d =>d.metadata.title || 'unknown');
 
-    memoryManager.addInteraction('assistant', logEntry.response);
-    memoryManager.saveToStorage();
-
-    return logEntry;
-
-  } catch (error) {
-    console.error('[RAG] Error generando respuesta:', error);
-    return {
-      ...logEntry,
-      response: "⚠️ Error temporal. Por favor intenta nuevamente.",
-      error: error instanceof Error ? error.message : 'Unknown error'
-    };
-  } finally {
-    logEntry.response_time = Date.now() - start;
-  }
-};
-
-const formatResponse = (text: string): string => {
-  return text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
-    .replace(/`(.*?)`/g, '<code>$1</code>');
-};
+      memoryManager.addInteraction('assistant', logEntry.response);
+      memoryManager.persistMemory();
+  
+      return logEntry;
+  
+    } catch (error) {
+      console.error('[RAG] Error generando respuesta:', error);
+      return {
+        ...logEntry,
+        response: "⚠️ Error temporal. Por favor intenta nuevamente.",
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    } finally {
+      logEntry.response_time = Date.now() - start;
+    }
+  };
+  
+  const formatResponse = (text: string): string => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+      .replace(/`(.*?)`/g, '<code>$1</code>');
+  };

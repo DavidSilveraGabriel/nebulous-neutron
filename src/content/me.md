@@ -5,7 +5,7 @@ description: "Conoce más sobre mí, mi experiencia, habilidades y proyectos des
 
 # Hola, soy David Gabriel Silvera 👋
 
-Soy un **Científico de Datos e Ingeniero de ML/IA** con más de cuatro años de experiencia en la creación de **soluciones de inteligencia artificial** innovadoras. Mi pasión radica en aplicar la tecnología para generar un **impacto positivo** y transformar la forma en que las organizaciones abordan sus desafíos.
+Soy un **Científico de Datos e Ingeniero de Machine learning e Inteligencia Artificial** con más de cuatro años de experiencia en la creación de **soluciones de inteligencia artificial** innovadoras. Mi pasión radica en aplicar la tecnología para generar un **impacto positivo** y transformar la forma en que las organizaciones abordan sus desafíos.
 
 Actualmente, desarrollo mi trabajo en **Argentina** y puedes encontrar más información sobre mis proyectos y experiencia profesional en:
 
