@@ -1,142 +1,239 @@
-# Portfolio de David Silvera - Data Scientist & AI Developer
+# Portfolio: David Silvera - Data Scientist & AI Developer
 
 ## 🚀 Descripción
 
-Este es un portfolio profesional construido con tecnologías modernas que muestra mis habilidades y experiencia como Científico de Datos y Desarrollador de IA. El sitio está diseñado para ofrecer una experiencia de usuario fluida y atractiva, con características como modo oscuro, animaciones suaves y diseño responsivo.
+This is a professional portfolio built with modern technologies, showcasing my skills and experience as a Data Scientist and AI Developer. The site is designed to offer a fluid and engaging user experience, with features like dark mode, smooth animations, and a responsive layout.
 
-## ✨ Características Principales
+## ✨ Key Features
 
-- **Diseño Moderno y Responsivo**: Adaptable a todos los dispositivos
-- **Modo Oscuro/Claro**: Cambio de tema con animaciones suaves
-- **Secciones Principales**:
-  - Hero Section con animaciones
-  - Servicios de IA
-  - Proyectos destacados
-  - Testimonios de clientes
-  - Blog integrado
-  - Formulario de contacto
+-   **Modern and Responsive Design:** Adapts seamlessly to all devices.
+-   **Dark/Light Mode:** Theme switching with smooth transitions.
+-   **Main Sections:**
+    -   Hero Section with animations
+    -   AI Services
+    -   Featured Projects
+    -   Customer Testimonials
+    -   Integrated Blog
 
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Technologies Used
 
-- **Framework**: Astro
-- **Estilos**: Tailwind CSS
-- **Lenguajes**:
-  - TypeScript
-  - JavaScript
-  - HTML/CSS
-- **Características Adicionales**:
-  - View Transitions API
-  - RSS Feed
-  - Markdown para blog posts
-  - Sistema de colecciones de contenido
+-   **Framework:** Astro
+-   **Styling:** Tailwind CSS
+-   **Languages:**
+    -   TypeScript
+    -   JavaScript
+    -   HTML/CSS
+-   **Additional Features:**
+    -   View Transitions API
+    -   RSS Feed
+    -   Markdown for blog posts
+    -   Content collection system
+    -   Bob the chatbot
 
-## 📦 Estructura del Proyecto
+## 📦 Project Structure
 
-```bash 
+```bash
+# This is a brief overview NOT the complete structure
 src/
 ├── components/
-│ ├── layout/
-│ ├── sections/
-│ └── ui/
-├── content/
-│ └── blog/
-├── pages/
-├── styles/
-└── consts.ts
-``` 
+│   ├── layout/
+│   │   ├── Footer.astro # Footer section
+│   │   ├── Header.astro # Header Layout
+│   │   ├── MarkdownPost.astro # Layout for markdown
+│   │   └── Base.astro  # Base layout component
+│   ├── sections/
+│   │   ├── HeroSection.astro # Hero section with intro and tech stack
+│   │   ├── ProjectsGrid.astro # Grid display for projects
+│   │   ├── ServicesSection.astro # Section detailing offered services
+│   │   ├── Testimonies.astro # Display of customer testimonials
+│   │   └── BlogSection.astro # Section for displaying blog posts
+│   └── ui/ #------
+│       └── ChatbotInterface.astro # UI for bob the chatbot
+├── content/ #-----
+│   └── blog/  # Markdown files for blog posts
+│       ├── post-1.md # Example 
+│       └── post-2.md # Example  
+├── data/
+│    └── projects.json # Data file containing project information
+├── pages/ # -----
+│   └── index.astro # Main index page of the site
+├── styles/ # Styles for the project
+└── consts.ts # Potentially stores project-wide constants
+```
 
-## 🚀 Instalación y Uso
+## ⚙️ Installation and Usage
 
-1. Clonar el repositorio:
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/DavidSilveraGabriel/nebulous-neutron.git
+    ```
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+3.  **Run in development mode:**
+    ```bash
+    npm run dev
+    ```
+4.  **Build for production:**
+    ```bash
+    npm run build
+    ```
 
-git clone https://github.com/DavidSilveraGabriel/nebulous-neutron.git
+## 💼 Services Offered
 
-2. Instalar dependencias:
-
-npm install
-
-3. Ejecutar en desarrollo:
-
-npm run dev 
-
-4. Construir para producción:
-
-### embedding creations for supabase
-```SQL 
-
--- Habilitar extensión pgvector
-create extension if not exists vector;
-
--- Tabla principal de embeddings
-create table content_embeddings (
-  id uuid primary key default gen_random_uuid(),
-  file_path text not null unique,
-  content text not null,
-  embeddings vector(768) not null,
-  metadata jsonb,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
-
--- Índice para búsqueda por similitud
-create index content_embeddings_embedding_idx
-  on content_embeddings
-  using ivfflat (embeddings vector_cosine_ops)
-  with (lists = 100);
-
--- Trigger para actualizar automáticamente updated_at
-create or replace function update_modified_column()
-returns trigger as $$
-begin
-  new.updated_at = now();
-  return new;
-end;
-$$ language plpgsql;
-
-create trigger update_content_embeddings_modtime
-before update on content_embeddings
-for each row
-execute procedure update_modified_column();
-``` 
-
-
-## 💼 Servicios Ofrecidos
-
-- **LLMs Empresariales**: Desde $10,000 USD
-- **Automatización con IA**: Desde $5,000 USD
-- **Consultoría en IA**: Desde $3,000 USD/mes
+-   **Enterprise LLMs**: From $10,000 USD
+-   **AI Automation**: From $5,000 USD
+-   **AI Consulting**: From $3,000 USD/month
 
 ## 📝 Blog
 
-El sitio incluye una sección de blog con:
-- Categorización por tags
-- Tiempo estimado de lectura
-- Imágenes destacadas
-- Sistema de borradores
+The site includes a blog section with:
 
-## 🌐 SEO y Rendimiento
+-   Categorization by tags
+-   Estimated reading time
+-   Featured images
+-   Draft system
 
-- Meta tags optimizados
-- Open Graph tags
-- Integración con Google Analytics
-- RSS Feed
+## 🌐 SEO and Performance
 
-## 📱 Redes Sociales
+-   Optimized meta tags
+-   Open Graph tags
+-   Integration with Google Analytics
+-   RSS Feed
 
-- GitHub: [@DavidSilveraGabriel](https://github.com/DavidSilveraGabriel)
-- Twitter: [@David_Silvera21](https://twitter.com/David_Silvera21)
-- LinkedIn: [davidsilveragabriel](https://www.linkedin.com/in/davidsilveragabriel/)
-- YouTube: [@SilveraDavid](https://www.youtube.com/@SilveraDavid)
-- Instagram: [@davidsilverag](https://www.instagram.com/davidsilverag/)
+## 📱 Social Media
 
-## 🤝 Contribuciones
+-   GitHub: [@DavidSilveraGabriel](https://github.com/DavidSilveraGabriel)
+-   Twitter: [@David_Silvera21](https://twitter.com/David_Silvera21)
+-   LinkedIn: [davidsilveragabriel](https://www.linkedin.com/in/davidsilveragabriel/)
+-   YouTube: [@SilveraDavid](https://www.youtube.com/@SilveraDavid)
+-   Instagram: [@davidsilverag](https://www.instagram.com/davidsilverag/)
 
-Las contribuciones son bienvenidas. Por favor, abre un issue primero para discutir los cambios que te gustaría realizar.
+## 🤝 Contributions
 
-## 📄 Licencia
+Contributions are welcome. Please open an issue first to discuss the changes you would like to make.
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+## 📄 License
 
-## 📞 Contacto
+This project is under the MIT License. See the `LICENSE` file for more details.
 
-Para consultas sobre proyectos o colaboraciones, puedes contactarme por WhatsApp.
+## 📞 Contact
+
+For project inquiries or collaborations, you can contact me via WhatsApp.
+
+---
+
+# About David Silvera
+
+I am a Data Scientist and Machine Learning Engineer with over four years of experience creating innovative AI solutions. My passion lies in applying technology to generate positive impact and transform how organizations approach their challenges.
+
+### Current Roles
+- 🚀 **CIO at NEXTSYNAPSE**
+  - Leading innovative BCI (Brain-Computer Interface) technology development
+  - Developing non-invasive EEG solutions for wheelchair control
+  - Successfully completed PoC, currently seeking investment for MVP phase
+- 👨‍🏫 **Data Science Instructor at CoderHouse**
+    - Teaching foundational and advanced data science concepts
+    - Mentoring students in their journey to become data professionals
+- 💼 **Freelance Data Scientist**
+    - Verified Fiverr Professional ([@davidsilverag](https://www.fiverr.com/davidsilverag))
+    - Specialized in computer vision projects
+    - Successfully delivered multiple AI/ML solutions globally
+
+### Technical Expertise
+- 🐍 **Languages**: Python, SQL
+- 🤖 **Disciplines**: Machine Learning, Deep Learning, Neural Networks, Data Analysis, Visualization, Computer Vision, NLP
+- 🧠 **Frameworks and Models**: LLMs, GenAI
+- 📊 **Tools**: Excel
+- 📚 **Libraries**: scikit-learn, TensorFlow
+
+### Personal
+- 👨‍👩‍👧‍👦 Proud family man and dedicated father
+- 🌟 Committed to creating technology that improves lives
+- 🤝 Always open to meaningful collaborations and innovative projects
+
+### Let's Connect!
+- 🔗 [LinkedIn](https://www.linkedin.com/in/davidsilveragabriel/)
+- ✉️ [Email](mailto:ingenieria.d.s.g@hotmail.com)
+- 💼 [Fiverr](https://www.fiverr.com/davidsilverag)
+- 🤓 [GitHub](https://github.com/DavidSilveraGabriel)
+
+---
+
+# Project Steps
+
+## 1. Project Request
+
+Do you have a project, idea, or challenge in mind? Fill out a detailed form with all the information about your needs. Within 48 business hours, I will confirm if your project is accepted based on availability, characteristics, and project complexity.
+
+**Initial Review:** I will analyze the requirements and determine if the project aligns with my services and current capacity.
+
+## 2. Alignment Meeting
+
+Schedule a time in my availability calendar. The first meeting is crucial for understanding your project's scope and clarifying expectations. If the available calendar doesn't suit your schedule, you can request a custom meeting time for an additional fee of $100 USD per 60 minutes. This service must be booked at least 48 hours in advance.
+
+**Purpose:** We'll understand the details together, resolve doubts, and establish a solid foundation before moving forward.
+
+## 3. Proposal and Approval
+
+After reviewing the project, I will send you a detailed proposal including:
+
+-   Estimated costs
+-   Milestone schedule and deliverables
+-   Identification of potential complexities
+
+**Approval:** Upon acceptance of the proposal, a 50% advance payment will be required for each milestone. This ensures work initiation and progressive delivery planning.
+
+## 4. Implementation
+
+**Project Execution:** Development will begin according to the established plan, ensuring quality in each delivery.
+
+**Continuous Communication:** Although work is autonomous, we'll maintain open communication channels for any inquiries via Discord, Slack, WhatsApp, or email according to your preference.
+
+**Progress Updates:** You'll receive notifications at each important milestone to track progress without concerns.
+
+## 5. Deployment and Final Delivery
+
+**Project Deployment:** Upon completion, I will deploy the model or solution in the agreed environment.
+
+**Complete Delivery:** I will send all project assets (code, documents, results, etc.), ensuring you have all necessary elements to continue or maintain the system.
+
+**Final Payment and Feedback:** Once you confirm your satisfaction with the results, the remaining payment will be completed. Your review is welcome to help me improve.
+
+---
+
+# Frequently Asked Questions (FAQ)
+
+## Services Offered
+
+### What types of data science projects can you handle?
+
+I currently specialize in implementing LLMs in organizations to cover a wide range of tasks and process optimization using agents for specific tasks.
+
+### Do you offer data science consulting and advisory services?
+
+Yes, I provide guidance on data science strategies, tool selection, best practices, and team guidance for project success.
+
+### Can you work with confidential or sensitive data?
+
+Yes, I sign an NDA by default to ensure your confidence that sensitive information will not be disclosed. I can provide a template that you can adjust according to your needs.
+
+## Work Process
+
+### How do I start a project with you?
+
+The process consists of 5 simple steps:
+
+1.  Project Request
+2.  Alignment Meeting
+3.  Proposal and Approval
+4.  Implementation
+5.  Deployment and Final Delivery
+
+### How long does it take to complete a project?
+
+Project duration depends on complexity. Once you submit your project request, you'll receive an approximate time estimate.
+
+### What are the payment terms?
+A 50% advance payment will be required for each milestone upon acceptance of the proposal.
