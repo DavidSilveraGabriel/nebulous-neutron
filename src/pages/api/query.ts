@@ -4,6 +4,10 @@ import { errorResponse, successResponse } from '../../utils/apihelpers.ts';
 import { logQuery } from '../../utils/logger.ts';
 import type { Document } from '../../utils/rag.ts';
 
+import { getMemoryManager, activeSessions, embeddingCache } from '../../utils/rag.ts';
+import { randomUUID  } from 'node:crypto';
+
+
 export const POST: APIRoute = async ({ request }) => {
   const startTime = Date.now();
   let context: Document[] = [];
@@ -115,5 +119,45 @@ export const POST: APIRoute = async ({ request }) => {
       message: "Estamos experimentando problemas técnicos. Por favor intenta nuevamente más tarde.",
       errorId: `${Date.now()}-${Math.random().toString(36).substr(2, 4)}`
     });
+  }
+};
+
+
+// Añade este nuevo método en tu archivo
+export const DELETE: APIRoute = async ({ request }) => {
+  const sessionId = request.headers.get('X-Session-ID');
+  
+  if (!sessionId) {
+    return errorResponse(400, 'Se requiere ID de sesión');
+  }
+
+  try {
+    // 1. Limpiar memoria de sesión
+    if (activeSessions.has(sessionId)) {
+      activeSessions.get(sessionId)?.clearMemory('all');
+      activeSessions.delete(sessionId);
+    }
+
+    // 2. Limpiar caché relacionado
+    embeddingCache.forEach((_, key) => {
+      if (key.includes(sessionId)) embeddingCache.delete(key);
+    });
+
+    // 3. Generar nueva sesión
+    const newSessionId = crypto.randomUUID();
+    
+    console.log('[SESSION] Reset completo:', { 
+      oldSession: sessionId,
+      newSession: newSessionId 
+    });
+
+    return successResponse({
+      newSessionId,
+      resetAt: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('[SESSION] Error crítico:', error);
+    return errorResponse(500, 'Falló el reset completo');
   }
 };

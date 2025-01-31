@@ -14,7 +14,10 @@ export interface LogEntry {
   session_id?:string; // Added session_id
 
 }
-
+export interface ResetResponse {
+  reset: boolean;
+  sessionId: string;
+}
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'error';
   content: string;

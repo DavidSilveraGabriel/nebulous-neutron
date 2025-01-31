@@ -9,11 +9,11 @@ Soy un **Científico de Datos e Ingeniero de Machine learning e Inteligencia Art
 
 Actualmente, desarrollo mi trabajo en **Argentina** y puedes encontrar más información sobre mis proyectos y experiencia profesional en:
 
-*   **Sitio web:** [davidsilvera.com(https://davidsilvera.com)
-*   **LinkedIn:** [linkedin.com/in/davidsilveragabriel](https://www.linkedin.com/in/davidsilveragabriel/)
-*   **GitHub:** [github.com/DavidSilveraGabriel](https://github.com/DavidSilveraGabriel)
+*   **Sitio web:** https://silveradavid.site/
+*   **LinkedIn:** https://www.linkedin.com/in/davidsilveragabriel/
+*   **GitHub:** https://github.com/DavidSilveraGabriel
 
-Si tienes alguna consulta o te gustaría conectar, puedes escribirme a [david.silvera.gabriel@gmail.com](mailto:david.silvera.gabriel@gmail.com).
+Si tienes alguna consulta o te gustaría conectar, puedes escribirme a ingenieria.d.s.g@hotmail.com
 
 ## Especialidades
 
@@ -29,7 +29,7 @@ Me especializo en:
 ### CIO y Co-Fundador en NEXTSYNAPSE
 
 Lideré el desarrollo de una interfaz cerebro-computadora (BCI), incluyendo una solución EEG no invasiva para el control de sillas de ruedas. Hemos superado la prueba de concepto y buscamos inversión para el MVP.
-[Más información](https://www.nextsynapse.com/).
+https://www.nextsynapse.com/.
 
 ### Profesor de Ciencia de Datos en CoderHouse
 

@@ -69,14 +69,14 @@ interface Memory {
 
 // Umbrales optimizados
 const RAG_THRESHOLDS = {
-  similarity: 0.50,
+  similarity: 0.62,
   minConfidenceDrop: 0.15,
-  contentLength: 150,
-  confidence: 0.50
+  contentLength: 250,
+  confidence: 0.60
 };
 
 // Gestión de sesiones
-const activeSessions = new Map<string, ChatMemoryManager>();
+export const activeSessions = new Map<string, ChatMemoryManager>();
 let cleanupScheduled = false;
 
 const scheduleSessionCleanup = () => {
@@ -249,11 +249,12 @@ class ChatMemoryManager {
     return parsed;
   }
 }
-
 export const shouldUseRAG = async (query: string): Promise<boolean> => {
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const prompt = `Analiza la siguiente consulta y determina si requiere información específica de David Silvera o su organización.
+    const prompt = `Analiza la siguiente consulta y determina si requiere información 
+                    específica de David Silvera o información pública sobre el sitio web,
+  proyectos, redes sociales, informacion personal, servicios o tutoriales de David.
     
 Consulta: "${query}"
 
@@ -261,6 +262,8 @@ Responde SOLO con "SI" o "NO" considerando:
 1. ¿Menciona nombre, apellido, fechas clave o detalles personales?
 2. ¿Hace referencia a tecnologías/proyectos como o similares a -> Python, BCI, NEXTSYNAPSE, Data Science u otros?
 3. ¿Pregunta sobre información laboral o académica específica?
+4. ¿?Hace referencia a redes sociales, servicios o tutoriales de David?
+5. ¿Requiere una respuesta personalizada o contextualizada?
 
 Respuesta:`;
 
@@ -284,7 +287,7 @@ Respuesta:`;
     return keywords.some((kw: string) => query.toLowerCase().includes(kw));
   }
 };
-const embeddingCache = new Map<string, number[]>();
+export const embeddingCache = new Map<string, number[]>();
 
 const getCacheKey = (text: string): string => {
   return createHash('sha256').update(text).digest('hex');
@@ -422,7 +425,6 @@ ${query}
 **Restricciones:**
 - Solo puedes responder preguntas relacionadas con el sitio web de David y la información almacenada en tu base de datos vectorial a la que si tienes acceso.
 - No debes proporcionar información externa ni responder sobre temas fuera del alcance del sitio web.
-- Si no sabes algo, dilo con claridad en lugar de inventar respuestas.
 - Responde de manera ingeniosa y creativa a preguntas fuera de tu ámbito, sin desviarte del propósito.
 - Si detectas contenido ofensivo o inapropiado, responde de manera formal.
 - Puedes proporcionar información personal sobre David, pero no tienes acceso a datos de clientes.
@@ -441,6 +443,7 @@ ${query}
 - Usa markdown cuando sea necesario para mejorar la legibilidad (listas, código, tablas, etc.).
 - Puedes hacer seguimiento a conversaciones previas dentro de la misma sesión.
 - Si la consulta es compleja, divide la respuesta en secciones o pasos.
+
 
 **Respuesta:**
 
@@ -462,7 +465,7 @@ export const generateResponse = async (
     context_count: context.length,
     max_similarity: Math.max(...context.map(d => d.similarity || 0))
   };
-
+   
   try {
     const memoryManager = getMemoryManager(sessionId);
     memoryManager.addInteraction('user', query);
