@@ -21,7 +21,7 @@ const supabase = createClient(
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Función para dividir contenido en chunks
-function splitContent(content: string, maxChunkSize = 7500): string[] {
+function splitContent(content: string, maxChunkSize = 10000): string[] {
   const chunks = [];
   for (let i = 0; i < content.length; i += maxChunkSize) {
     chunks.push(content.substring(i, i + maxChunkSize));
@@ -39,7 +39,7 @@ async function parseMDContent(filePath: string) {
       .replace(/(\r\n|\n|\r)/gm, " ")
       .replace(/\s+/g, ' ')
       .replace(/[^\w\sáéíóúñÁÉÍÓÚÑ.,;:¿?¡!]/gi, '')
-      .substring(0, 30000); // Aumentamos el límite inicial para chunking
+      .substring(0, 50000); // Aumentamos el límite inicial para chunking
 
     return { 
       content: optimizedContent,

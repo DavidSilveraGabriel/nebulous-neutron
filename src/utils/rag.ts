@@ -71,10 +71,10 @@ interface Memory {
 
 // Umbrales optimizados
 const RAG_THRESHOLDS = {
-  similarity: 0.62,
+  similarity: 0.50,
   minConfidenceDrop: 0.15,
   contentLength: 250,
-  confidence: 0.60
+  confidence: 0.55
 };
 
 // Gestión de sesiones
@@ -335,7 +335,7 @@ export const semanticSearch = async (embedding: number[]): Promise<Document[]> =
 
     const results = (data || [])
       .filter((doc: Document) => 
-        doc.content.length >= RAG_THRESHOLDS.contentLength &&
+        //doc.content.length >= RAG_THRESHOLDS.contentLength &&
         (doc.similarity ?? 0) >= RAG_THRESHOLDS.similarity
       )
       .slice(0, 2);
