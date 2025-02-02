@@ -20,7 +20,9 @@ if (!supabaseUrl || !supabaseKey || !geminiKey) {
 // Inicialización de clientes
 const supabase = createClient(supabaseUrl, supabaseKey);
 const genAI = new GoogleGenerativeAI(geminiKey);
-
+// Después de crear el cliente Supabase
+const { error } = await supabase.from('documents').select('*').limit(1);
+if (error) console.error('[DB] Error de conexión:', error.message);
 // Tipos de datos
 interface Metadata {
   title?: string;
@@ -252,31 +254,29 @@ class ChatMemoryManager {
 export const shouldUseRAG = async (query: string): Promise<boolean> => {
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const prompt = `Analiza la siguiente consulta y determina si requiere información 
-                    específica de David Silvera o información pública sobre el sitio web,
-  proyectos, redes sociales, informacion personal, servicios o tutoriales de David.
-    
+    const prompt = `Analiza si la consulta requiere información específica de:
+- Proyectos profesionales/personales
+- Tecnologías usadas (Python, BCI, IA, etc.)
+- Experiencia laboral/académica
+- Servicios ofrecidos
+- Redes sociales o contacto
+
 Consulta: "${query}"
 
-Responde SOLO con "SI" o "NO" considerando:
-1. ¿Menciona nombre, apellido, fechas clave o detalles personales?
-2. ¿Hace referencia a tecnologías/proyectos como o similares a -> Python, BCI, NEXTSYNAPSE, Data Science u otros?
-3. ¿Pregunta sobre información laboral o académica específica?
-4. ¿?Hace referencia a redes sociales, servicios o tutoriales de David?
-5. ¿Requiere una respuesta personalizada o contextualizada?
-
-Respuesta:`;
+Responde SOLO "SI" o "NO"`;
 
     const start = Date.now();
     const result = await model.generateContent(prompt);
     const response = (await result.response.text()).trim().toUpperCase();
     const decision = response === "SI";
-    
+    const keywords = ['proyecto', 'project', 'trabajo', 'portfolio', 'experiencia'];
+
     console.log('[RAG] Decisión:', {
-      query: query.substring(0, 50),
+      query: query.substring(0, 100), // Mostrar más contexto
       decision,
       response,
-      latency: Date.now() - start
+      latency: Date.now() - start,
+      envKeywords: keywords // Verificar keywords cargadas
     });
 
     return decision;
