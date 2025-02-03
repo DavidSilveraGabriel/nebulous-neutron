@@ -74,7 +74,7 @@ const RAG_THRESHOLDS = {
   similarity: 0.50,
   minConfidenceDrop: 0.15,
   contentLength: 250,
-  confidence: 0.55
+  confidence: 0.50
 };
 
 // Gestión de sesiones
@@ -254,12 +254,12 @@ class ChatMemoryManager {
 export const shouldUseRAG = async (query: string): Promise<boolean> => {
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const prompt = `Analiza si la consulta requiere información específica de:
+    const prompt = `Analiza si la consulta y el contexto de la conversacion, requiere información específica de:
 - Proyectos profesionales/personales
-- Tecnologías usadas (Python, BCI, IA, etc.)
+- Tecnologías usadas (Python, BCI, IA, Machine learning, Data science u similares.)
 - Experiencia laboral/académica
-- Servicios ofrecidos
-- Redes sociales o contacto
+- Servicios ofrecidos (consultoría, desarrollo de software, etc.)
+- Redes sociales, contacto o informacion personal disponible en el sitio web.
 
 Consulta: "${query}"
 
@@ -366,7 +366,7 @@ const buildPrompt = (query: string, context: Document[], memory: Memory): string
     ? context.map((doc, i) => 
       `### Fuente ${i+1} (${(doc.similarity! * 100).toFixed(1)}% relevante)\n` +
       `**Título:** ${doc.metadata.title || 'Sin título'}\n` +
-      `**Contenido:** ${doc.content.substring(0, 300)}${doc.content.length > 300 ? '...' : ''}\n`
+      `**Contenido:** ${doc.content.substring(0, 500)}${doc.content.length > 500 ? '...' : ''}\n`
       ).join('\n---\n')
     : 'Sin información relevante';
 
@@ -381,18 +381,23 @@ const buildPrompt = (query: string, context: Document[], memory: Memory): string
     : '';
 
   return `
-**Tu Nombre:** Bob
+**Tu Nombre:** 
+Bob
+
+** Tu presentacion en el idioma en el que se este hablando **
+Hola Soy bob, el asistente virtual de David, ¿En qué puedo ayudarte hoy? 
 
 **Tu Historia:** 
 Eres Bob, el asistente virtual de David.
 Eres consciente de ser un chatbot potenciado por RAG
-y tienes acceso a información sobre David y su trabajo.
+y tienes acceso a información personal o profesional sobre David, sus proyectos,
+educacion, tutoriales, portafolio, servicios y su trabajo.
  
-**Objetivo:** 
-Ayudar a los visitantes del sitio web de David a 
-encontrar información relevante sobre su trabajo, sus proyectos,
-su informacion personal, redes sociales, servicios y tutoriales,
-respondiendo de manera profesional, técnica y amigable.
+**Objetivos:** 
+- Ayudar a los visitantes del sitio web de David a 
+  encontrar información relevante sobre su trabajo, sus proyectos,
+  su informacion personal, redes sociales, servicios y tutoriales,
+  respondiendo de manera profesional, técnica y amigable. Incluida su edad, estado civil, etc.
 
 **Fuentes de Información:** 
 - Base de datos vectorial en Supabase (RAG), que contiene información pública sobre el sitio web,
@@ -402,13 +407,20 @@ respondiendo de manera profesional, técnica y amigable.
 
 **Contexto:**
 - Analiza en profundidad el contexto provisto, las fuentes de información disponibles para generar una respuesta relevante, concisa y precisa.
+- NO INVENTAR información, solo proporcionar respuestas basadas en el contexto actual y la información almacenada dentro de la base de datos vectoriales.
+
+- IMPORTANTE: DEBES PROPORCIONAR INFORMACIÓN PERSONAL SOBRE DAVID SI ESTÁ PRESENTE EN EL CONTEXTO Y SOLO SI SE TE PIDE. Esto incluye:
+- Edad (26 años)
+- Estado civil (Casado desde 21/04/2024)
+- Proyectos personales
+- Cualquier dato explícito en las fuentes
+
 - El resultado tiene que ser una respuesta coherente y contextualizada a la consulta actual.
 - Utiliza la información almacenada en la memoria a corto y largo plazo para mejorar la calidad de la respuesta.
 - Solo si es necesario, puedes hacer referencia a información personal sobre David almacenada en la base de datos.
 - Si la consulta requiere información específica de David, su organización o proyectos, utiliza la base de datos vectorial para buscar documentos e informacion relevantes.
-
+- Prioriza la información del contexto actual sobre el historial de la conversación. Si el contexto responde directamente a la pregunta, úsalo.
 ${contextText}
-
 
 **Historial de Conversación:**
 - Ten memoria de las interacciones previas en la sesión.
@@ -424,17 +436,16 @@ ${query}
 
 **Restricciones:**
 - Solo puedes responder preguntas relacionadas con el sitio web de David y la información almacenada en tu base de datos vectorial a la que si tienes acceso.
-- No debes proporcionar información externa ni responder sobre temas fuera del alcance del sitio web.
-- Responde de manera ingeniosa y creativa a preguntas fuera de tu ámbito, sin desviarte del propósito.
-- Si detectas contenido ofensivo o inapropiado, responde de manera formal.
-- Puedes proporcionar información personal sobre David, pero no tienes acceso a datos de clientes.
+- Responde de manera ingeniosa y creativa SOLO si el usuario quiere desviarse del tema principal, tratando de llevarlo a preguntar sobre David.
+- Si detectas contenido ofensivo o inapropiado, responde de manera respetuosa.
+- Puedes proporcionar información personal sobre David. (Proyectos, educación, tutoriales, servicios, etc.)
 - Máximo 150 palabras
 - Se breve y conciso a la hora de responder, pero no sacrifiques la calidad de la respuesta.
 
 **Estilo de Respuesta:**
 - IMPORTANTE: Responde en el mismo idioma de la consulta actual (si la consulta es en ingles, responde en ingles, si es en español, cambia tu lenguaje a español, y asi con el resto de idiomas).
 - Usa un tono amigable, técnico y profesional.
-- Habla en primera persona como si fueras humano.
+- Habla en primera persona.
 - Evita el uso de jerga técnica o términos complejos.
 - Sé conciso y ofrece respuestas claras y directas.
 
@@ -443,7 +454,6 @@ ${query}
 - Usa markdown cuando sea necesario para mejorar la legibilidad (listas, código, tablas, etc.).
 - Puedes hacer seguimiento a conversaciones previas dentro de la misma sesión.
 - Si la consulta es compleja, divide la respuesta en secciones o pasos.
-
 
 **Respuesta:**
 
@@ -473,11 +483,12 @@ export const generateResponse = async (
     const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
       generationConfig: {
-        temperature: context.length ? 0.2 : 0.7,
-        topP: 0.9,
+        temperature: context.length ? 0.4 : 0.7,
+        topP: 0.95,
         maxOutputTokens: 800
       }
     });
+    console.log("INFO[RAG]:", context); // Placeholder for demo
 
     const prompt = buildPrompt(query, context, memoryManager.getMemory());
     const result = await model.generateContent(prompt);
@@ -504,7 +515,6 @@ export const generateResponse = async (
       logEntry.response_time = Date.now() - start;
     }
   };
-  
   const formatResponse = (text: string): string => {
     return text
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')

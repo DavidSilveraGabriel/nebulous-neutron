@@ -1,3 +1,7 @@
+---
+title: 'Projects' 
+description: "Conoce más sobre mís proyectos destacados." 
+---
 ## Proyectos Destacados
 
 Aquí puedes encontrar algunos de mis proyectos más recientes:

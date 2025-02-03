@@ -1,5 +1,5 @@
 ---
-title: "Sobre Mí"
+title: "About me"
 description: "Conoce más sobre mí, mi experiencia, habilidades y proyectos destacados."
 ---
 
