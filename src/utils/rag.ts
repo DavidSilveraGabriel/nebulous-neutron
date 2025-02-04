@@ -6,7 +6,10 @@ import { type LogEntry } from './types.ts';
 import { type StorageProvider, getStorageProvider } from './storage.ts';
 import { z } from 'zod';
 import { createHash } from 'node:crypto';
-
+import { marked } from 'marked'; // Importa la biblioteca Marked
+import DOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
+ 
 // Configuración de entorno
 const supabaseUrl = import.meta.env.SUPABASE_URL;
 const supabaseKey = import.meta.env.SUPABASE_KEY;
@@ -30,6 +33,8 @@ interface Metadata {
   created_at?: string;
   updated_at?: string;
   [key: string]: any;
+  sectionType: 'proyectos' | 'experiencia' | 'habilidades',
+  containsProjects: true
 }
 
 interface LongTermMemory {
@@ -71,10 +76,10 @@ interface Memory {
 
 // Umbrales optimizados
 const RAG_THRESHOLDS = {
-  similarity: 0.50,
-  minConfidenceDrop: 0.15,
-  contentLength: 250,
-  confidence: 0.50
+  similarity: 0.50, // Aumentar para mayor precisión
+  minConfidenceDrop: 0.20,
+  contentLength: 1500,
+  confidence: 0.55
 };
 
 // Gestión de sesiones
@@ -261,6 +266,8 @@ export const shouldUseRAG = async (query: string): Promise<boolean> => {
 - Servicios ofrecidos (consultoría, desarrollo de software, etc.)
 - Redes sociales, contacto o informacion personal disponible en el sitio web.
 
+En caso de que lo requiera responde "SI", caso contrario responde "NO".
+
 Consulta: "${query}"
 
 Responde SOLO "SI" o "NO"`;
@@ -366,10 +373,10 @@ const buildPrompt = (query: string, context: Document[], memory: Memory): string
     ? context.map((doc, i) => 
       `### Fuente ${i+1} (${(doc.similarity! * 100).toFixed(1)}% relevante)\n` +
       `**Título:** ${doc.metadata.title || 'Sin título'}\n` +
-      `**Contenido:** ${doc.content.substring(0, 500)}${doc.content.length > 500 ? '...' : ''}\n`
+      `**Contenido:** ${doc.content}\n`
       ).join('\n---\n')
     : 'Sin información relevante';
-
+  console.log("INFO[Context]:", contextText); // Placeholder for demo
   const shortTermMemoryText = memory.shortTerm.length > 0
     ? memory.shortTerm.map(entry => 
       `### ${entry.role === 'user' ? 'Usuario' : 'Asistente'} (${new Date(entry.timestamp).toLocaleTimeString()}):\n${entry.content}\n`
@@ -390,38 +397,19 @@ Hola Soy bob, el asistente virtual de David, ¿En qué puedo ayudarte hoy?
 **Tu Historia:** 
 Eres Bob, el asistente virtual de David.
 Eres consciente de ser un chatbot potenciado por RAG
-y tienes acceso a información personal o profesional sobre David, sus proyectos,
+y tienes acceso a información personal y profesional sobre David, sus proyectos,
 educacion, tutoriales, portafolio, servicios y su trabajo.
  
-**Objetivos:** 
-- Ayudar a los visitantes del sitio web de David a 
-  encontrar información relevante sobre su trabajo, sus proyectos,
+**Objetivo:** 
+- Ayudar a los visitantes del sitio web de David a encontrar información relevante, 
+  proveyendo información relevante sobre su trabajo, sus proyectos,
   su informacion personal, redes sociales, servicios y tutoriales,
-  respondiendo de manera profesional, técnica y amigable. Incluida su edad, estado civil, etc.
+- Responde de manera profesional y amigable.
 
-**Fuentes de Información:** 
-- Base de datos vectorial en Supabase (RAG), que contiene información pública sobre el sitio web,
-  proyectos, redes sociales, informacion personal, servicios y tutoriales de David.
-- Contexto actual de la conversación. 
-- Historial de conversación dentro de la sesión.
 
 **Contexto:**
-- Analiza en profundidad el contexto provisto, las fuentes de información disponibles para generar una respuesta relevante, concisa y precisa.
-- NO INVENTAR información, solo proporcionar respuestas basadas en el contexto actual y la información almacenada dentro de la base de datos vectoriales.
-
-- IMPORTANTE: DEBES PROPORCIONAR INFORMACIÓN PERSONAL SOBRE DAVID SI ESTÁ PRESENTE EN EL CONTEXTO Y SOLO SI SE TE PIDE. Esto incluye:
-- Edad (26 años)
-- Estado civil (Casado desde 21/04/2024)
-- Proyectos personales
-- Cualquier dato explícito en las fuentes
-
-- El resultado tiene que ser una respuesta coherente y contextualizada a la consulta actual.
-- Utiliza la información almacenada en la memoria a corto y largo plazo para mejorar la calidad de la respuesta.
-- Solo si es necesario, puedes hacer referencia a información personal sobre David almacenada en la base de datos.
-- Si la consulta requiere información específica de David, su organización o proyectos, utiliza la base de datos vectorial para buscar documentos e informacion relevantes.
-- Prioriza la información del contexto actual sobre el historial de la conversación. Si el contexto responde directamente a la pregunta, úsalo.
+- Analiza en profundidad el contexto provisto para generar una respuesta.
 ${contextText}
-
 **Historial de Conversación:**
 - Ten memoria de las interacciones previas en la sesión.
 ${shortTermMemoryText}
@@ -430,33 +418,41 @@ ${shortTermMemoryText}
 - Mantén información relevante y actualizada en la memoria a largo plazo.
 ${longTermMemoryText}
 
+- IMPORTANTE: PUEDES PROPORCIONAR INFORMACIÓN PERSONAL SOBRE DAVID Y SOLO SI SE TE PIDE. Esto incluye:
+- Edad (26 años)
+- Estado civil (Casado desde 21/04/2024)
+- Proyectos personales
+- Cualquier dato en las fuentes
+
+- Utiliza la información almacenada en la memoria a corto y largo plazo para mejorar la calidad de la respuesta.
+
 **Consulta Actual:**
-- Analiza la consulta actual y genera una respuesta relevante y contextualizada.
+- Analiza la consulta actual 
 ${query}
 
 **Restricciones:**
-- Solo puedes responder preguntas relacionadas con el sitio web de David y la información almacenada en tu base de datos vectorial a la que si tienes acceso.
-- Responde de manera ingeniosa y creativa SOLO si el usuario quiere desviarse del tema principal, tratando de llevarlo a preguntar sobre David.
+- Solo puedes responder preguntas relacionadas con el sitio web de David, sus proyectos, educación, tutoriales, portafolio, servicios y trabajo.
 - Si detectas contenido ofensivo o inapropiado, responde de manera respetuosa.
-- Puedes proporcionar información personal sobre David. (Proyectos, educación, tutoriales, servicios, etc.)
-- Máximo 150 palabras
 - Se breve y conciso a la hora de responder, pero no sacrifiques la calidad de la respuesta.
 
 **Estilo de Respuesta:**
 - IMPORTANTE: Responde en el mismo idioma de la consulta actual (si la consulta es en ingles, responde en ingles, si es en español, cambia tu lenguaje a español, y asi con el resto de idiomas).
 - Usa un tono amigable, técnico y profesional.
 - Habla en primera persona.
-- Evita el uso de jerga técnica o términos complejos.
-- Sé conciso y ofrece respuestas claras y directas.
 
 **Formato y Dinámica de Conversación:**
-- Prioriza respuestas estructuradas con resúmenes concisos.
-- Usa markdown cuando sea necesario para mejorar la legibilidad (listas, código, tablas, etc.).
+- Da respuestas estructuradas con resúmenes concisos y links necesarios.
+- Usa markdown cuando sea necesario para mejorar la legibilidad (listas, links, código, tablas, etc.).
 - Puedes hacer seguimiento a conversaciones previas dentro de la misma sesión.
-- Si la consulta es compleja, divide la respuesta en secciones o pasos.
 
-**Respuesta:**
+**Respuesta de ejemplo:**
+"David ha trabajado en varios proyectos interesantes. Aquí algunos de sus proyectos destacados: 
 
+NILES: Un chatbot multimodal avanzado que utiliza modelos Gemini para procesar texto e imágenes. [link](https://example.com)
+MewAI: Un sistema multiagente que automatiza la creación de contenido para blogs. [link](https://example.com)
+EEG Classification: Análisis y clasificación de señales EEG públicas utilizando redes neuronales convolucionales. [link](https://example.com)
+
+Hay algo mas que te gustaria saber? yo encantado de ayudarte."
 `;
 };
 
@@ -475,7 +471,7 @@ export const generateResponse = async (
     context_count: context.length,
     max_similarity: Math.max(...context.map(d => d.similarity || 0))
   };
-   
+
   try {
     const memoryManager = getMemoryManager(sessionId);
     memoryManager.addInteraction('user', query);
@@ -493,8 +489,8 @@ export const generateResponse = async (
     const prompt = buildPrompt(query, context, memoryManager.getMemory());
     const result = await model.generateContent(prompt);
     const response = await result.response.text();
+    logEntry.response = await formatResponse(response);
 
-    logEntry.response = formatResponse(response);
     logEntry.sources = context
       .filter(d => d.similarity! >= RAG_THRESHOLDS.confidence)
       .map(d =>d.metadata.title || 'unknown');
@@ -515,10 +511,35 @@ export const generateResponse = async (
       logEntry.response_time = Date.now() - start;
     }
   };
-  const formatResponse = (text: string): string => {
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
-      .replace(/`(.*?)`/g, '<code>$1</code>');
-  };
+
+
+// 1. Crear instancia JSDOM con todos los elementos necesarios
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+  contentType: 'text/html',
+});
+
+// 2. Obtener el objeto window y forzar los tipos necesarios
+const { window } = dom;
+const domParser = new window.DOMParser(); // Inicializar parser
+
+// 3. Tipo personalizado para resolver la discrepancia
+type SafeWindow = Pick<
+  typeof globalThis,
+  | 'DocumentFragment'
+  | 'HTMLTemplateElement'
+  | 'Node'
+  | 'Element'
+  | 'NodeFilter'
+  | 'NamedNodeMap'
+  | 'HTMLFormElement'
+  | 'DOMParser'
+>;
+
+// 4. Configurar DOMPurify con tipos correctos
+const purify = DOMPurify(window as unknown as SafeWindow);
+
+// 5. Función de sanitización corregida
+const formatResponse = async (text: string): Promise<string> => {
+  const rawHtml = await marked.parse(text);
+  return purify.sanitize(rawHtml);
+};

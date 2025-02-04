@@ -1,7 +1,5 @@
 ---
 import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
-
-
 ---
 
 <div class="fixed bottom-4 right-4 z-[999]">
@@ -17,10 +15,7 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
   </button>
 
   <!-- Contenedor del Chat -->
-  <div
-        id="chatbot-container"
-        class="fixed bottom-20 right-4 w-[95vw] md:w-96 h-[70vh] bg-gray-900 backdrop-blur-lg bg-opacity-95 text-white rounded-xl shadow-2xl opacity-0 translate-y-4 scale-95 origin-bottom-right transition-all duration-300 border border-white/10 invisible"
-      >
+  <div id="chatbot-container" class="fixed bottom-20 right-4 w-[95vw] md:w-96 h-[70vh] bg-gray-900 backdrop-blur-lg bg-opacity-95 text-white rounded-xl shadow-2xl opacity-0 translate-y-4 scale-95 origin-bottom-right transition-all duration-300 border border-white/10 invisible chat-container">
     <div class="flex flex-col h-full pointer-events-auto">
       <!-- Header -->
       <div class="bg-gradient-to-r from-blue-600/30 to-purple-600/30 p-4 rounded-t-xl flex justify-between items-center">
@@ -138,6 +133,52 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
     background-color: #374151;
     border-radius: 0.5rem;
   }
+
+  .chat-container ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.chat-container li {
+  margin-bottom: 0.25rem;
+}
+
+.chat-container pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.chat-container code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+/* Asegurar estilos adecuados para elementos markdown */
+.chat-container {
+  h1, h2, h3 { 
+    font-weight: bold;
+    margin: 0.5em 0;
+  }
+  
+  pre {
+    background: #1a1a1a;
+    padding: 1em;
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+  
+  code {
+    background: #2d2d2d;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+  }
+  
+  a {
+    color: #58a6ff;
+    text-decoration: underline;
+  }
+}
 </style>
 
 <script>
@@ -177,16 +218,8 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
   };
  
   const utils = {
-    formatContent: (text: string) => {
-      const sanitized = document.createElement('div');
-      sanitized.textContent = text;
-      return sanitized.innerHTML
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-        .replace(/`(.*?)`/g, '<code>$1</code>')
-        .replace(/\n/g, '<br>');
-    },
+    formatContent: (text: string) => text, // Confiar en el HTML sanitizado del backend
+
     
     log: (type: string, message: string, data?: any) => {
       console.log(`[${new Date().toISOString()}] [${type.toUpperCase()}] ${message}`, data);
@@ -226,7 +259,7 @@ import { trackChatbotInteraction } from '../../utils/trackChatbotInteraction';
       role === 'user' ? 'bg-blue-600/80' : 'bg-gray-800/80'
     }`;
  
-    bubble.innerHTML = utils.formatContent(content);
+bubble.innerHTML = utils.formatContent(content);
  
     if (sources.length > 0) {
       const sourcesDiv = document.createElement('div');
