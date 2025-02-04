@@ -1,7 +1,12 @@
 ---
 import ThemeIcon from '../ui/ThemeIcon.astro';
 
-const navItems = [
+interface NavItem {
+  name: string;
+  path: string;
+}
+
+const navItems: NavItem[] = [
   { name: 'Services', path: '/#services' },
   { name: 'Projects', path: '/#projects' },
   { name: 'Testimonies', path: '/#testimoniosCarrusel' },
@@ -15,122 +20,180 @@ const currentPath = Astro.url.pathname;
 <header class="fixed w-full top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
-      <a href="/" data-astro-reload="true" class="flex items-center space-x-2">
+      <!-- Logo -->
+      <a href="/" class="flex items-center space-x-2 group" data-astro-reload>
         <div class="relative w-8 h-8">
           <img
             src="/icono-black-no-bg.png"
             class="absolute inset-0 w-full h-full transition-opacity duration-300 dark:opacity-0"
-            alt="Logo light"
+            alt="Logo"
+            loading="eager"
+            width="32"
+            height="32"
           />
           <img
             src="/icono-white-no-bg.png"
             class="absolute inset-0 w-full h-full transition-opacity duration-300 opacity-0 dark:opacity-100"
-            alt="Logo dark"
+            alt="Logo"
+            loading="eager"
+            width="32"
+            height="32"
           />
         </div>
         <div class="flex space-x-2">
-          <span class="text-xl font-bold text-gray-900 dark:text-white">SILVERA</span>
-          <span class="text-xl font-bold text-gray-900 dark:text-white">DAVID</span>
+          <span class="text-xl font-bold text-gray-900 dark:text-white">SILVERA DAVID</span>
         </div>
       </a>
 
-      <nav class="hidden md:flex items-center justify-between flex-1 px-16">
-        <div></div>
-        <div class="flex items-center space-x-8">
-          {navItems.slice(0, 3).map(item => (
-            <a
-              href={item.path}
-              class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300"
-            >
-              {item.name}
-            </a>
-          ))}
-        </div>
-        <div class="flex items-center space-x-8">
-          {navItems.slice(3).map(item => (
-            <a
-              href={item.path}
-              class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300"
-            >
-              {item.name}
-            </a>
-          ))}
-          <ThemeIcon />
-        </div>
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-8">
+        {navItems.map((item) => (
+          <a
+            href={item.path}
+            class={`px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 ${
+              currentPath === item.path ? 'font-semibold text-primary-600 dark:text-primary-400' : ''
+            }`}
+          >
+            {item.name}
+          </a>
+        ))}
+        <ThemeIcon />
       </nav>
 
+      <!-- Mobile Menu Button -->
       <button
-        type="button"
-        class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-        aria-controls="mobile-menu"
-        aria-expanded="false"
         id="menu-button"
+        type="button"
+        class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
       >
-        <span class="sr-only">Open main menu</span>
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <div class="relative w-6 h-6">
+          <svg
+            class="menu-icon absolute inset-0 w-full h-full transition-transform duration-300"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg
+            class="close-icon absolute inset-0 w-full h-full transition-transform duration-300 opacity-0 -rotate-180 scale-50"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </div>
       </button>
     </div>
   </div>
 
-  <div class="md:hidden hidden transition-all duration-300" id="mobile-menu">
-    <div class="px-2 pt-2 pb-3 space-y-1">
-      {navItems.map(item => (
+  <!-- Mobile Menu -->
+  <div
+    id="mobile-menu"
+    class="md:hidden max-h-0 overflow-hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm transition-all duration-300"
+  >
+    <div class="px-2 pt-2 pb-4 space-y-2 border-t border-gray-100 dark:border-gray-800">
+      {navItems.map((item) => (
         <a
           href={item.path}
-          class="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+          class="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         >
           {item.name}
         </a>
       ))}
+      <div class="px-4 py-3">
+        <ThemeIcon class="transition-transform duration-200 hover:scale-110" />
+      </div>
     </div>
   </div>
 </header>
+
+<style>
+  /* Animaciones mejoradas */
+  #mobile-menu {
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+  }
+
+  button[aria-expanded="true"] .menu-icon {
+    transform: rotate(180deg) scale(0);
+    opacity: 0;
+  }
+
+  button[aria-expanded="true"] .close-icon {
+    transform: rotate(0) scale(1);
+    opacity: 1;
+  }
+</style>
 
 <script>
   const setupMobileMenu = () => {
     const menuButton = document.getElementById('menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
-    let isOpen = false;
-
+    
     if (!menuButton || !mobileMenu) return;
 
-    menuButton.addEventListener('click', (e) => {
+    let isOpen = menuButton.getAttribute('aria-expanded') === 'true';
+
+    const toggleMenu = (open: boolean) => {
+      isOpen = open;
+      menuButton.setAttribute('aria-expanded', open.toString());
+      mobileMenu.style.maxHeight = open ? `${mobileMenu.scrollHeight}px` : '0';
+      void mobileMenu.offsetHeight; // Forzar reflow
+    };
+
+    const handleClick = (e: { stopPropagation: () => void; }) => {
       e.stopPropagation();
-      isOpen = !isOpen;
-      mobileMenu.classList.toggle('hidden');
-      menuButton.setAttribute('aria-expanded', isOpen.toString());
+      toggleMenu(!isOpen);
+    };
+
+    const handleClose = (e: { target: any; }) => {
+      const target = e.target;
+      const isInside = mobileMenu.contains(target) || menuButton.contains(target);
+      if (isOpen && !isInside) {
+        toggleMenu(false);
+      }
+    };
+
+    // Limpiar listeners anteriores
+    menuButton.removeEventListener('click', handleClick);
+    document.removeEventListener('click', handleClose);
+    window.removeEventListener('resize', handleClose);
+
+    // Nuevos listeners
+    menuButton.addEventListener('click', handleClick);
+    document.addEventListener('click', handleClose);
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) toggleMenu(false);
     });
 
-    document.addEventListener('click', (e) => {
-      if (isOpen && !menuButton.contains(e.target as Node) && !mobileMenu.contains(e.target as Node)) {
-        isOpen = false;
-        mobileMenu.classList.add('hidden');
-        menuButton.setAttribute('aria-expanded', 'false');
-      }
+    // Cerrar menú al hacer clic en enlaces
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => toggleMenu(false));
     });
   };
 
-  setupMobileMenu();
-  document.addEventListener('astro:page-load', setupMobileMenu);
+  // Inicialización robusta
+  let isInitialized = false;
+  const initMenu = () => {
+    if (isInitialized) return;
+    isInitialized = true;
+    
+    setupMobileMenu();
+    document.addEventListener('astro:page-load', () => {
+      isInitialized = false;
+      initMenu();
+    });
+  };
 
-  window.addEventListener('load', () => {
-    if (location.hash) {
-      document.querySelector(location.hash)?.scrollIntoView({ behavior: 'smooth' });
-    }
-  });
+  if (document.readyState !== 'loading') {
+    initMenu();
+  } else {
+    document.addEventListener('DOMContentLoaded', initMenu);
+  }
+  
 </script>
-
-<style>
-  #mobile-menu {
-    opacity: 1;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-  }
-
-  #mobile-menu:not(.hidden) {
-    max-height: 280px;
-  }
-</style>

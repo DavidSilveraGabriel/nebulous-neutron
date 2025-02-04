@@ -13,4 +13,6 @@ async function main() {
 
 main();
 
-// uso : directorio --> "npx tsx scripts/index-content.ts"
+// uso : directorio --> "npx tsx scripts/index-content.ts" 
+// o "node --trace-deprecation scripts/index-content.ts"
+

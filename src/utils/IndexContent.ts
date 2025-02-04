@@ -8,11 +8,19 @@ import fs from 'fs';
 import path from 'path';
 import { Buffer } from 'buffer';
 
-// Validación mejorada de variables de entorno
+// Configuración ajustable
+const CHUNK_CONFIG = {
+  maxChunkSize: 8000,       // 8KB para chunks
+  maxPayloadSize: 9800,     // 9.8KB para la API
+  maxRetries: 3,
+  concurrency: 5            // Procesamiento paralelo
+};
+
+// Validación de variables de entorno
 const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_KEY', 'GEMINI_API_KEY'];
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
 if (missingVars.length > 0) {
-  throw new Error(`Faltan variables de entorno: ${missingVars.join(', ')}`);
+  throw new Error(`Missing environment variables: ${missingVars.join(', ')}`);
 }
 
 const supabase = createClient(
@@ -22,110 +30,154 @@ const supabase = createClient(
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-// Mejora: Dividir contenido en chunks lógicos manteniendo contexto
-function splitContent(content: string, maxByteSize = 9500): string[] {
+// Función para dividir contenido grande
+function splitLargeContent(text: string, maxByteSize: number): string[] {
+  const chunks: string[] = [];
+  let currentChunk = '';
+  let currentSize = 0;
+
+  const sentences = text.split(/(?<=\b[.!?])\s+/g);
+
+  for (const sentence of sentences) {
+    const sentenceSize = Buffer.byteLength(sentence, 'utf8');
+    
+    if (sentenceSize > maxByteSize) {
+      for (let i = 0; i < sentence.length; i += maxByteSize) {
+        chunks.push(sentence.slice(i, i + maxByteSize));
+      }
+    } else if (currentSize + sentenceSize > maxByteSize) {
+      chunks.push(currentChunk);
+      currentChunk = sentence;
+      currentSize = sentenceSize;
+    } else {
+      currentChunk += sentence;
+      currentSize += sentenceSize;
+    }
+  }
+
+  if (currentChunk) chunks.push(currentChunk);
+  return chunks;
+}
+
+// Función principal de división
+function splitContent(content: string): string[] {
   const chunks: string[] = [];
   let currentChunk: string[] = [];
   let currentSize = 0;
 
-  // Conservar estructura básica de markdown
   const sections = content.split(/(\n#{1,6}\s+.*|\n\*\*\*+|\n-{3,})/g);
-  
+
   for (const section of sections) {
     const sectionSize = Buffer.byteLength(section, 'utf8');
-    
-    if (currentSize + sectionSize > maxByteSize && currentChunk.length > 0) {
-      chunks.push(currentChunk.join(''));
-      currentChunk = [];
-      currentSize = 0;
+
+    if (sectionSize > CHUNK_CONFIG.maxChunkSize) {
+      chunks.push(...splitLargeContent(section, CHUNK_CONFIG.maxChunkSize));
+      continue;
     }
-    
-    currentChunk.push(section);
-    currentSize += sectionSize;
+
+    if (currentSize + sectionSize > CHUNK_CONFIG.maxChunkSize) {
+      chunks.push(currentChunk.join(''));
+      currentChunk = [section];
+      currentSize = sectionSize;
+    } else {
+      currentChunk.push(section);
+      currentSize += sectionSize;
+    }
   }
 
-  if (currentChunk.length > 0) {
-    chunks.push(currentChunk.join(''));
-  }
-
+  if (currentChunk.length > 0) chunks.push(currentChunk.join(''));
   return chunks;
 }
 
-// Mejora: Procesamiento mejorado de contenido MD/MDX
+// Procesamiento de Markdown mejorado
 async function parseMDContent(filePath: string) {
   try {
     const rawContent = fs.readFileSync(filePath, 'utf8');
     const { content, data: metadata } = matter(rawContent);
 
-    // Preservar bloques de código y URLs
     const codeBlocks: string[] = [];
-    let processedContent = content
-      // Extraer y guardar bloques de código
+    const processedContent = content
       .replace(/```[\s\S]*?```/g, (match) => {
         codeBlocks.push(match);
         return `CODE_BLOCK_${codeBlocks.length - 1}`;
       })
-      // Limpiar contenido restante
       .replace(/(\r\n|\n|\r)/gm, ' ')
       .replace(/\s+/g, ' ')
-      // Mantener más caracteres relevantes
       .replace(/[^\w\sáéíóúñÁÉÍÓÚÑ\-_~!$&*+,;=:@%#?/\d()[\]'"{}⟨⟩<>«»“”‘’¿¡°–—§€®™•·.,]/gi, '');
 
-    // Reinsertar bloques de código preservados
-    processedContent = processedContent.replace(/CODE_BLOCK_(\d+)/g, (_, index) => 
-      codeBlocks[parseInt(index)].replace(/\n/g, ' ')
+    const finalContent = processedContent.replace(/CODE_BLOCK_(\d+)/g, (_, index) => 
+      codeBlocks[parseInt(index)]
     );
 
-    // Validar metadatos esenciales
     const requiredMetadata = ['title'];
     const missingMetadata = requiredMetadata.filter(field => !metadata[field]);
     if (missingMetadata.length > 0) {
-      console.warn(`⚠️ Metadata faltante en ${path.basename(filePath)}: ${missingMetadata.join(', ')}`);
+      console.warn(`⚠️ Missing metadata in ${path.basename(filePath)}: ${missingMetadata.join(', ')}`);
     }
 
     return {
-      content: processedContent.trim(),
+      content: finalContent.trim(),
       metadata: {
         ...metadata,
         original_length: content.length,
         code_blocks: codeBlocks.length,
-        internal_links: (processedContent.match(/\[[^\]]+\]\([^)]+\)/g) || []).length
+        code_blocks_size: codeBlocks.reduce((acc, block) => acc + Buffer.byteLength(block, 'utf8'), 0),
+        internal_links: (finalContent.match(/\[[^\]]+\]\([^)]+\)/g) || []).length
       }
     };
   } catch (error) {
-    console.error(`❌ Error procesando ${filePath}:`, error);
+    console.error(`❌ Error processing ${filePath}:`, error);
     return { content: '', metadata: {} };
   }
 }
 
-// Función de embeddings con reintentos
-async function safeExtractEmbeddings(content: string, filePath: string, retries = 3) {
-  const byteSize = Buffer.byteLength(content, 'utf8');
+// Generación de embeddings con manejo de tamaño
+async function safeExtractEmbeddings(content: string, filePath: string) {
+  const payload = JSON.stringify({
+    model: "text-embedding-004",
+    content: content
+  });
   
-  if (byteSize > 9999) {
-    console.warn(`🟡 Tamaño excedido: ${filePath} (${byteSize} bytes)`);
+  const payloadSize = Buffer.byteLength(payload, 'utf8');
+  
+  if (payloadSize > CHUNK_CONFIG.maxPayloadSize) {
+    console.warn(`🟡 Size exceeded: ${filePath} (${payloadSize} bytes)`);
     return null;
   }
 
-  for (let attempt = 1; attempt <= retries; attempt++) {
+  for (let attempt = 1; attempt <= CHUNK_CONFIG.maxRetries; attempt++) {
     try {
       const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
       const result = await model.embedContent(content);
       return result.embedding.values;
     } catch (error: any) {
-      if (attempt < retries && error?.response?.status === 429) {
+      if (attempt < CHUNK_CONFIG.maxRetries && error?.response?.status === 429) {
         const delay = Math.pow(2, attempt) * 1000;
-        console.log(`⌛ Reintento ${attempt} para ${filePath} en ${delay}ms`);
+        console.log(`⌛ Retry ${attempt} for ${filePath} in ${delay}ms`);
         await new Promise(resolve => setTimeout(resolve, delay));
       } else {
-        throw error;
+        console.error(`🔴 Embedding error for ${filePath}:`, error.message);
+        return null;
       }
     }
   }
   return null;
 }
 
-// Función principal mejorada
+// Función para registrar errores en Supabase
+async function logErrorToDB(filePath: string, error: any) {
+  try {
+    await supabase.from('indexing_errors').insert({
+      file_path: filePath,
+      error_message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  } catch (dbError) {
+    console.error('❌ Failed to log error to DB:', dbError);
+  }
+}
+
+// Función principal optimizada
 export async function indexContent() {
   const contentDir = path.join(process.cwd(), 'src/content');
   
@@ -135,7 +187,7 @@ export async function indexContent() {
       ignore: ['**/node_modules/**', '**/drafts/**']
     });
 
-    console.log(`📂 Encontrados ${files.length} archivos para procesar`);
+    console.log(`📂 Found ${files.length} files to process`);
 
     for (const file of files) {
       const startTime = Date.now();
@@ -143,54 +195,69 @@ export async function indexContent() {
       
       try {
         const { content, metadata } = await parseMDContent(filePath);
-        if (!content) {
-          console.warn(`⏩ Saltando archivo vacío: ${file}`);
+        if (!content || content.length < 100) {
+          console.warn(`⏩ Skipping empty/short file: ${file}`);
           continue;
         }
 
         const chunks = splitContent(content);
-        console.log(`📑 ${file} dividido en ${chunks.length} chunks`);
+        console.log(`📑 ${file} split into ${chunks.length} chunks`);
 
-        for (const [index, chunk] of chunks.entries()) {
-          const embeddings = await safeExtractEmbeddings(chunk, filePath);
-          
-          if (!embeddings) {
-            console.warn(`⏩ Saltando chunk ${index + 1} de ${file}`);
-            continue;
+        // Procesar chunks en paralelo con límite de concurrencia
+        const chunkPromises = chunks.map(async (chunk, index) => {
+          try {
+            const embeddings = await safeExtractEmbeddings(chunk, filePath);
+            if (!embeddings) return;
+
+            const { error } = await supabase
+              .from('content_embeddings')
+              .upsert({
+                file_path: `${file}#chunk${index + 1}`,
+                content: chunk,
+                embeddings,
+                metadata: {
+                  ...metadata,
+                  source: 'content',
+                  chunk: index + 1,
+                  total_chunks: chunks.length,
+                  updated_at: new Date().toISOString()
+                }
+              }, { onConflict: 'file_path' });
+
+            if (error) throw error;
+            console.log(`✅ Chunk ${index + 1}/${chunks.length} indexed`);
+          } catch (chunkError) {
+            console.error(`🔥 Error in chunk ${index + 1} of ${file}:`, chunkError);
+            await logErrorToDB(filePath, chunkError);
           }
+        });
 
-          const { error } = await supabase
-            .from('content_embeddings')
-            .upsert({
-              file_path: `${file}#chunk${index + 1}`,
-              content: chunk,
-              embeddings,
-              metadata: {
-                ...metadata,
-                source: 'content',
-                chunk: index + 1,
-                total_chunks: chunks.length,
-                updated_at: new Date().toISOString()
-              }
-            }, { onConflict: 'file_path' });
-
-          if (error) throw error;
-          console.log(`✅ Chunk ${index + 1}/${chunks.length} indexado`);
+        // Ejecutar en lotes para evitar rate limiting
+        while (chunkPromises.length > 0) {
+          const batch = chunkPromises.splice(0, CHUNK_CONFIG.concurrency);
+          await Promise.all(batch);
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Delay entre lotes
         }
 
-        console.log(`⏱️  Tiempo procesamiento ${file}: ${(Date.now() - startTime)/1000}s`);
+        console.log(`⏱️  Processing time ${file}: ${(Date.now() - startTime)/1000}s`);
         
       } catch (error) {
-        console.error(`🔥 Error procesando ${file}:`, error);
-        // Opcional: Registrar error en base de datos
+        console.error(`🔥 Error processing ${file}:`, error);
+        await logErrorToDB(filePath, error);
       }
     }
     
-    console.log('🎉 Proceso completado');
+    console.log('🎉 Process completed');
     return true;
 
   } catch (error) {
-    console.error('🚨 Error crítico en el proceso:', error);
+    console.error('🚨 Critical process error:', error);
     return false;
   }
 }
+
+// Ejecutar el indexado
+indexContent().then(success => {
+  if (success) process.exit(0);
+  else process.exit(1);
+});
