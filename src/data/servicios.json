@@ -1,0 +1,69 @@
+{
+  "servicios": [
+    {
+      "title": "🤖 AI Chatbots",
+      "description": "Advanced conversational solutions with multimodal integration",
+      "category": ["chatbots", "automation"],
+      "badges": ["GPT-4", "Gemini", "NLP","Supabase", "RAG"],
+      "features": ["Natural Language Processing", "Multimodal Integration", "Workflow Automation"],
+      "icon": "chat"
+    },
+    {
+      "title": "📊 Data Analysis",
+      "description": "Interactive dashboards and advanced predictive models",
+      "category": ["analysis", "DataScience"],
+      "badges": ["Python", "Power BI", "Tableau", "Pandas", "Spark"],
+      "features": ["Data Visualization", "Predictive Modeling", "Data Mining"],
+      "icon": "analytics"
+    },
+    {
+      "title": "🧠 Machine Learning",
+      "description": "Predictive models and custom intelligent systems",
+      "category": ["ml", "DataScience"],
+      "badges": ["TensorFlow", "PyTorch", "Scikit-learn", "XGBoost", "AutoML"],
+      "features": ["Predictive Modeling", "Classification", "Optimization"],
+      "icon": "ai"
+    },
+    {
+      "title": "👁️ Computer Vision",
+      "description": "Automated visual analysis solutions",
+      "category": ["vision", "automation"],
+      "badges": ["OpenCV", "YOLO", "TensorFlow", "PyTorch", "OCR"],
+      "features": ["Image Recognition", "Object Detection", "Quality Control"],
+      "icon": "vision"
+    },
+    {
+      "title": "📝 Natural Language Processing",
+      "description": "Advanced text analysis and NLP",
+      "category": ["nlp", "DataScience"],
+      "badges": ["NLTK", "Spacy", "BERT", "Transformers", "LLMs"],
+      "features": ["Sentiment Analysis", "Topic Modeling", "Automatic Summarization"],
+      "icon": "text"
+    },
+    {
+      "title": "🧑🏫 AI Workshops",
+      "description": "Practical training in artificial intelligence",
+      "category": ["education", "consulting","DataScience"],
+      "badges": ["Workshops", "Training", "MLOps", "AI Ethics", "Cases"],
+      "features": ["Technical Training", "Executive Sessions", "Practical Materials"],
+      "icon": "education"
+    },
+    {
+      "title": "⚙️ Model Optimization",
+      "description": "Performance improvement of AI systems",
+      "category": ["ml", "optimization"],
+      "badges": ["TensorRT", "ONNX", "Pruning", "Quantization", "Benchmark"],
+      "features": ["Optimization", "Compression", "Acceleration"],
+      "icon": "optimization"
+    },
+    {
+      "title": "💡 AI Strategy",
+      "description": "Strategic consulting in artificial intelligence",
+      "category": ["consulting", "strategy"],
+      "badges": ["Roadmap", "Audit", "Ethics", "Implementation", "ROI"],
+      "features": ["Planning", "Evaluation", "Implementation"],
+      "icon": "strategy"
+    }
+  ]
+}
+

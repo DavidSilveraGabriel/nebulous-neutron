@@ -5,7 +5,7 @@ description: "Learn more about me, my experience, skills, and featured projects.
 
 # Hi, I'm David Gabriel Silvera 👋
 
-I am a **Data Scientist and Machine Learning & Artificial Intelligence Engineer** with over four years of experience in creating innovative **artificial intelligence solutions**. My passion lies in applying technology to generate a **positive impact** and transform the way organizations address their challenges.
+I am a **Data Scientist and Machine Learning & Artificial Intelligence Engineer** with over five years of experience in creating innovative **artificial intelligence solutions**. My passion lies in applying technology to generate a **positive impact** and transform the way organizations address their challenges.
 
 Currently, I am working in **Argentina**, and you can find more information about my projects and professional experience at:
 
