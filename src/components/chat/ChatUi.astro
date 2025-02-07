@@ -190,10 +190,8 @@ import { init } from '../../utils/chatUiLogic.ts'; // Importa la función init d
   import { init } from '../../utils/chatUiLogic.ts'; // Asegúrate de que la ruta sea correcta
   
   document.addEventListener('astro:page-load', init);
-  document.addEventListener('DOMContentLoaded', () => { // Asegura que el DOM esté listo
-                init(); // Inicializa el chatbot
-            });
-            </script>
+  document.addEventListener('DOMContentLoaded', () => { init();});
+</script>
 
 
 
