@@ -1,7 +1,6 @@
 ---
 // src/components/chat/ChatUi.astro
-import { init } from '../../utils/chatUiLogic'; // Importa la función init desde chatUiLogic.ts
-
+import { init } from '../../utils/chatUiLogic.ts'; // Importa la función init desde chatUiLogic.ts
 ---
 
 <div class="fixed bottom-4 right-4 z-[999]">
@@ -189,10 +188,12 @@ import { init } from '../../utils/chatUiLogic'; // Importa la función init desd
 
 <script>
   import { init } from '../../utils/chatUiLogic.ts'; // Asegúrate de que la ruta sea correcta
-
+  
   document.addEventListener('astro:page-load', init);
-  window.addEventListener('DOMContentLoaded', init);
-</script>
+  document.addEventListener('DOMContentLoaded', () => { // Asegura que el DOM esté listo
+                init(); // Inicializa el chatbot
+            });
+            </script>
 
 
 
