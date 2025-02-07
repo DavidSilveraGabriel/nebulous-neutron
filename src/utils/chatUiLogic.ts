@@ -219,11 +219,11 @@ const api: APIFunctions = {
                 try {
                     const { response: botResponse, sources = [], error: backendError } = data;
                     const responseToLog = backendError || botResponse || 'No response content'; // Log error or response
-
+                    const responseToSave = botResponse || (backendError ? backendError : 'No response content'); // Save only response
                     const { error: logResponseError } = await supabase
                         .from('chatbot_interactions')
                         .insert([
-                            { session_id: sessionId, timestamp: new Date(), role: 'assistant', content: responseToLog }
+                            { session_id: sessionId, timestamp: new Date(), role: 'assistant', content: responseToLog, response: responseToSave }
                         ]);
                     if (logResponseError) {
                         utils.log('error', 'Supabase log error (bot response)', logResponseError);
