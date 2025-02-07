@@ -1,16 +1,21 @@
 ---
+// src/components/sections/ServicesSection.astro
 import serviciosData from '../../data/servicios.json';
+import ServiceCard from '../ui/ServiceCard.astro';
+import FilterButtons from '../ui/FilterButtons.astro';
 
 const categoriasUnicas = [...new Set(serviciosData.servicios.flatMap(s => s.category))];
 ---
 
-<section class="py-20 bg-white dark:bg-gray-900 relative overflow-hidden" id="services">
-    <!-- Fondo con efecto sutil -->
-    <div class="absolute inset-0 bg-gradient-to-br from-blue-50/30 to-purple-50/30 dark:from-gray-800 dark:to-gray-900"></div>
-    
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <!-- Encabezado -->
-        <div class="text-center mb-16 space-y-6">
+<section class="py-24 bg-white dark:bg-gray-900 relative" id="services">
+    <div class="absolute inset-0 -z-10 transform-gpu overflow-hidden">
+        <div class="w-full h-full bg-gradient-to-br from-blue-100/30 via-transparent to-purple-100/30 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 backdrop-blur-sm"></div>
+        <div class="absolute -bottom-48 -left-48 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl dark:bg-purple-600/10"></div>
+        <div class="absolute -top-32 -right-48 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl dark:bg-blue-600/10"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 space-y-6 scroll-mt-24">
             <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
                 AI & Data Science Solutions
             </h2>
@@ -18,57 +23,15 @@ const categoriasUnicas = [...new Set(serviciosData.servicios.flatMap(s => s.cate
                 Transform your business with cutting-edge AI solutions and data-driven insights
             </p>
             
-            <!-- Filtros -->
-            <div class="flex flex-wrap justify-center gap-2 mt-8" id="filters">
-                <button class="filter-btn active" data-filter="all">All Services</button>
-                {categoriasUnicas.map(categoria => (
-                    <button class="filter-btn" data-filter={categoria}>
-                        {categoria.replace(/-/g, ' ').toUpperCase()}
-                    </button>
-                ))}
-            </div>
+            <FilterButtons categories={categoriasUnicas} />
         </div>
 
-        <!-- Grid de Servicios -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 services-container">
-            {serviciosData.servicios.map(servicio => (
-                <article class="service-card group" data-category={servicio.category.join(' ')}>
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 h-full transition-all duration-300 hover:-translate-y-2 relative overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-100 hover:dark:border-purple-900/50">
-                        <!-- Efecto de gradiente hover -->
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-50/20 to-purple-50/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                       
-
-                        <!-- Contenido -->
-                        <h3 class="text-2xl font-bold text-center mb-4 text-gray-900 dark:text-white">
-                            {servicio.title}
-                        </h3>
-                        
-                        <div class="flex flex-wrap justify-center gap-2 mb-4">
-                            {servicio.badges.map(badge => (
-                                <span class="badge hover:bg-blue-100 hover:dark:bg-purple-900/20 cursor-pointer">
-                                    {badge}
-                                </span>
-                            ))}
-                        </div>
-                        
-                        <p class="text-gray-600 dark:text-gray-300 text-center mb-6 text-balance">
-                            {servicio.description}
-                        </p>
-                        
-                        <ul class="space-y-3 text-gray-600 dark:text-gray-300 mb-6">
-                            {servicio.features.map(feature => (
-                                <li class="flex items-center hover:pl-3 transition-all duration-300">
-                                    <span class="mr-2 text-blue-500 dark:text-purple-400">▸</span>
-                                    {feature}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </article>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 services-container">
+            {serviciosData.servicios.map((servicio) => (
+                <ServiceCard servicio={servicio} />
             ))}
         </div>
 
-        <!-- CTA mejorado -->
         <div class="mt-16 text-center space-y-4">
             <p class="text-lg text-gray-600 dark:text-gray-300">
                 Ready to transform your business with AI?
@@ -86,21 +49,6 @@ const categoriasUnicas = [...new Set(serviciosData.servicios.flatMap(s => s.cate
     </div>
 
     <style>
-        .filter-btn {
-            @apply px-5 py-2.5 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 
-                   border border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:dark:border-purple-500 
-                   transition-all duration-300 text-sm font-medium shadow-sm hover:shadow-md;
-        }
-        
-        .filter-btn.active {
-            @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent shadow-lg;
-        }
-        
-        .badge {
-            @apply px-3 py-1.5 text-sm rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 
-                   transition-all duration-200 hover:scale-105;
-        }
-        
         .whatsapp-btn {
             @apply inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 
                    text-white rounded-2xl transition-all duration-300 shadow-xl hover:shadow-2xl text-lg font-semibold 
@@ -117,7 +65,6 @@ const categoriasUnicas = [...new Set(serviciosData.servicios.flatMap(s => s.cate
     </style>
 
     <script is:inline>
-        // Sistema de Filtrado Mejorado
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -128,16 +75,6 @@ const categoriasUnicas = [...new Set(serviciosData.servicios.flatMap(s => s.cate
                     const categories = card.dataset.category.split(' ');
                     card.classList.toggle('hidden', filter !== 'all' && !categories.includes(filter));
                 });
-            });
-        });
-
-        // Interactividad para badges
-        document.querySelectorAll('.badge').forEach(badge => {
-            badge.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const technology = badge.textContent.trim();
-                console.log(`Filter by technology: ${technology}`);
-                // Puedes implementar lógica adicional de filtrado aquí
             });
         });
     </script>

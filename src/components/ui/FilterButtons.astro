@@ -1,0 +1,32 @@
+---
+// src/components/ui/FilterButtons.astro
+interface Props {
+  categories: string[];
+}
+
+const { categories } = Astro.props;
+---
+
+<div class="flex flex-wrap justify-center gap-3 mt-8" id="filters">
+  <button class="filter-btn active" data-filter="all">All Services</button>
+  {categories.map(categoria => 
+    <button 
+      class="filter-btn" 
+      data-filter={categoria}
+    >
+      {categoria.replace(/-/g, ' ').toUpperCase()}
+    </button>
+  )}
+</div>
+
+<style>
+  .filter-btn {
+    @apply px-5 py-2.5 rounded-full bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 
+           border border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:dark:border-purple-500 
+           transition-all duration-300 text-sm font-medium shadow-sm hover:shadow-md;
+  }
+  
+  .filter-btn.active {
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent shadow-lg;
+  }
+</style>

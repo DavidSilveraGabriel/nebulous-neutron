@@ -1,0 +1,47 @@
+---
+// src/components/ui/ServiceCard.astro
+import ServiceBadge from './ServiceBadge.astro';
+
+interface Props {
+  servicio: {
+    title: string;
+    category: string[];
+    badges: string[];
+    description: string;
+    features: string[];
+  };
+}
+
+const { servicio } = Astro.props;
+---
+
+<article class="service-card group" data-category={servicio.category.join(' ')}>
+  <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 h-full transition-all duration-300 hover:-translate-y-2 border border-gray-100 dark:border-gray-700 hover:border-blue-200 hover:dark:border-purple-900/50 shadow-lg hover:shadow-xl relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-50/20 to-purple-50/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    
+    <div class="relative">
+      <h3 class="text-2xl font-bold text-center mb-4 text-gray-900 dark:text-white">
+        {servicio.title}
+      </h3>
+      
+      <div class="flex flex-wrap justify-center gap-2 mb-4">
+        {servicio.badges.map((badge) => (
+          <ServiceBadge badge={badge} />
+        ))}
+      </div>
+      
+      <p class="text-gray-600 dark:text-gray-300 text-center mb-6 text-balance">
+        {servicio.description}
+      </p>
+      
+      <ul class="space-y-3 text-gray-600 dark:text-gray-300 mb-6">
+        {servicio.features.map((feature) => (
+          <li class="flex items-center hover:pl-3 transition-all duration-300">
+            <span class="mr-2 text-blue-500 dark:text-purple-400">▸</span>
+            {feature}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,19 @@
+---
+// src/components/ui/ServiceBadge.astro
+interface Props {
+  badge: string;
+}
+
+const { badge } = Astro.props;
+---
+
+<span class="badge">
+  {badge}
+</span>
+
+<style>
+  .badge {
+    @apply px-3 py-1.5 text-sm rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 
+           transition-all duration-200 hover:scale-105 cursor-pointer;
+  }
+</style>
