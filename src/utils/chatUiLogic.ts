@@ -1,3 +1,4 @@
+// src/utils/chatUiLogic.ts (COMPLETO y CORREGIDO)
 import { createClient } from '@supabase/supabase-js';
 import type { ChatState, Message, Utils, UIElements, HistoryFunctions, APIFunctions, UIFunctions } from './chatUiTypes.ts';
 
@@ -199,8 +200,11 @@ const api: APIFunctions = {
         // --- 2. Actualizar la fila con la respuesta ---
         if (interactionId) { //  Solo actualiza si tenemos un ID.
           try {
+            // *** MODIFICACIÓN AQUÍ: Usar un valor por defecto para sources ***
+            const sourcesToSave = data.sources && data.sources.length > 0 ? data.sources : ['Data Base'];
+
             const { error: updateError } = await supabase.from('chatbot_interactions')
-              .update({ response: data.response, sources: data.sources })
+              .update({ response: data.response, sources: sourcesToSave }) // Usar sourcesToSave
               .eq('id', interactionId);
 
             if (updateError) throw updateError;
