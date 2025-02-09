@@ -158,12 +158,32 @@ const api: APIFunctions = {
       localStorage.setItem('chatSessionId', sessionId);
     }
 
+    let interactionId: number | null = null; // Variable para guardar el ID de la interacción
+
     try {
-      await supabase.from('chatbot_interactions').insert([
-        { session_id: sessionId, timestamp: new Date(), role: 'user', content: query }
-      ]);
+      // 1. Insertar la consulta del usuario INICIALMENTE y obtener el ID
+      const insertResult = await supabase
+        .from('chatbot_interactions')
+        .insert([
+          { session_id: sessionId, timestamp: new Date(), role: 'user', content: query }
+        ])
+        .select('id'); // Seleccionamos el ID para que Supabase lo retorne
+
+      if (insertResult.error) {
+        utils.log('error', 'Error logging user query (insert)', insertResult.error);
+        throw insertResult.error; // Propagar el error para que se maneje en el catch
+      }
+
+      if (insertResult.data && insertResult.data.length > 0) {
+        interactionId = insertResult.data[0].id; // Asumimos que 'id' es el nombre de tu columna de ID y es numérica
+      } else {
+        utils.log('error', 'No se pudo obtener el ID de la interacción insertada');
+        throw new Error('No interaction ID returned after insert');
+      }
+
+
     } catch (e) {
-      utils.log('error', 'Error logging user query', e);
+      utils.log('error', 'Error logging user query (initial insert)', e);
     }
 
     if (chatState.controller) chatState.controller.abort();
@@ -185,15 +205,28 @@ const api: APIFunctions = {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
 
-        await supabase.from('chatbot_interactions').insert([
-          { 
-            session_id: sessionId, 
-            timestamp: new Date(), 
-            role: 'assistant', 
-            content: data.response, 
-            sources: data.sources 
+        // 2. Actualizar la fila EXISTENTE con la respuesta del bot usando el interactionId
+        if (interactionId !== null) {
+          const updateResult = await supabase
+            .from('chatbot_interactions')
+            .update({
+              role: 'assistant', // Ahora actualizamos el rol a 'assistant' en la misma fila
+              content: data.response, // Puedes seguir guardando la respuesta en 'content' si quieres
+              response: data.response, // Insertamos la respuesta en la columna 'response'
+              sources: data.sources
+            })
+            .eq('id', interactionId); // Filtramos por el ID de la interacción que guardamos
+
+          if (updateResult.error) {
+            utils.log('error', 'Error updating interaction with bot response', updateResult.error);
+            // Decide si quieres propagar el error de update o solo loggearlo.
+            // En este ejemplo, solo lo loggeamos para que la conversación siga funcionando
+            // aunque no se haya guardado la respuesta en la BD.
           }
-        ]);
+        } else {
+          utils.log('error', 'No interaction ID available for update');
+        }
+
 
         return data;
       } catch (error) {
