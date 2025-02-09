@@ -1,4 +1,4 @@
-// src/utils/chatUiLogic.ts (COMPLETO y CORREGIDO, usando la función de Supabase)
+// src/utils/chatUiLogic.ts (con depuración mejorada)
 
 import { createClient } from '@supabase/supabase-js';
 import type { ChatState, Message, Utils, UIElements, HistoryFunctions, APIFunctions, UIFunctions } from './chatUiTypes.ts';
@@ -150,6 +150,7 @@ const history: HistoryFunctions = {
     }
   }
 };
+
 // Funciones API
 const api: APIFunctions = {
     sendQuery: async (query) => {
@@ -157,6 +158,20 @@ const api: APIFunctions = {
         if (!sessionId) {
             sessionId = crypto.randomUUID();
             localStorage.setItem('chatSessionId', sessionId);
+        }
+
+        // --- Insertar la pregunta del usuario ---
+        try {
+            const { error: insertUserError } = await supabase.from('chatbot_interactions').insert([
+                { session_id: sessionId, timestamp: new Date(), role: 'user', content: query }
+            ]);
+            if (insertUserError) { // Verificar y registrar error de inserción del usuario
+                console.error('[Supabase] Error inserting user query:', insertUserError);
+                utils.log('error', 'Error logging user query', insertUserError);
+            }
+        } catch (e) {
+            console.error('[Supabase] Exception inserting user query:', e); // Capturar excepciones
+            utils.log('error', 'Exception logging user query', e);
         }
 
         if (chatState.controller) chatState.controller.abort();
@@ -178,20 +193,37 @@ const api: APIFunctions = {
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
 
-                // --- Llamar a la función de Supabase ---
+                // --- Insertar la respuesta del bot ---
                 try {
-                  const sourcesArray = data.sources && data.sources.length > 0 ? data.sources : null;
-                    const { error: upsertError } = await supabase.rpc('upsert_chatbot_interaction', {
-                        p_session_id: sessionId,
-                        p_role: 'user',
-                        p_content: query,
-                        p_response: data.response,
-                        p_sources: sourcesArray, //Pasar sources como null, si no hay
-                    });
+                    const { error: insertBotError } = await supabase.from('chatbot_interactions').insert([
+                        {
+                            session_id: sessionId,
+                            timestamp: new Date(),
+                            role: 'assistant',
+                            content: data.response,
+                            sources: data.sources && data.sources.length > 0 ? data.sources : ['Data Base'],
+                        }
+                    ]);
+                   if (insertBotError) {
+                        // REGISTRO DETALLADO DEL ERROR
+                        console.error('[Supabase] Error inserting bot response:', {
+                            error: insertBotError,
+                            sessionId,
+                            response: data.response.substring(0, 100), // Primeros 100 caracteres
+                            sources: data.sources,
+                        });
+                        utils.log('error', 'Error logging bot response', insertBotError);
+                    }
 
-                    if (upsertError) throw upsertError;
-                } catch (upsertErr) {
-                    utils.log('error', 'Error calling upsert function', upsertErr);
+                } catch (e) {
+                    // REGISTRO DETALLADO DE LA EXCEPCIÓN
+                    console.error('[Supabase] Exception inserting bot response:', {
+                        exception: e,
+                        sessionId,
+                        response: data.response.substring(0, 100), // Primeros 100 caracteres
+                        sources: data.sources,
+                    });
+                    utils.log('error', 'Exception logging bot response', e);
                 }
 
                 return data;
@@ -205,7 +237,6 @@ const api: APIFunctions = {
         throw new Error('Max retries reached');
     }
 };
-
 // Reset completo
 const hardResetSession = async () => {
   if (!confirm('¿Resetear toda la conversación y contexto?')) return;
