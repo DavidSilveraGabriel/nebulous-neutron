@@ -55,11 +55,11 @@ const ui: UIFunctions = {
       elements.container.classList.toggle('invisible', !chatState.isOpen);
       elements.container.style.pointerEvents = chatState.isOpen ? 'auto' : 'none';
     }
-    
+
     if (elements.toggleButton) {
       elements.toggleButton.classList.toggle('rotate-45', chatState.isOpen);
     }
-    
+
     if (elements.messagesContainer && chatState.isOpen) {
       elements.messagesContainer.scrollTop = elements.messagesContainer.scrollHeight;
     }
@@ -158,13 +158,24 @@ const api: APIFunctions = {
       localStorage.setItem('chatSessionId', sessionId);
     }
 
+    // --- 1. Insertar la pregunta y obtener el ID ---
+    let interactionId = null;
     try {
-      await supabase.from('chatbot_interactions').insert([
-        { session_id: sessionId, timestamp: new Date(), role: 'user', content: query }
-      ]);
+      const { data, error } = await supabase.from('chatbot_interactions')
+        .insert([
+          { session_id: sessionId, timestamp: new Date(), role: 'user', content: query }
+        ])
+        .select('id'); // <-- Importante: seleccionar el ID
+
+      if (error) throw error;
+      interactionId = data?.[0]?.id; // <-- Obtener el ID
+      if (!interactionId) throw new Error('Failed to get interaction ID');
+
     } catch (e) {
       utils.log('error', 'Error logging user query', e);
+      //  Podrías decidir no abortar aquí, y simplemente no actualizar.
     }
+
 
     if (chatState.controller) chatState.controller.abort();
     chatState.controller = new AbortController();
@@ -185,17 +196,22 @@ const api: APIFunctions = {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
 
-        await supabase.from('chatbot_interactions').insert([
-          { 
-            session_id: sessionId, 
-            timestamp: new Date(), 
-            role: 'assistant', 
-            content: data.response, 
-            sources: data.sources 
+        // --- 2. Actualizar la fila con la respuesta ---
+        if (interactionId) { //  Solo actualiza si tenemos un ID.
+          try {
+            const { error: updateError } = await supabase.from('chatbot_interactions')
+              .update({ response: data.response, sources: data.sources })
+              .eq('id', interactionId);
+
+            if (updateError) throw updateError;
+
+          } catch (updateErr) {
+            utils.log('error', 'Error updating response', updateErr);
           }
-        ]);
+        }
 
         return data;
+
       } catch (error) {
         if (retries === 0 || (error as Error).name === 'AbortError') throw error;
         await new Promise(resolve => setTimeout(resolve, RETRY_CONFIG.baseDelay * (RETRY_CONFIG.maxRetries - retries + 1)));
@@ -287,51 +303,51 @@ const init = () => {
   });
 
   // Dentro del event listener del send button
-elements.sendButton?.addEventListener('click', async () => {
-  if (!elements.input || !elements.sendButton) return;
+  elements.sendButton?.addEventListener('click', async () => {
+    if (!elements.input || !elements.sendButton) return;
 
-  const query = elements.input.value.trim();
-  if (!query) return;
+    const query = elements.input.value.trim();
+    if (!query) return;
 
-  elements.sendButton.disabled = true;
-  elements.input.disabled = true;
+    elements.sendButton.disabled = true;
+    elements.input.disabled = true;
 
-  try {
-    ui.toggleLoading(true);
-    chatState.history.push({ role: 'user', content: query, sources: [], timestamp: Date.now() });
-    ui.addMessage('user', query);
+    try {
+      ui.toggleLoading(true);
+      chatState.history.push({ role: 'user', content: query, sources: [], timestamp: Date.now() });
+      ui.addMessage('user', query);
 
-    ui.showTypingIndicator();
-    elements.input.value = '';
+      ui.showTypingIndicator();
+      elements.input.value = '';
 
-    const { response, sources = [], error } = await api.sendQuery(query);
-    ui.removeTypingIndicator();
+      const { response, sources = [], error } = await api.sendQuery(query);
+      ui.removeTypingIndicator();
 
-    if (error) {
-      ui.addMessage('error', error);
-      chatState.history.push({ role: 'error', content: error, timestamp: Date.now() });
-    } else {
-      // Función para limpiar la respuesta
-      const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const escapedQuery = escapeRegExp(query);
-      const queryPattern = new RegExp(`^${escapedQuery}\\s*`, 'i');
-      const cleanedResponse = response.replace(queryPattern, '').trim();
+      if (error) {
+        ui.addMessage('error', error);
+        chatState.history.push({ role: 'error', content: error, timestamp: Date.now() });
+      } else {
+        // Función para limpiar la respuesta
+        const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const escapedQuery = escapeRegExp(query);
+        const queryPattern = new RegExp(`^${escapedQuery}\\s*`, 'i');
+        const cleanedResponse = response.replace(queryPattern, '').trim();
 
-      chatState.history.push({ role: 'assistant', content: cleanedResponse, sources, timestamp: Date.now() });
-      ui.addMessage('assistant', cleanedResponse, sources);
+        chatState.history.push({ role: 'assistant', content: cleanedResponse, sources, timestamp: Date.now() });
+        ui.addMessage('assistant', cleanedResponse, sources);
+      }
+
+      history.save();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error de conexión';
+      ui.addMessage('error', errorMessage);
+      utils.log('error', 'Chat error', error);
+    } finally {
+      ui.toggleLoading(false);
+      elements.sendButton.disabled = false;
+      elements.input.disabled = false;
     }
-
-    history.save();
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Error de conexión';
-    ui.addMessage('error', errorMessage);
-    utils.log('error', 'Chat error', error);
-  } finally {
-    ui.toggleLoading(false);
-    elements.sendButton.disabled = false;
-    elements.input.disabled = false;
-  }
-});
+  });
 
   // Cargar estado inicial
   const savedState = localStorage.getItem('chatIsOpen');
