@@ -286,45 +286,52 @@ const init = () => {
     }
   });
 
-  elements.sendButton?.addEventListener('click', async () => {
-    if (!elements.input || !elements.sendButton) return;
+  // Dentro del event listener del send button
+elements.sendButton?.addEventListener('click', async () => {
+  if (!elements.input || !elements.sendButton) return;
 
-    const query = elements.input.value.trim();
-    if (!query) return;
+  const query = elements.input.value.trim();
+  if (!query) return;
 
-    elements.sendButton.disabled = true;
-    elements.input.disabled = true;
+  elements.sendButton.disabled = true;
+  elements.input.disabled = true;
 
-    try {
-      ui.toggleLoading(true);
-      chatState.history.push({ role: 'user', content: query, sources: [], timestamp: Date.now() });
-      ui.addMessage('user', query);
+  try {
+    ui.toggleLoading(true);
+    chatState.history.push({ role: 'user', content: query, sources: [], timestamp: Date.now() });
+    ui.addMessage('user', query);
 
-      ui.showTypingIndicator();
-      elements.input.value = '';
+    ui.showTypingIndicator();
+    elements.input.value = '';
 
-      const { response, sources = [], error } = await api.sendQuery(query);
-      ui.removeTypingIndicator();
+    const { response, sources = [], error } = await api.sendQuery(query);
+    ui.removeTypingIndicator();
 
-      if (error) {
-        ui.addMessage('error', error);
-        chatState.history.push({ role: 'error', content: error, timestamp: Date.now() });
-      } else {
-        chatState.history.push({ role: 'assistant', content: response, sources, timestamp: Date.now() });
-        ui.addMessage('assistant', response, sources);
-      }
+    if (error) {
+      ui.addMessage('error', error);
+      chatState.history.push({ role: 'error', content: error, timestamp: Date.now() });
+    } else {
+      // Función para limpiar la respuesta
+      const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const escapedQuery = escapeRegExp(query);
+      const queryPattern = new RegExp(`^${escapedQuery}\\s*`, 'i');
+      const cleanedResponse = response.replace(queryPattern, '').trim();
 
-      history.save();
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error de conexión';
-      ui.addMessage('error', errorMessage);
-      utils.log('error', 'Chat error', error);
-    } finally {
-      ui.toggleLoading(false);
-      elements.sendButton.disabled = false;
-      elements.input.disabled = false;
+      chatState.history.push({ role: 'assistant', content: cleanedResponse, sources, timestamp: Date.now() });
+      ui.addMessage('assistant', cleanedResponse, sources);
     }
-  });
+
+    history.save();
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Error de conexión';
+    ui.addMessage('error', errorMessage);
+    utils.log('error', 'Chat error', error);
+  } finally {
+    ui.toggleLoading(false);
+    elements.sendButton.disabled = false;
+    elements.input.disabled = false;
+  }
+});
 
   // Cargar estado inicial
   const savedState = localStorage.getItem('chatIsOpen');

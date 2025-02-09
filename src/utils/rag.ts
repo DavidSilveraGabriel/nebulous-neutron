@@ -1,5 +1,3 @@
-// src/utils/rag.ts
-
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { type LogEntry } from './types.ts';
@@ -9,7 +7,7 @@ import { createHash } from 'node:crypto';
 import { marked } from 'marked'; // Importa la biblioteca Marked
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
- 
+
 // Configuración de entorno
 const supabaseUrl = import.meta.env.SUPABASE_URL;
 const supabaseKey = import.meta.env.SUPABASE_KEY;
@@ -104,7 +102,7 @@ export const getMemoryManager = (sessionId: string): ChatMemoryManager => {
     scheduleSessionCleanup();
     cleanupScheduled = true;
   }
-  
+
   if (!activeSessions.has(sessionId)) {
     activeSessions.set(sessionId, new ChatMemoryManager(10, sessionId));
   }
@@ -117,7 +115,7 @@ class ChatMemoryManager {
     shortTerm: [],
     longTerm: {}
   };
-  
+
   private storage: StorageProvider;
   private lastAccessed: number = Date.now();
 
@@ -127,7 +125,7 @@ class ChatMemoryManager {
   ) {
     this.storage = getStorageProvider();
     console.log(`[Memory] Inicializada memoria ${sessionId ? `para sesión ${sessionId}` : 'nueva'}`);
-    
+
     if (sessionId) {
       try {
         this.loadFromStorage();
@@ -147,13 +145,13 @@ class ChatMemoryManager {
       console.error('[Memory] Intento de agregar interacción inválida:', { role, content });
       return;
     }
-    
-    const entry = { 
-      role, 
+
+    const entry = {
+      role,
       content: content.substring(0, 500),
-      timestamp: new Date().toISOString() 
+      timestamp: new Date().toISOString()
     };
-    
+
     this.memory.shortTerm.push(entry);
     this.lastAccessed = Date.now();
 
@@ -161,7 +159,7 @@ class ChatMemoryManager {
     while (this.memory.shortTerm.length > this.maxShortTermEntries) {
       this.memory.shortTerm.shift();
     }
-    
+
     this.saveToStorage();
     this.logAction('addInteraction', { role, content: entry.content });
   }
@@ -171,7 +169,7 @@ class ChatMemoryManager {
       console.error('[Memory] Clave inválida para memoria a largo plazo:', key);
       return;
     }
-    
+
     this.memory.longTerm[key] = value;
     this.lastAccessed = Date.now();
     this.saveToStorage();
@@ -188,15 +186,15 @@ class ChatMemoryManager {
 
   public clearMemory(type: 'short' | 'long' | 'all' = 'short') {
     console.log(`[Memory] Limpiando memoria (${type})`);
-    
+
     if (type === 'short' || type === 'all') {
       this.memory.shortTerm = [];
     }
-    
+
     if (type === 'long' || type === 'all') {
       this.memory.longTerm = {};
     }
-    
+
     this.saveToStorage();
     this.logAction('clearMemory', { type });
   }
@@ -210,7 +208,7 @@ class ChatMemoryManager {
 
   private saveToStorage() {
     if (!this.sessionId) return;
-    
+
     try {
       const data = JSON.stringify(this.memory);
       this.storage.setItem(`memory-${this.sessionId}`, data);
@@ -218,7 +216,7 @@ class ChatMemoryManager {
     } catch (error) {
       console.error('[Memory] Error guardando en storage:', error);
     }
-    console.log("Saving memory to storage!"); // Placeholder for demo
+    //console.log("Saving memory to storage!"); // Placeholder for demo  <- ELIMINADO
 
   }
   public persistMemory() {
@@ -226,7 +224,7 @@ class ChatMemoryManager {
   }
   private loadFromStorage() {
     if (!this.sessionId) return;
-    
+
     try {
       const saved = this.storage.getItem(`memory-${this.sessionId}`);
       if (saved) {
@@ -302,20 +300,20 @@ const getCacheKey = (text: string): string => {
 
 export const getEmbedding = async (text: string): Promise<number[]> => {
   const cacheKey = getCacheKey(text);
-  
+
   if (embeddingCache.has(cacheKey)) {
     console.debug('[RAG] Cache hit para embedding:', cacheKey);
     return embeddingCache.get(cacheKey)!;
   }
-  
+
   try {
     const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
     const result = await model.embedContent(text);
-    
+
     if (!result.embedding?.values) {
       throw new Error('Estructura de embedding inválida');
     }
-    
+
     embeddingCache.set(cacheKey, result.embedding.values);
     return result.embedding.values;
 
@@ -341,7 +339,7 @@ export const semanticSearch = async (embedding: number[]): Promise<Document[]> =
     if (error) throw error;
 
     const results = (data || [])
-      .filter((doc: Document) => 
+      .filter((doc: Document) =>
         //doc.content.length >= RAG_THRESHOLDS.contentLength &&
         (doc.similarity ?? 0) >= RAG_THRESHOLDS.similarity
       )
@@ -359,7 +357,7 @@ export const semanticSearch = async (embedding: number[]): Promise<Document[]> =
         return [results[0]];
       }
     }
-    
+
     return results;
 
   } catch (error) {
@@ -370,17 +368,17 @@ export const semanticSearch = async (embedding: number[]): Promise<Document[]> =
 
 const buildPrompt = (query: string, context: Document[], memory: Memory): string => {
   const contextText = context.length > 0
-    ? context.map((doc, i) => 
-      `### Fuente ${i+1} (${(doc.similarity! * 100).toFixed(1)}% relevante)\n` +
+    ? context.map((doc, i) =>
+      `### Fuente ${i + 1} (${(doc.similarity! * 100).toFixed(1)}% relevante)\n` +
       `**Título:** ${doc.metadata.title || 'Sin título'}\n` +
       `**Contenido:** ${doc.content}\n`
-      ).join('\n---\n')
+    ).join('\n---\n')
     : 'Sin información relevante';
-  console.log("INFO[Context]:", contextText); // Placeholder for demo
+  //console.log("INFO[Context]:", contextText); // Placeholder for demo, ELIMINADO.
   const shortTermMemoryText = memory.shortTerm.length > 0
-    ? memory.shortTerm.map(entry => 
+    ? memory.shortTerm.map(entry =>
       `### ${entry.role === 'user' ? 'Usuario' : 'Asistente'} (${new Date(entry.timestamp).toLocaleTimeString()}):\n${entry.content}\n`
-      ).join('\n')
+    ).join('\n')
     : '';
 
   const longTermMemoryText = Object.keys(memory.longTerm).length > 0
@@ -475,7 +473,7 @@ export const generateResponse = async (
   try {
     const memoryManager = getMemoryManager(sessionId);
     memoryManager.addInteraction('user', query);
-    
+
     const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
       generationConfig: {
@@ -484,62 +482,50 @@ export const generateResponse = async (
         maxOutputTokens: 800
       }
     });
-    console.log("INFO[RAG]:", context); // Placeholder for demo
+    //console.log("INFO[RAG]:", context); // Placeholder for demo, ELIMINADO.
 
     const prompt = buildPrompt(query, context, memoryManager.getMemory());
     const result = await model.generateContent(prompt);
-    const response = await result.response.text();
-    logEntry.response = await formatResponse(response);
+    let response = await result.response.text();
+
+    // *** LIMPIAR LA PREGUNTA DE LA RESPUESTA (ANTES DE GUARDAR) ***
+    const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedQuery = escapeRegExp(query);
+    const queryPattern = new RegExp(`^${escapedQuery}\\s*`, 'i');
+    response = response.replace(queryPattern, '').trim();
+
+
+    logEntry.response = await formatResponse(response);  // Formatear y sanitizar
 
     logEntry.sources = context
       .filter(d => d.similarity! >= RAG_THRESHOLDS.confidence)
-      .map(d =>d.metadata.title || 'unknown');
+      .map(d => d.metadata.title || 'unknown');
 
-      memoryManager.addInteraction('assistant', logEntry.response);
-      memoryManager.persistMemory();
-  
-      return logEntry;
-  
-    } catch (error) {
-      console.error('[RAG] Error generando respuesta:', error);
-      return {
-        ...logEntry,
-        response: "⚠️ Error temporal. Por favor intenta nuevamente.",
-        error: error instanceof Error ? error.message : 'Unknown error'
-      };
-    } finally {
-      logEntry.response_time = Date.now() - start;
-    }
-  };
+    memoryManager.addInteraction('assistant', logEntry.response); // Guardar la respuesta *limpia*
+    memoryManager.persistMemory();
+
+    return logEntry;
+
+  } catch (error) {
+    console.error('[RAG] Error generando respuesta:', error);
+    return {
+      ...logEntry,
+      response: "⚠️ Error temporal. Por favor intenta nuevamente.",
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  } finally {
+    logEntry.response_time = Date.now() - start;
+  }
+};
 
 
-// 1. Crear instancia JSDOM con todos los elementos necesarios
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
-  contentType: 'text/html',
-});
 
-// 2. Obtener el objeto window y forzar los tipos necesarios
-const { window } = dom;
-const domParser = new window.DOMParser(); // Inicializar parser
+// Función de sanitización usando JSDOM y DOMPurify
+const dom = new JSDOM('<!DOCTYPE html>');
+const purify = DOMPurify(dom.window as any);
 
-// 3. Tipo personalizado para resolver la discrepancia
-type SafeWindow = Pick<
-  typeof globalThis,
-  | 'DocumentFragment'
-  | 'HTMLTemplateElement'
-  | 'Node'
-  | 'Element'
-  | 'NodeFilter'
-  | 'NamedNodeMap'
-  | 'HTMLFormElement'
-  | 'DOMParser'
->;
 
-// 4. Configurar DOMPurify con tipos correctos
-const purify = DOMPurify(window as unknown as SafeWindow);
-
-// 5. Función de sanitización corregida
 const formatResponse = async (text: string): Promise<string> => {
-  const rawHtml = await marked.parse(text);
-  return purify.sanitize(rawHtml);
+  const rawHtml = marked.parse(text);
+  return purify.sanitize(rawHtml as string); // Type assertion: Treat rawHtml as string
 };
