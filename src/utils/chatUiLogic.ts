@@ -1,4 +1,5 @@
-// src/utils/chatUiLogic.ts (COMPLETO y CORREGIDO)
+// src/utils/chatUiLogic.ts (COMPLETO y CORREGIDO, usando la función de Supabase)
+
 import { createClient } from '@supabase/supabase-js';
 import type { ChatState, Message, Utils, UIElements, HistoryFunctions, APIFunctions, UIFunctions } from './chatUiTypes.ts';
 
@@ -149,81 +150,60 @@ const history: HistoryFunctions = {
     }
   }
 };
-
 // Funciones API
 const api: APIFunctions = {
-  sendQuery: async (query) => {
-    let sessionId = localStorage.getItem('chatSessionId');
-    if (!sessionId) {
-      sessionId = crypto.randomUUID();
-      localStorage.setItem('chatSessionId', sessionId);
-    }
-
-    // --- 1. Insertar la pregunta y obtener el ID ---
-    let interactionId = null;
-    try {
-      const { data, error } = await supabase.from('chatbot_interactions')
-        .insert([
-          { session_id: sessionId, timestamp: new Date(), role: 'user', content: query }
-        ])
-        .select('id'); // <-- Importante: seleccionar el ID
-
-      if (error) throw error;
-      interactionId = data?.[0]?.id; // <-- Obtener el ID
-      if (!interactionId) throw new Error('Failed to get interaction ID');
-
-    } catch (e) {
-      utils.log('error', 'Error logging user query', e);
-      //  Podrías decidir no abortar aquí, y simplemente no actualizar.
-    }
-
-
-    if (chatState.controller) chatState.controller.abort();
-    chatState.controller = new AbortController();
-
-    let retries = RETRY_CONFIG.maxRetries;
-    while (retries >= 0) {
-      try {
-        const response = await fetch(API_ENDPOINT, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Session-ID': sessionId
-          },
-          body: JSON.stringify({ message: query }),
-          signal: chatState.controller.signal
-        });
-
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-
-        // --- 2. Actualizar la fila con la respuesta ---
-        if (interactionId) { //  Solo actualiza si tenemos un ID.
-          try {
-            // *** MODIFICACIÓN AQUÍ: Usar un valor por defecto para sources ***
-            const sourcesToSave = data.sources && data.sources.length > 0 ? data.sources : ['Data Base'];
-
-            const { error: updateError } = await supabase.from('chatbot_interactions')
-              .update({ response: data.response, sources: sourcesToSave }) // Usar sourcesToSave
-              .eq('id', interactionId);
-
-            if (updateError) throw updateError;
-
-          } catch (updateErr) {
-            utils.log('error', 'Error updating response', updateErr);
-          }
+    sendQuery: async (query) => {
+        let sessionId = localStorage.getItem('chatSessionId');
+        if (!sessionId) {
+            sessionId = crypto.randomUUID();
+            localStorage.setItem('chatSessionId', sessionId);
         }
 
-        return data;
+        if (chatState.controller) chatState.controller.abort();
+        chatState.controller = new AbortController();
 
-      } catch (error) {
-        if (retries === 0 || (error as Error).name === 'AbortError') throw error;
-        await new Promise(resolve => setTimeout(resolve, RETRY_CONFIG.baseDelay * (RETRY_CONFIG.maxRetries - retries + 1)));
-        retries--;
-      }
+        let retries = RETRY_CONFIG.maxRetries;
+        while (retries >= 0) {
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Session-ID': sessionId
+                    },
+                    body: JSON.stringify({ message: query }),
+                    signal: chatState.controller.signal
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+
+                // --- Llamar a la función de Supabase ---
+                try {
+                  const sourcesArray = data.sources && data.sources.length > 0 ? data.sources : null;
+                    const { error: upsertError } = await supabase.rpc('upsert_chatbot_interaction', {
+                        p_session_id: sessionId,
+                        p_role: 'user',
+                        p_content: query,
+                        p_response: data.response,
+                        p_sources: sourcesArray, //Pasar sources como null, si no hay
+                    });
+
+                    if (upsertError) throw upsertError;
+                } catch (upsertErr) {
+                    utils.log('error', 'Error calling upsert function', upsertErr);
+                }
+
+                return data;
+
+            } catch (error) {
+                if (retries === 0 || (error as Error).name === 'AbortError') throw error;
+                await new Promise(resolve => setTimeout(resolve, RETRY_CONFIG.baseDelay * (RETRY_CONFIG.maxRetries - retries + 1)));
+                retries--;
+            }
+        }
+        throw new Error('Max retries reached');
     }
-    throw new Error('Max retries reached');
-  }
 };
 
 // Reset completo
