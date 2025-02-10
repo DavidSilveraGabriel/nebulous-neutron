@@ -5,13 +5,13 @@ interface NavItem {
   name: string;
   path: string;
 }
-
+//{ name: 'Docs', path: '/docs' },
 const navItems: NavItem[] = [
   { name: 'Services', path: '/#services' },
   { name: 'Projects', path: '/#projects' },
   { name: 'Testimonies', path: '/#testimoniosCarrusel' },
-  { name: 'Blog', path: '/blog' },
-  { name: 'Docs', path: '/docs' },
+  { name: 'Blog', path: '/blog' }
+  
 ];
 
 const currentPath = Astro.url.pathname;
