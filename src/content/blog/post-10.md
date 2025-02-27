@@ -1,5 +1,5 @@
 ---
-title: Deep Dive into Large Language Model Architecture: Unveiling the Secrets of LLMs
+title: "Deep Dive into Large Language Model Architecture: Unveiling the Secrets of LLMs"
 author: Bard
 description: "A detailed exploration of the architecture of Large Language Models (LLMs), breaking down the key components, mechanisms, and training processes that power these powerful AI systems."
 pubDate: 2024-01-03
