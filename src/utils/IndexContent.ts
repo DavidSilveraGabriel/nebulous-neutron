@@ -18,16 +18,16 @@ const CHUNK_CONFIG = {
 
 // Validación de variables de entorno
 const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_KEY', 'GEMINI_API_KEY'];
-const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
-if (missingVars.length > 0) {
-  throw new Error(`Missing environment variables: ${missingVars.join(', ')}`);
-}
+console.log("Variables de entorno process.env:", process.env.SUPABASE_URL ); // <-- Añade esto
+console.log("Variables de entorno process.env:", process.env.SUPABASE_KEY ); // <-- Añade esto
+
+
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_KEY!
 );
-
+ 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 // Función para dividir contenido grande

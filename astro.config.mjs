@@ -63,7 +63,9 @@ export default defineConfig({
     define: {
       'process.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
       'process.env.SUPABASE_KEY': JSON.stringify(process.env.SUPABASE_KEY),
-      'process.env.GEMINI_API_KEY': JSON.stringify(process.env.GEMINI_API_KEY)
+      'process.env.GEMINI_API_KEY': JSON.stringify(process.env.GEMINI_API_KEY),
+      'process.env.PUBLIC_SUPABASE_URL': JSON.stringify(process.env.PUBLIC_SUPABASE_URL),
+      'process.env.PUBLIC_SUPABASE_ANON_KEY': JSON.stringify(process.env.PUBLIC_SUPABASE_ANON_KEY),
     }
   },
   output: 'server',
