@@ -1,58 +1,77 @@
 ---
 import Base from '../components/layout/Base.astro';
-import { getCollection, type CollectionEntry  } from "astro:content";
 import FormattedDate from '../components/FormattedDate.astro';
-const pageTitle = "Blog";
-const allPosts = await getCollection("blog");
+import { supabase } from '../utils/supabaseClient.ts'; // ✅ Añadido .js extension
+import type { PostFrontmatter } from '../utils/types.ts'; // ✅ Añadido .ts extension
 
+const pageTitle = "Blog";
+let allPostsData: PostFrontmatter[] = [];
+
+// 🚀  NUEVO: Obtener los posts DESDE LA BASE DE DATOS Supabase
+const { data: posts, error } = await supabase
+    .from('posts')
+    .select('*');
+
+if (error) {
+    console.error("Error al obtener posts de Supabase:", error);
+} else {
+  allPostsData = posts.map(post => ({...post.metadata, 
+                                    slug: post.slug // Agregar el slug desde el nivel superior
+                                    }) as PostFrontmatter);
+
+}
 ---
 
 <Base title={pageTitle} showProjectForm={false}>
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-    <h1 class="text-4xl font-bold text-center mb-4">Welcome to my blog 🧐</h1>
-    <p class="text-xl text-gray-600 text-center mb-12">
-      Articles about Data Science, Machine Learning/Deep Learning/LLMs and much more... ✨ 
-    </p>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <h1 class="text-4xl font-bold text-center mb-4">Welcome to my blog 🧐</h1>
+        <p class="text-xl text-gray-600 text-center mb-12">
+            Articles about Data Science, Machine Learning/Deep Learning/LLMs and much more... ✨
+        </p>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {allPosts.map((post: CollectionEntry<'blog'>, index: number) => (
-        <article 
-          class="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 animate-on-scroll"
-          style={`animation-delay: ${index * 150}ms`}
-        >
-          <div class="aspect-video relative overflow-hidden rounded-t-xl">
-            <img 
-              src={post.data.image?.url || '/default-blog-image.jpg'}
-              alt={post.data.image?.alt || post.data.title}
-              class="object-cover w-full h-full transform group-hover:scale-110 transition-transform duration-500 ease-in-out"
-            />
-            <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
-          </div>
-          
-          <div class="p-6">
-            <div class="text-gray-600 dark:text-gray-400 text-sm mb-2">
-              <FormattedDate date={post.data.pubDate} />
-            </div>
-            <h2 class="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">
-              {post.data.title}
-            </h2>
-            {post.data.description && (
-              <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                {post.data.description}
-              </p>
-            )}
-            <a 
-              href={`/blog/${post.slug}/`}
-              class="inline-flex items-center text-primary-600 hover:text-primary-700"
-            >
-              Read more..
-              <svg class="w-4 h-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-              </svg>
-            </a>
-          </div>
-        </article>
-      ))}
-    </div>
-  </main>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {allPostsData.map((post, index) => (
+                <article
+                    is="article"
+                    class="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 animate-on-scroll"
+                    style={`animation-delay: ${index * 150}ms`}
+                >
+                    <a href={`/blog/${post.slug}/`}>
+                        <div class="aspect-video relative overflow-hidden rounded-t-xl">
+                            <img
+                                src={post.image?.url || '/default-blog-image.jpg'}
+                                alt={post.image?.alt || post.title}
+                                class="object-cover w-full h-auto transform group-hover:scale-110 transition-transform duration-500 ease-in-out"
+                            /> 
+                             
+                            <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
+                        </div>
+
+                        <div class="p-6">
+                            <div class="text-gray-600 dark:text-gray-400 text-sm mb-2">
+                                <FormattedDate date={post.pubDate ? new Date(post.pubDate) : new Date()} />
+                            </div>
+                            <h2 class="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">
+                                {post.title}
+                            </h2>
+                            {post.description && (
+                                <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+                                    {post.description}
+                                </p>
+                            )}
+                            <a
+                                href={`/blog/${post.slug}/`}
+                                class="inline-flex items-center text-primary-600 hover:text-primary-700"
+                            >
+                                Read more..
+                                <svg class="w-4 h-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            ))}
+        </div>
+    </main>
 </Base>

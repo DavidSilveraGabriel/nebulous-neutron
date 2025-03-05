@@ -52,3 +52,22 @@ export interface ErrorLog {
   severity: 'low' | 'medium' | 'critical';
 }
 
+// src/utils/types.ts
+export interface PostFrontmatter {
+  title: string;
+  pubDate: Date; // ✅ Type is Date object now
+  description: string;
+  author: string;
+  image: {
+      url: string;
+      alt: string;
+  };
+  tags: string[];
+  category?: 'tutorial' | 'case-study' | 'technical' | 'blog';
+  readingTime?: number;
+  featured?: boolean;
+  draft?: boolean;
+  slug: string;
+  contenido?: string;
+  [key: string]: any;
+}

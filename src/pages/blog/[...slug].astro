@@ -1,38 +1,102 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content';
 import BlogPost from '../../components/layout/MarkdownPost.astro';
+import { supabase } from '../../utils/supabaseClient';
+import type { PostFrontmatter } from '../../utils/types';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkMdx from 'remark-mdx';
+import rehypeStringify from 'rehype-stringify';
+import remarkRehype from 'remark-rehype';
+import {matter} from 'vfile-matter';
+import parse from 'js-yaml';
+import remarkFrontmatter from 'remark-frontmatter';
 
 export const prerender = true;
 
-// Obtener los posts de la colección 'blog'
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+    console.log("getStaticPaths: Iniciando getStaticPaths() en [...slug].astro..."); // LOG inicio getStaticPaths
+
+    const { data: posts, error } = await supabase
+        .from('posts')
+        .select('slug');
+
+    console.log("getStaticPaths: Resultado de supabase.from('posts').select('slug'):"); // LOG consulta Supabase
+    console.log("getStaticPaths: Posts from Supabase:", posts); //  LOG - Data de Supabase (lista de posts)
+
+    if (error) {
+        console.error("getStaticPaths: Error al obtener slugs de posts de Supabase:", error); // LOG Error Supabase
+        return [];
+    }
+
+    if (!posts) {
+        console.log("getStaticPaths: No se encontraron posts en Supabase."); // LOG No posts encontrados
+        return [];
+    }
+
+    const paths = posts.map((post) => {
+        console.log("getStaticPaths: Procesando post:", post, "Slug:", post.slug); // LOG - Post individual y slug
+        const slugValue = post.slug; // Extrae el slug
+        console.log("getStaticPaths: Slug:", slugValue); // LOG - Valor del slug extraído
+        return {
+            params: { slug: slugValue }, // Usa slugValue para params
+            props: { slug: slugValue },
+        };
+    });
+
+    console.log("getStaticPaths: Rutas generadas:", paths); // LOG - Rutas finales generadas
+    return paths;
 }
 
-// Definimos el tipo de las props
 type Props = {
-  post: CollectionEntry<'blog'>;
+    slug: string;
 };
 
-// Desestructuramos el post de Astro.props
-const { post } = Astro.props;
+const { slug } = Astro.props;
 
-// Verificamos si post está definido
-if (!post) {
-  throw new Error('Post is undefined');
+console.log("[...slug].astro: Componente [...slug].astro Iniciado, Slug Prop:", slug); // ✅ ADD THIS LOG - Print slug prop at start of component
+
+let postData = null;
+
+
+if (slug) {
+    const { data: post, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+
+    if (error) {
+        console.error(`Error al obtener el post con slug '${slug}' de Supabase:`, error);
+        throw new Error(`Error al cargar el post: ${slug}`);
+    }
+    const contenido = post.contenido || ''; // Fallback a string vacío
+    if (post) {
+        const processedMdx = await unified()
+          .use(remarkParse)
+          .use(remarkRehype)
+          .use(rehypeStringify)
+          .process(post.contenido);
+
+        postData = {
+            content: processedMdx.value,
+            frontmatter: post.metadata as PostFrontmatter || {}
+        };
+    }
 }
-if (!post) {
-  return new Response(null, { status: 404 });
-}
-// Renderizamos el contenido del post
-const { Content } = await post.render();
+
+
+const { frontmatter, content } = postData || { frontmatter: null, content: "" };
+
 ---
 
-<!-- Pasamos los datos del post al componente BlogPost -->
-<BlogPost {...post.data}>
-  <Content />
+<BlogPost 
+{...frontmatter} 
+title={frontmatter?.title || 'Default Title'} 
+description={frontmatter?.description || 'Default Description'} 
+image={frontmatter?.image || { url: '', alt: '' }} 
+author={frontmatter?.author || 'Unknown Author'} 
+pubDate={frontmatter?.pubDate ? new Date(frontmatter.pubDate) : new Date()}  {/* ✅ Pass Date object */}
+tags={frontmatter?.tags || []}
+>
+  <Fragment set:html={content} />
 </BlogPost>
