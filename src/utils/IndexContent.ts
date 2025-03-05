@@ -18,9 +18,7 @@ const CHUNK_CONFIG = {
 
 // Validación de variables de entorno
 const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_KEY', 'GEMINI_API_KEY'];
-console.log("Variables de entorno process.env:", process.env.SUPABASE_URL ); // <-- Añade esto
-console.log("Variables de entorno process.env:", process.env.SUPABASE_KEY ); // <-- Añade esto
-
+ 
 
 
 const supabase = createClient(

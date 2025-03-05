@@ -10,8 +10,8 @@ dotenv.config({ path: '.env.local' });
 export async function PostsToDb() {
     console.log("Iniciando subida de posts...");
 
-    const supabaseUrl = process.env.PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.PUBLIC_SUPABASE_ANON_KEY;
+    const supabaseUrl = process.env.PUBLIC_SUPABASE_URL!;
+    const supabaseAnonKey = process.env.PUBLIC_SUPABASE_ANON_KEY!;
 
     if (!supabaseUrl || !supabaseAnonKey) {
         console.error("Error: Faltan variables de entorno");
@@ -66,4 +66,4 @@ export async function PostsToDb() {
     }
 }
 
-PostsToDb().catch(error => console.error("Error no manejado:", error));
+//PostsToDb().catch(error => console.error("Error no manejado:", error));
