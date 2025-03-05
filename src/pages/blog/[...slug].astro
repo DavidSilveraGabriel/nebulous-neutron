@@ -14,14 +14,13 @@ import remarkFrontmatter from 'remark-frontmatter';
 export const prerender = true;
 
 export async function getStaticPaths() {
-    console.log("getStaticPaths: Iniciando getStaticPaths() en [...slug].astro..."); // LOG inicio getStaticPaths
+    //console.log("getStaticPaths: Iniciando getStaticPaths() en [...slug].astro..."); // LOG inicio getStaticPaths
 
     const { data: posts, error } = await supabase
         .from('posts')
         .select('slug');
 
-    console.log("getStaticPaths: Resultado de supabase.from('posts').select('slug'):"); // LOG consulta Supabase
-    console.log("getStaticPaths: Posts from Supabase:", posts); //  LOG - Data de Supabase (lista de posts)
+    //console.log("getStaticPaths: Posts from Supabase:", posts); //  LOG - Data de Supabase (lista de posts)
 
     if (error) {
         console.error("getStaticPaths: Error al obtener slugs de posts de Supabase:", error); // LOG Error Supabase
@@ -34,16 +33,16 @@ export async function getStaticPaths() {
     }
 
     const paths = posts.map((post) => {
-        console.log("getStaticPaths: Procesando post:", post, "Slug:", post.slug); // LOG - Post individual y slug
+        //console.log("getStaticPaths: Procesando post:", post, "Slug:", post.slug); // LOG - Post individual y slug
         const slugValue = post.slug; // Extrae el slug
-        console.log("getStaticPaths: Slug:", slugValue); // LOG - Valor del slug extraído
+        //console.log("getStaticPaths: Slug:", slugValue); // LOG - Valor del slug extraído
         return {
             params: { slug: slugValue }, // Usa slugValue para params
             props: { slug: slugValue },
         };
     });
 
-    console.log("getStaticPaths: Rutas generadas:", paths); // LOG - Rutas finales generadas
+    //console.log("getStaticPaths: Rutas generadas:", paths); // LOG - Rutas finales generadas
     return paths;
 }
 
@@ -53,7 +52,7 @@ type Props = {
 
 const { slug } = Astro.props;
 
-console.log("[...slug].astro: Componente [...slug].astro Iniciado, Slug Prop:", slug); // ✅ ADD THIS LOG - Print slug prop at start of component
+//console.log("[...slug].astro: Componente [...slug].astro Iniciado, Slug Prop:", slug); // ✅ ADD THIS LOG - Print slug prop at start of component
 
 let postData = null;
 
