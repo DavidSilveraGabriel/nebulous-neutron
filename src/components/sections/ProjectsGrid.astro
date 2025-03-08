@@ -13,7 +13,7 @@ interface Props {
   projects?: Project[];
 }
 
-const { 
+const {
   layout = 'grid',
   projects = []
 } = Astro.props;
@@ -23,6 +23,8 @@ const gradients = [
   'from-zinc-900/80 via-zinc-900/40 to-transparent',
   'from-zinc-900/80 via-zinc-900/40 to-transparent',
 ];
+
+const accentColor = 'lime-400'; // Futuristic lime green accent color
 ---
 
 <section id="projects" class="py-24">
@@ -33,17 +35,17 @@ const gradients = [
     <p class="text-center text-gray-600 dark:text-gray-400 mb-20 max-w-2xl mx-auto text-lg">
       Exploring the intersection of AI, machine learning, and technology innovation
     </p>
-    
+
     <div class={`
       ${layout === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : ''}
       ${layout === 'list' ? 'space-y-12' : ''}
       ${layout === 'carousel' ? 'flex overflow-x-auto snap-x snap-mandatory -mx-4 px-4 py-4 space-x-8' : ''}
     `}>
       {projects.map((project, index) => (
-        <article 
+        <article
           class={`
             group relative bg-white dark:bg-gray-900 rounded-xl overflow-hidden
-            hover:shadow-2xl hover:shadow-purple-500/10 dark:hover:shadow-purple-500/5
+            hover:shadow-xl hover:shadow-${accentColor}/20 dark:hover:shadow-${accentColor}/10
             transition-all duration-500 ease-out
             ${layout === 'carousel' ? 'w-96 flex-shrink-0 snap-center' : ''}
             animate-on-scroll
@@ -51,22 +53,25 @@ const gradients = [
           style={`animation-delay: ${index * 100}ms`}
         >
           <div class="relative w-full pt-[60%]">
-            <a href={project.github || project.link || '#'} 
-               target="_blank" 
+            <a href={project.github || project.link || '#'}
+               target="_blank"
                rel="noopener noreferrer"
                class="absolute inset-0 overflow-hidden">
-              <img 
-                src={project.image} 
+              <img
+                src={project.image}
                 alt={project.title}
-                class="absolute inset-0 w-full h-full object-cover filter saturate-[0.95] brightness-[1.02]
+                class="absolute inset-0 w-full h-full object-cover filter saturate-[0.95 brightness-[1.02]
                        transform group-hover:scale-[1.02] transition-all duration-700"
               />
-              <div class={`absolute inset-0 bg-gradient-to-t ${gradients[index % gradients.length]} 
-                          opacity-0 group-hover:opacity-100 transition-opacity duration-500`}>
+              <div class={`absolute inset-0 bg-gradient-to-t ${gradients[index % gradients.length]}
+                          opacity-0 group-hover:opacity-80 transition-opacity duration-500`}>
+              </div>
+              <div class={`absolute inset-0 bg-gradient-to-b from-transparent to-${accentColor}/10
+                          opacity-0 group-hover:opacity-50 transition-opacity duration-500`}>
               </div>
             </a>
           </div>
-          
+
           <div class="p-8 relative">
             <h3 class="text-2xl font-semibold mb-3 text-gray-900 dark:text-white tracking-tight
                        transform group-hover:translate-x-1 transition-transform duration-300">
@@ -77,11 +82,11 @@ const gradients = [
             </p>
             <div class="flex flex-wrap gap-2">
               {project.tags.map(tag => (
-                <span class="px-4 py-1.5 text-sm rounded-full
+                <span class={`px-4 py-1.5 text-sm rounded-full
                            bg-gray-100 dark:bg-gray-800
                            text-gray-700 dark:text-gray-300
                            transition-colors duration-300
-                           hover:bg-gray-200 dark:hover:bg-gray-700">
+                           hover:bg-${accentColor}/20 dark:hover:bg-${accentColor}/70 hover:text-gray-900 dark:hover:text-white`}>
                   {tag}
                 </span>
               ))}
