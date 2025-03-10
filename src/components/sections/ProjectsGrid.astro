@@ -1,4 +1,6 @@
 ---
+import ProjectCard from '../ProjectCard.astro';
+
 interface Project {
   title: string;
   description: string;
@@ -6,130 +8,383 @@ interface Project {
   tags: string[];
   link?: string;
   github?: string;
+  duration?: string;
+  role?: string;
+  results?: string;
+  featured?: boolean;
+  category?: string;
+  caseStudy?: string;
+  challenge?: string;
+  solution?: string;
+  outcome?: string;
 }
 
 interface Props {
-  layout?: 'grid' | 'carousel' | 'list';
   projects?: Project[];
+  animationType?: 'fade' | 'slide' | 'zoom';
+  autoplaySpeed?: number; // en milisegundos
 }
 
 const {
-  layout = 'grid',
-  projects = []
+  projects = [],
+  animationType = 'fade',
+  autoplaySpeed = 5000 // 5 segundos por defecto
 } = Astro.props;
 
-const gradients = [
-  'from-zinc-900/80 via-zinc-900/40 to-transparent',
-  'from-zinc-900/80 via-zinc-900/40 to-transparent',
-  'from-zinc-900/80 via-zinc-900/40 to-transparent',
-];
+// Proyectos destacados primero
+const sortedProjects = [...projects].sort((a, b) => {
+  if (a.featured && !b.featured) return -1;
+  if (!a.featured && b.featured) return 1;
+  return 0;
+});
 
-const accentColor = 'lime-400'; // Futuristic lime green accent color
+// Colores y estilos
+const accentColor = 'lime-400';
 ---
 
-<section id="projects" class="py-24">
+<section id="projects" class="py-24 overflow-hidden">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <h2 class="text-5xl font-bold text-center mb-4 text-gray-900 dark:text-white">
       Featured Projects
     </h2>
-    <p class="text-center text-gray-600 dark:text-gray-400 mb-20 max-w-2xl mx-auto text-lg">
+    <p class="text-center text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto text-lg">
       Exploring the intersection of AI, machine learning, and technology innovation
     </p>
 
-    <div class={`
-      ${layout === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : ''}
-      ${layout === 'list' ? 'space-y-12' : ''}
-      ${layout === 'carousel' ? 'flex overflow-x-auto snap-x snap-mandatory -mx-4 px-4 py-4 space-x-8' : ''}
-    `}>
-      {projects.map((project, index) => (
-        <article
-          class={`
-            group relative bg-white dark:bg-gray-900 rounded-xl overflow-hidden
-            hover:shadow-xl hover:shadow-${accentColor}/20 dark:hover:shadow-${accentColor}/10
-            transition-all duration-500 ease-out
-            ${layout === 'carousel' ? 'w-96 flex-shrink-0 snap-center' : ''}
-            animate-on-scroll
-          `}
-          style={`animation-delay: ${index * 100}ms`}
-        >
-          <div class="relative w-full pt-[60%]">
-            <a href={project.github || project.link || '#'}
-               target="_blank"
-               rel="noopener noreferrer"
-               class="absolute inset-0 overflow-hidden">
-              <img
-                src={project.image}
-                alt={project.title}
-                class="absolute inset-0 w-full h-full object-cover filter saturate-[0.95 brightness-[1.02]
-                       transform group-hover:scale-[1.02] transition-all duration-700"
-              />
-              <div class={`absolute inset-0 bg-gradient-to-t ${gradients[index % gradients.length]}
-                          opacity-0 group-hover:opacity-80 transition-opacity duration-500`}>
-              </div>
-              <div class={`absolute inset-0 bg-gradient-to-b from-transparent to-${accentColor}/10
-                          opacity-0 group-hover:opacity-50 transition-opacity duration-500`}>
-              </div>
-            </a>
-          </div>
+    <!-- Contenedor del carrusel -->
+    <div class="relative">
+      <!-- Botones de navegación -->
+      <button id="prev-project" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-gray-800/80 p-3 rounded-full shadow-lg text-gray-800 dark:text-white hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        <span class="sr-only">Anterior</span>
+      </button>
+      
+      <button id="next-project" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-gray-800/80 p-3 rounded-full shadow-lg text-gray-800 dark:text-white hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+        <span class="sr-only">Siguiente</span>
+      </button>
 
-          <div class="p-8 relative">
-            <h3 class="text-2xl font-semibold mb-3 text-gray-900 dark:text-white tracking-tight
-                       transform group-hover:translate-x-1 transition-transform duration-300">
-              {project.title}
-            </h3>
-            <p class="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3 leading-relaxed">
-              {project.description}
-            </p>
-            <div class="flex flex-wrap gap-2">
-              {project.tags.map(tag => (
-                <span class={`px-4 py-1.5 text-sm rounded-full
-                           bg-gray-100 dark:bg-gray-800
-                           text-gray-700 dark:text-gray-300
-                           transition-colors duration-300
-                           hover:bg-${accentColor}/20 dark:hover:bg-${accentColor}/70 hover:text-gray-900 dark:hover:text-white`}>
-                  {tag}
-                </span>
-              ))}
-            </div>
+      <!-- Carrusel de proyectos -->
+      <div id="projects-container" class="carousel-container flex snap-x snap-mandatory overflow-x-hidden" data-animation-type={animationType} data-autoplay-speed={autoplaySpeed}>
+        {sortedProjects.map((project, index) => (
+          <div class="carousel-slide w-full flex-shrink-0 snap-center transition-transform duration-500" data-index={index}>
+            <ProjectCard 
+              project={project} 
+              index={index} 
+              layout="carousel" 
+              animationType={animationType}
+            />
           </div>
-        </article>
-      ))}
+        ))}
+      </div>
+      
+      <!-- Indicadores de posición -->
+      <div class="flex justify-center mt-8 space-x-2">
+        {sortedProjects.map((_, index) => (
+          <button 
+            class="carousel-indicator w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors duration-300 focus:outline-none" 
+            data-index={index}
+            aria-label={`Ir al proyecto ${index + 1}`}
+          >
+            <span class="sr-only">Proyecto {index + 1}</span>
+          </button>
+        ))}
+      </div>
     </div>
   </div>
 </section>
 
+<!-- Modal para detalles del proyecto -->
+<div id="project-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+  <div class="bg-white dark:bg-gray-900 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition-transform duration-300">
+    <div class="sticky top-0 z-10 flex justify-end p-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm">
+      <button id="close-modal" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        <span class="sr-only">Cerrar</span>
+      </button>
+    </div>
+    <div id="modal-content" class="p-6 pt-0">
+      <!-- El contenido se llenará dinámicamente con JavaScript -->
+    </div>
+  </div>
+</div>
+
 <style>
-  article {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    backdrop-filter: blur(20px);
+  .carousel-container {
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }
-
-  .p-8 {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  
+  .carousel-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
   }
-
-  .animate-on-scroll {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  
+  .carousel-indicator.active {
+    background-color: theme('colors.lime.400');
+    width: 2rem;
   }
-
-  @keyframes fadeInUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  
+  /* Animación de entrada para el modal */
+  #project-modal.active {
+    opacity: 1;
+    pointer-events: auto;
   }
-
-  :global(.dark) article {
-    background: rgba(17, 17, 17, 0.8);
-  }
-
-  :global(.dark) article:hover {
-    background: rgba(24, 24, 27, 0.9);
+  
+  #project-modal.active > div {
+    transform: scale(1);
   }
 </style>
+
+<script define:vars={{ sortedProjects }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('projects-container');
+    const slides = document.querySelectorAll('.carousel-slide');
+    const indicators = document.querySelectorAll('.carousel-indicator');
+    const prevButton = document.getElementById('prev-project');
+    const nextButton = document.getElementById('next-project');
+    const modal = document.getElementById('project-modal');
+    const modalContent = document.getElementById('modal-content');
+    const closeModalButton = document.getElementById('close-modal');
+    
+    let currentIndex = 0;
+    let autoplayInterval = null;
+    const autoplaySpeed = container?.getAttribute('data-autoplay-speed') || '5000';
+    
+    // Función para actualizar el carrusel
+    const updateCarousel = (index) => {
+      if (!container) return;
+      
+      // Asegurarse de que el índice esté dentro de los límites
+      currentIndex = (index + slides.length) % slides.length;
+      
+      // Desplazar al slide actual
+      const slideElement = slides[currentIndex];
+      if (slideElement) {
+        container.scrollLeft = slideElement.offsetLeft;
+      }
+      
+      // Actualizar indicadores
+      indicators.forEach((indicator, i) => {
+        if (i === currentIndex) {
+          indicator.classList.add('active');
+        } else {
+          indicator.classList.remove('active');
+        }
+      });
+    };
+    
+    // Iniciar autoplay
+    const startAutoplay = () => {
+      if (autoplayInterval) clearInterval(autoplayInterval);
+      
+      autoplayInterval = setInterval(() => {
+        updateCarousel(currentIndex + 1);
+      }, parseInt(autoplaySpeed));
+    };
+    
+    // Detener autoplay
+    const stopAutoplay = () => {
+      if (autoplayInterval) {
+        clearInterval(autoplayInterval);
+        autoplayInterval = null;
+      }
+    };
+    
+    // Inicializar carrusel
+    updateCarousel(0);
+    startAutoplay();
+    
+    // Event listeners para los botones de navegación
+    if (prevButton) {
+      prevButton.addEventListener('click', () => {
+        updateCarousel(currentIndex - 1);
+        stopAutoplay();
+        startAutoplay();
+      });
+    }
+    
+    if (nextButton) {
+      nextButton.addEventListener('click', () => {
+        updateCarousel(currentIndex + 1);
+        stopAutoplay();
+        startAutoplay();
+      });
+    }
+    
+    // Event listeners para los indicadores
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        updateCarousel(index);
+        stopAutoplay();
+        startAutoplay();
+      });
+    });
+    
+    // Soporte para gestos táctiles
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    if (container) {
+      container.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        stopAutoplay();
+      }, { passive: true });
+      
+      container.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+        startAutoplay();
+      }, { passive: true });
+    }
+    
+    const handleSwipe = () => {
+      const threshold = 50; // Mínima distancia para considerar un swipe
+      
+      if (touchEndX < touchStartX - threshold) {
+        // Swipe izquierda -> siguiente proyecto
+        updateCarousel(currentIndex + 1);
+      } else if (touchEndX > touchStartX + threshold) {
+        // Swipe derecha -> proyecto anterior
+        updateCarousel(currentIndex - 1);
+      }
+    };
+    
+    // Abrir modal al hacer clic en un proyecto
+    document.querySelectorAll('.project-card').forEach((card, index) => {
+      card.addEventListener('click', (e) => {
+        // Evitar que se abra el modal si se hace clic en los enlaces
+        if (e.target.closest('a')) return;
+        
+        stopAutoplay();
+        openProjectModal(index);
+      });
+    });
+    
+    // Función para abrir el modal con los detalles del proyecto
+    const openProjectModal = (index) => {
+      if (!modal || !modalContent) return;
+      
+      const project = sortedProjects[index];
+      if (!project) return;
+      
+      // Construir el contenido del modal
+      modalContent.innerHTML = `
+        <div class="space-y-6">
+          <div class="relative pt-[50%] rounded-lg overflow-hidden">
+            <img 
+              src="${project.image}" 
+              alt="${project.title}" 
+              class="absolute inset-0 w-full h-full object-cover"
+            />
+          </div>
+          
+          <h2 class="text-3xl font-bold text-gray-900 dark:text-white mt-6">${project.title}</h2>
+          
+          <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+            ${project.description}
+          </p>
+          
+          ${project.caseStudy ? `
+            <div class="mt-8 space-y-6">
+              <h3 class="text-2xl font-semibold text-gray-900 dark:text-white">Estudio de caso</h3>
+              <p class="text-gray-600 dark:text-gray-300">${project.caseStudy}</p>
+              
+              ${project.challenge ? `
+                <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h4 class="text-xl font-medium text-gray-900 dark:text-white mb-3">Desafío</h4>
+                  <p class="text-gray-600 dark:text-gray-300">${project.challenge}</p>
+                </div>
+              ` : ''}
+              
+              ${project.solution ? `
+                <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h4 class="text-xl font-medium text-gray-900 dark:text-white mb-3">Solución</h4>
+                  <p class="text-gray-600 dark:text-gray-300">${project.solution}</p>
+                </div>
+              ` : ''}
+              
+              ${project.outcome ? `
+                <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h4 class="text-xl font-medium text-gray-900 dark:text-white mb-3">Resultado</h4>
+                  <p class="text-gray-600 dark:text-gray-300">${project.outcome}</p>
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+          
+          <div class="flex flex-wrap gap-2 mt-6">
+            ${project.tags.map(tag => `
+              <span class="px-4 py-1.5 text-sm rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                ${tag}
+              </span>
+            `).join('')}
+          </div>
+          
+          <div class="flex flex-wrap gap-4 mt-8">
+            ${project.github ? `
+              <a href="${project.github}" target="_blank" rel="noopener noreferrer" 
+                 class="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                Ver código
+              </a>
+            ` : ''}
+            
+            ${project.link ? `
+              <a href="${project.link}" target="_blank" rel="noopener noreferrer" 
+                 class="inline-flex items-center gap-2 px-6 py-3 bg-lime-500 text-white rounded-lg hover:bg-lime-600 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Ver proyecto
+              </a>
+            ` : ''}
+          </div>
+        </div>
+      `;
+      
+      // Mostrar el modal
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Evitar scroll en el body
+    };
+    
+    // Cerrar modal
+    if (closeModalButton) {
+      closeModalButton.addEventListener('click', () => {
+        if (!modal) return;
+        
+        modal.classList.remove('active');
+        document.body.style.overflow = ''; // Restaurar scroll
+        startAutoplay();
+      });
+    }
+    
+    // Cerrar modal al hacer clic fuera del contenido
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+          document.body.style.overflow = ''; // Restaurar scroll
+          startAutoplay();
+        }
+      });
+    }
+    
+    // Cerrar modal con la tecla Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        modal.classList.remove('active');
+        document.body.style.overflow = ''; // Restaurar scroll
+        startAutoplay();
+      }
+    });
+  });
+</script>

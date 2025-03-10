@@ -4,14 +4,30 @@
       "description": "NILES is an advanced multimodal chatbot leveraging Gemini models to process both text and images. Built with a modular architecture and a clean interface, NILES delivers an intuitive and powerful chat experience.",
       "image": "/projects_img/cover.png",
       "tags": ["GenAI", "LLMs", "AI bot"],
-      "github": "https://github.com/DavidSilveraGabriel/NILES"
+      "github": "https://github.com/DavidSilveraGabriel/NILES",
+      "featured": true,
+      "category": "AI Assistants",
+      "duration": "3 meses",
+      "role": "Desarrollador principal",
+      "caseStudy": "NILES fue desarrollado como una solución para interactuar con modelos de IA multimodales de manera intuitiva y eficiente.",
+      "challenge": "El principal desafío fue crear una interfaz que permitiera a los usuarios aprovechar al máximo las capacidades multimodales de Gemini, manteniendo una experiencia fluida y accesible.",
+      "solution": "Implementamos una arquitectura modular que separa claramente la interfaz de usuario de la lógica de procesamiento, permitiendo una fácil extensión y mantenimiento. La interfaz fue diseñada con principios de UX minimalistas para facilitar la interacción.",
+      "outcome": "El resultado es un chatbot que permite a los usuarios interactuar con Gemini de manera natural, combinando texto e imágenes en sus consultas y obteniendo respuestas contextuales de alta calidad."
     },
     {
       "title": "🐱 MewAI - Feline Agent Crew",
       "description": "MewAI is a multi-agent system powered by crewAI, utilizing 'feline agents' enhanced by Gemini to automate blog content creation. These agents collaborate on tasks involving web research, content drafting, and content review.",
       "image": "/projects_img/mewai.png",
       "tags": ["GenAI", "LLMs", "AI bot","AI Agents","CrewAI"],
-      "github": "https://github.com/DavidSilveraGabriel/MewAI"
+      "github": "https://github.com/DavidSilveraGabriel/MewAI",
+      "featured": true,
+      "category": "AI Agents",
+      "duration": "2 meses",
+      "role": "Arquitecto de agentes",
+      "caseStudy": "MewAI surgió como una exploración de sistemas multi-agente para la creación automatizada de contenido de alta calidad.",
+      "challenge": "Coordinar múltiples agentes especializados para que trabajen juntos de manera coherente, cada uno con su propio rol y responsabilidades en el proceso de creación de contenido.",
+      "solution": "Utilizamos el framework crewAI para orquestar los agentes, asignando roles específicos (investigador, redactor, editor) y definiendo flujos de trabajo claros entre ellos. Cada agente fue potenciado con Gemini para mejorar sus capacidades.",
+      "outcome": "El sistema es capaz de generar artículos de blog completos y bien investigados con mínima intervención humana, manteniendo un tono consistente y calidad editorial."
     },
     {
       "title": "Analyze and classify public domain EEG(ML) signals",
@@ -19,27 +35,45 @@
       "image": "/projects_img/eeg.png",
       "tags": ["Python", "mne", "Pandas", "braindecode", "EEG"],
       "github": "https://github.com/DavidSilveraGabriel/EEG-classification",
-      "link": "https://github.com/DavidSilveraGabriel/EEG-classification/blob/master/Using_mne_and_braindecode.ipynb"
+      "link": "https://github.com/DavidSilveraGabriel/EEG-classification/blob/master/Using_mne_and_braindecode.ipynb",
+      "category": "Machine Learning",
+      "duration": "1 mes",
+      "results": "Precisión del 85% en clasificación",
+      "caseStudy": "Este proyecto exploró la aplicación de redes neuronales convolucionales para la clasificación de señales EEG relacionadas con movimientos imaginados y ejecutados.",
+      "challenge": "Las señales EEG son notoriamente ruidosas y variables entre sujetos, lo que hace que su clasificación sea un problema complejo de aprendizaje automático.",
+      "solution": "Implementamos una arquitectura de red neuronal convolucional profunda utilizando la biblioteca braindecode, especializada en procesamiento de señales EEG. Aplicamos técnicas de preprocesamiento avanzadas con mne para mejorar la calidad de las señales.",
+      "outcome": "Logramos una precisión de clasificación del 85%, superando los métodos tradicionales y demostrando el potencial de las redes neuronales profundas para interfaces cerebro-computadora."
     },
     {
       "title": "Data Science Resources",
       "description": "A list of Data Science resources for everyone",
       "image": "https://images.unsplash.com/photo-1666875753105-c63a6f3bdc86?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8ZGF0YSUyMHNjaWVuY2V8ZW58MHx8MHx8fDA%3D",
       "tags": ["Data", "Machine Learning"],
-      "github": "https://github.com/DavidSilveraGabriel/Data-science-resources"
+      "github": "https://github.com/DavidSilveraGabriel/Data-science-resources",
+      "category": "Recursos"
     },
     {
       "title": "Computer Pointer Controller",
       "description": "Computer Pointer Controller app estimate pose of head and is used to control the movement of mouse pointer by the direction of eyes.",
       "image": "/projects_img/openvino.png",
       "tags": ["Machine Learning", "Deep Learning", "AI"],
-      "github": "https://github.com/DavidSilveraGabriel/Intel--Edge-AI-for-IoT-Developers---Project-3"
+      "github": "https://github.com/DavidSilveraGabriel/Intel--Edge-AI-for-IoT-Developers---Project-3",
+      "category": "Computer Vision",
+      "caseStudy": "Este proyecto explora el control del cursor del ordenador mediante el seguimiento de la mirada y la posición de la cabeza.",
+      "challenge": "Implementar un sistema de seguimiento ocular preciso que funcione en tiempo real con recursos computacionales limitados.",
+      "solution": "Utilizamos el kit de herramientas OpenVINO de Intel para optimizar modelos de visión por computadora preentrenados, permitiendo inferencias rápidas incluso en hardware de gama baja.",
+      "outcome": "Creamos una aplicación que permite controlar el cursor del ordenador con movimientos de la cabeza y dirección de la mirada, demostrando el potencial de la IA en el borde para interfaces de usuario alternativas."
     },
     {
       "title": "Deploy a People Counter App at the Edge",
       "description": "The app will detect people in a designated area, providing the number of people in the frame, average duration of people in frame, and total count.",
       "image": "/projects_img/nanodegree.png",
       "tags": ["Machine Learning", "Deep Learning", "AI"],
-      "github": "https://github.com/DavidSilveraGabriel/Intel--Edge-AI-for-IoT-Developers---Project-1"
+      "github": "https://github.com/DavidSilveraGabriel/Intel--Edge-AI-for-IoT-Developers---Project-1",
+      "category": "Computer Vision",
+      "caseStudy": "Desarrollo de una aplicación de conteo de personas para implementación en dispositivos de borde.",
+      "challenge": "Crear un sistema de conteo de personas preciso que pueda funcionar en dispositivos con recursos limitados y en tiempo real.",
+      "solution": "Implementamos un modelo de detección de personas optimizado con OpenVINO, junto con algoritmos de seguimiento para mantener la identidad de las personas a través de los fotogramas.",
+      "outcome": "La aplicación puede contar personas con precisión, calcular su tiempo de permanencia en el área designada y proporcionar estadísticas útiles para análisis de tráfico en espacios comerciales o públicos."
     }
 ]
