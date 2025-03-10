@@ -8,48 +8,172 @@ import ReadingProgress from '../ui/ReadingProgress.astro';
 type Props = CollectionEntry<'blog'>['data'];
 
 const { title, description, pubDate, image } = Astro.props;
+const accentColor = 'lime-500'; // Color verde para acentos
 ---
 
 <Base title={title} description={description}>
-  <ReadingProgress />
-  
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="lg:grid lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-8">
-      <!-- Sidebar -->
-      <aside class="hidden lg:block">
-        <div class="sticky top-24 text-gray-100">
-          <TableOfContents />
-        </div>
-      </aside>
+  <!-- Barra de progreso de lectura fija -->
+  <ReadingProgress class="fixed top-0 left-0 w-full z-20" />
 
-      <!-- Article -->
-      <article class="mx-auto">
-        {image && (
-          <div class="mb-8 not-prose">
-            <img 
-              src={image.url} 
-              alt={title}
-              class="w-full h-auto rounded-xl shadow-lg"
-              width={1020} 
-              height={510}
-            />
-          </div>
-        )}
-        
-        <header class="mb-8">
-          <div class="flex items-center gap-2 text-black dark:text-gray-100 mb-4">
-            <FormattedDate date={pubDate} />
-          </div>
-          <h1 class="text-4xl font-bold mb-4">{title}</h1>
-          {description && (
-            <p class="text-xl text-black dark:text-gray-300">{description}</p>
-          )}
-        </header>
-
-        <div class="prose-content">
-          <slot />
-        </div>
-      </article>
+  <!-- Barra lateral fija para TOC -->
+  <aside class="hidden lg:block fixed left-0 top-24 w-64 px-4 z-10">
+    <div class="sticky top-24 text-gray-100">
+      <TableOfContents />
     </div>
+  </aside>
+
+  <!-- Contenido principal con margen para la barra lateral -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:pl-72">
+    <article class="mx-auto max-w-3xl">
+      {image && (
+        <div class="mb-12 not-prose rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+          <img
+            src={image.url}
+            alt={title}
+            class="w-full h-auto object-cover mx-auto"
+            width={1020}
+            height={510}
+            style="aspect-ratio: 1020 / 510;"
+          />
+        </div>
+      )}
+
+      <header class="mb-12">
+        <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-3 text-sm">
+          <FormattedDate date={pubDate} />
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white tracking-tight">
+          {title}
+        </h1>
+        {description && (
+          <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+            {description}
+          </p>
+        )}
+      </header>
+
+      <div class="prose prose-base dark:prose-invert max-w-none prose-content">
+        <slot />
+      </div>
+    </article>
   </main>
 </Base>
+
+<style>
+  /* Barra de progreso superior */
+  :global(.reading-progress-container) {
+    @apply h-1 bg-gray-200 dark:bg-gray-800;
+  }
+  
+  :global(.reading-progress-bar) {
+    @apply h-full bg-lime-500 dark:bg-lime-400 transition-all duration-300;
+  }
+
+  /* Contenedor principal del artículo */
+  .prose-content {
+    @apply pt-8;
+  }
+
+  /* Estilos base mejorados */
+  .prose-base {
+    @apply text-gray-700 dark:text-gray-300;
+    font-size: 1.125rem;
+    line-height: 1.8;
+
+    /* Encabezados */
+    & :where(h1, h2, h3) {
+      @apply text-gray-900 dark:text-white tracking-tight font-bold;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    & :where(h1) { font-size: 2.75rem; }
+    & :where(h2) { font-size: 2.25rem; }
+    & :where(h3) { font-size: 1.875rem; }
+
+    /* Párrafos */
+    & :where(p) {
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Enlaces */
+    & :where(a) {
+      @apply text-lime-500 dark:text-lime-400 font-semibold;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      transition: color 0.3s ease;
+    }
+
+    & :where(a:hover) {
+      @apply text-lime-600 dark:text-lime-500;
+    }
+
+    /* Bloques de código */
+    & :where(pre) {
+      @apply bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-xl;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    /* Imágenes */
+    & :where(img) {
+      @apply rounded-2xl shadow-xl dark:shadow-none mx-auto;
+      margin: 2rem 0;
+      transition: transform 0.3s ease;
+    }
+
+    & :where(img:hover) {
+      transform: scale(1.02);
+    }
+
+    /* Blockquotes */
+    & :where(blockquote) {
+      @apply border-l-4 border-lime-500 dark:border-lime-400;
+      padding-left: 1.5rem;
+      margin: 2rem 0;
+      font-style: italic;
+    }
+
+    /* Listas */
+    & :where(ul, ol) {
+      @apply pl-6;
+      margin: 1.5rem 0;
+    }
+
+    /* Tablas */
+    & :where(table) {
+      @apply mt-6 mb-8 w-full;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    & :where(th) {
+      @apply bg-gray-100 dark:bg-gray-800;
+      padding: 1rem;
+      border-top: 1px solid transparent;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    & :where(td) {
+      @apply p-3;
+      border-bottom: 1px solid #e5e7eb;
+    }
+  }
+
+  /* Mejoras en modo oscuro */
+  .dark .prose-base {
+    & :where(blockquote) {
+      @apply border-lime-400;
+    }
+
+    & :where(th) {
+      @apply border-b-gray-700;
+    }
+
+    & :where(td) {
+      @apply border-b-gray-700;
+    }
+  }
+</style>
