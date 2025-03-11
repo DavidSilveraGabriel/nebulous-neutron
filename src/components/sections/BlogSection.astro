@@ -1,9 +1,55 @@
 ---
-import { getCollection } from "astro:content";
 import FormattedDate from '../FormattedDate.astro';
+import { supabase } from '../../utils/supabaseClient.ts';
+import type { PostFrontmatter } from '../../utils/types.ts';
 
-const allPosts = await getCollection("blog");
-const featuredPosts = allPosts.filter(post => post.data.featured);
+// Obtener los posts desde Supabase
+let allPosts: PostFrontmatter[] = [];
+let featuredPosts: PostFrontmatter[] = [];
+
+try {
+  const { data: posts, error } = await supabase
+      .from('posts')
+      .select('*');
+
+  if (error) {
+      console.error("Error al obtener posts de Supabase:", error);
+  } else if (posts) {
+    // Procesar los datos de los posts
+    allPosts = posts.map(post => {
+      // Asegurarse de que metadata existe
+      const metadata = post.metadata || {};
+      
+      return {
+        ...metadata,
+        slug: post.slug || '', // Agregar el slug desde el nivel superior
+        title: metadata.title || post.title || 'Sin título',
+        description: metadata.description || post.description || '',
+        pubDate: metadata.pubDate || post.created_at || new Date().toISOString(),
+        image: metadata.image || { 
+          url: post.image_url || '/default-blog-image.jpg',
+          alt: metadata.title || post.title || 'Imagen del post'
+        },
+        featured: metadata.featured || post.featured || false,
+        category: metadata.category || post.category || ''
+      } as PostFrontmatter;
+    });
+    
+    // Filtrar solo los posts destacados
+    featuredPosts = allPosts.filter(post => post.featured);
+    
+    // Si no hay posts destacados, mostrar los 3 más recientes
+    if (featuredPosts.length === 0) {
+      featuredPosts = [...allPosts]
+        .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+        .slice(0, 3);
+    }
+    
+    console.log(`BlogSection: Obtenidos ${allPosts.length} posts, ${featuredPosts.length} destacados`);
+  }
+} catch (e) {
+  console.error("Error al procesar los posts:", e);
+}
 ---
 
 <section class="py-24">
@@ -15,54 +61,69 @@ const featuredPosts = allPosts.filter(post => post.data.featured);
       Insights and explorations in technology and innovation
     </p>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {featuredPosts.map((post, index) => (
-        <article 
-          class="group relative bg-white dark:bg-gray-900 rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-purple-500/10 dark:hover:shadow-purple-500/5 transition-all duration-500"
-          style={`animation-delay: ${index * 100}ms`}
-        >
-          <a href={`/blog/${post.slug}/`} class="block">
-            <div class="relative aspect-[16/10] overflow-hidden">
-              <img 
-                src={post.data.image?.url || '/default-blog-image.jpg'}
-                alt={post.data.image?.alt || post.data.title}
-                class="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-700 filter brightness-[0.98]"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            </div>
-            
-            <div class="p-8">
-              <div class="flex items-center space-x-2 mb-4">
-                <time class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                  <FormattedDate date={post.data.pubDate} />
-                </time>
-                {post.data.category && (
-                  <span class="text-sm px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-                    {post.data.category}
-                  </span>
+    {featuredPosts.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {featuredPosts.map((post, index) => (
+          <article 
+            class="group relative bg-white dark:bg-gray-900 rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-purple-500/10 dark:hover:shadow-purple-500/5 transition-all duration-500"
+            style={`animation-delay: ${index * 100}ms`}
+          >
+            <a href={`/blog/${post.slug}/`} class="block">
+              <div class="relative aspect-[16/10] overflow-hidden">
+                <img 
+                  src={post.image?.url || '/default-blog-image.jpg'}
+                  alt={post.image?.alt || post.title}
+                  class="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-700 filter brightness-[0.98]"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              </div>
+              
+              <div class="p-8">
+                <div class="flex items-center space-x-2 mb-4">
+                  <time class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                    <FormattedDate date={new Date(post.pubDate)} />
+                  </time>
+                  {post.category && (
+                    <span class="text-sm px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                      {post.category}
+                    </span>
+                  )}
+                </div>
+
+                <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300 line-clamp-2">
+                  {post.title}
+                </h3>
+
+                {post.description && (
+                  <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2 leading-relaxed">
+                    {post.description}
+                  </p>
                 )}
+
+                <div class="flex items-center text-primary-600 dark:text-primary-400 font-medium group-hover:translate-x-1 transition-transform duration-300">
+                  Read article
+                  <svg class="w-5 h-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </div>
               </div>
-
-              <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300 line-clamp-2">
-                {post.data.title}
-              </h3>
-
-              {post.data.description && (
-                <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2 leading-relaxed">
-                  {post.data.description}
-                </p>
-              )}
-
-              <div class="flex items-center text-primary-600 dark:text-primary-400 font-medium group-hover:translate-x-1 transition-transform duration-300">
-                Read article
-                <svg class="w-5 h-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                </svg>
-              </div>
-            </div>
-          </a>
-        </article>
-      ))}
+            </a>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-12">
+        <p class="text-gray-600 dark:text-gray-400">No hay posts destacados disponibles en este momento.</p>
+      </div>
+    )}
+    
+    <div class="text-center mt-12">
+      <a href="/blog" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-300">
+        Ver todos los artículos
+        <svg class="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </a>
     </div>
   </div>
 </section>
