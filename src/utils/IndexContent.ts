@@ -132,7 +132,7 @@ async function parseMDContent(filePath: string) {
 // Generación de embeddings con manejo de tamaño
 async function safeExtractEmbeddings(content: string, filePath: string) {
   const payload = JSON.stringify({
-    model: "text-embedding-004",
+    model: "gemini-embedding-exp-03-07",
     content: content
   });
   
@@ -145,7 +145,7 @@ async function safeExtractEmbeddings(content: string, filePath: string) {
 
   for (let attempt = 1; attempt <= CHUNK_CONFIG.maxRetries; attempt++) {
     try {
-      const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+      const model = genAI.getGenerativeModel({ model: "gemini-embedding-exp-03-07" });
       const result = await model.embedContent(content);
       return result.embedding.values;
     } catch (error: any) {

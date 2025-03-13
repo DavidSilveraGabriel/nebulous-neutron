@@ -307,7 +307,7 @@ export const getEmbedding = async (text: string): Promise<number[]> => {
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-embedding-exp-03-07	' });
     const result = await model.embedContent(text);
 
     if (!result.embedding?.values) {
