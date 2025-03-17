@@ -1,0 +1,111 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const currentUrl = Astro.url.href;
+---
+
+<div class="share-container">
+  <h4 class="share-title">Compartir</h4>
+  
+  <div class="share-buttons">
+    <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(currentUrl)}`} 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       class="share-button twitter-share"
+       aria-label="Compartir en Twitter">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+      <span class="sr-only">Twitter</span>
+    </a>
+    
+    <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`} 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       class="share-button linkedin-share"
+       aria-label="Compartir en LinkedIn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+    
+    <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`} 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       class="share-button facebook-share"
+       aria-label="Compartir en Facebook">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+      <span class="sr-only">Facebook</span>
+    </a>
+    
+    <button id="copy-link-button" class="share-button copy-link" aria-label="Copiar enlace">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+      <span class="sr-only">Copiar enlace</span>
+    </button>
+  </div>
+</div>
+
+<script define:vars={{ currentUrl }}>
+document.addEventListener('astro:page-load', () => {
+  const copyButton = document.getElementById('copy-link-button');
+  
+  if (copyButton) {
+    copyButton.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(currentUrl);
+        
+        // Mostrar notificación de éxito
+        copyButton.classList.add('copied');
+        copyButton.setAttribute('aria-label', 'Enlace copiado!');
+        
+        // Restaurar después de un tiempo
+        setTimeout(() => {
+          copyButton.classList.remove('copied');
+          copyButton.setAttribute('aria-label', 'Copiar enlace');
+        }, 2000);
+      } catch (err) {
+        console.error('No se pudo copiar el enlace: ', err);
+      }
+    });
+  }
+});
+</script>
+
+<style>
+.share-container {
+  @apply mt-8 border-t border-gray-200 dark:border-gray-800 pt-5;
+}
+
+.share-title {
+  @apply text-sm font-medium text-gray-600 dark:text-gray-400 mb-3 flex items-center;
+}
+
+.share-buttons {
+  @apply flex gap-2;
+}
+
+.share-button {
+  @apply flex items-center justify-center w-10 h-10 rounded-full text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors;
+}
+
+/* Estilos específicos por red social */
+.twitter-share:hover {
+  @apply text-blue-500 bg-blue-50 dark:bg-blue-950;
+}
+
+.linkedin-share:hover {
+  @apply text-blue-600 bg-blue-50 dark:bg-blue-950;
+}
+
+.facebook-share:hover {
+  @apply text-blue-700 bg-blue-50 dark:bg-blue-950;
+}
+
+.copy-link:hover {
+  @apply text-lime-600 bg-lime-50 dark:bg-lime-950;
+}
+
+.copied {
+  @apply text-lime-600 bg-lime-100 dark:bg-lime-900 !important;
+}
+</style> 

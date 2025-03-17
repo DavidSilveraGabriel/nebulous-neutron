@@ -1,0 +1,70 @@
+---
+interface Props {
+  author: {
+    name: string;
+    avatar?: string;
+    role?: string;
+    bio?: string;
+  };
+}
+
+const { author } = Astro.props;
+---
+
+<div class="author-card">
+  <div class="author-avatar">
+    {author.avatar ? (
+      <img 
+        src={author.avatar} 
+        alt={`Foto de ${author.name}`} 
+        width="48" 
+        height="48" 
+        loading="lazy"
+      />
+    ) : (
+      <div class="author-avatar-placeholder">
+        {author.name.charAt(0)}
+      </div>
+    )}
+  </div>
+  
+  <div class="author-info">
+    <p class="author-name">{author.name}</p>
+    {author.role && <p class="author-role">{author.role}</p>}
+    {author.bio && <p class="author-bio">{author.bio}</p>}
+  </div>
+</div>
+
+<style>
+.author-card {
+  @apply flex items-center gap-3 my-4;
+}
+
+.author-avatar {
+  @apply flex-shrink-0;
+}
+
+.author-avatar img {
+  @apply w-12 h-12 rounded-full object-cover border-2 border-gray-100 dark:border-gray-800;
+}
+
+.author-avatar-placeholder {
+  @apply w-12 h-12 rounded-full bg-lime-100 dark:bg-lime-900 text-lime-800 dark:text-lime-200 flex items-center justify-center text-lg font-bold;
+}
+
+.author-info {
+  @apply flex-1;
+}
+
+.author-name {
+  @apply font-medium text-gray-900 dark:text-white;
+}
+
+.author-role {
+  @apply text-sm text-gray-500 dark:text-gray-400;
+}
+
+.author-bio {
+  @apply text-sm text-gray-600 dark:text-gray-300 mt-1;
+}
+</style> 

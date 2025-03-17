@@ -4,176 +4,262 @@ import Base from './Base.astro';
 import FormattedDate from '../FormattedDate.astro';
 import TableOfContents from '../ui/TableOfContents.astro';
 import ReadingProgress from '../ui/ReadingProgress.astro';
+import ShareButtons from '../ui/ShareButtons.astro';
+import RelatedPosts from '../ui/RelatedPosts.astro';
+import AuthorCard from '../ui/AuthorCard.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, image } = Astro.props;
+// Definir estructura correcta para author
+interface Author {
+  name: string;
+  avatar?: string;
+  role?: string;
+  bio?: string;
+}
+
+const { title, description, pubDate, image, author, tags } = Astro.props;
 const accentColor = 'lime-500'; // Color verde para acentos
 ---
 
 <Base title={title} description={description}>
-  <!-- Barra de progreso de lectura fija -->
-  <ReadingProgress class="fixed top-0 left-0 w-full z-20" />
-
-  <!-- Barra lateral fija para TOC -->
-  <aside class="hidden lg:block fixed left-14 top-24 w-64 px-4 z-10">
-    <div class="sticky top-24 text-gray-100">
-      <TableOfContents />
-    </div>
-  </aside>
-
-  <!-- Contenido principal con margen para la barra lateral -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:pl-72">
-    <article class="mx-auto max-w-4xl content-center">
-      {image && (
-        <div class="mb-12 not-prose rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
-          <img
-            src={image.url}
-            alt={title}
-            class="w-full h-auto object-cover mx-auto"
-            width={1020}
-            height={510}
-            style="aspect-ratio: 1020 / 510;"
-          />
-        </div>
-      )}
-
-      <header class="mb-12">
-        <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-3 text-sm">
-          <FormattedDate date={pubDate} />
-        </div>
-        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white tracking-tight">
-          {title}
-        </h1>
-        {description && (
-          <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-            {description}
-          </p>
+  <ReadingProgress />
+  
+  <div class="blog-outer-container">
+    <article class="blog-article">
+      <header class="blog-header">
+        {image && (
+          <div class="blog-hero-image">
+            <img 
+              src={image.url} 
+              alt={title} 
+              width="1200"
+              height="600"
+              loading="eager"
+            />
+          </div>
         )}
+        
+        <div class="blog-header-content">
+          <div class="blog-meta">
+            <FormattedDate date={pubDate} />
+            {tags && tags.length > 0 && (
+              <div class="blog-tags">
+                {tags.map((tag: string) => (
+                  <a href={`/tags/${tag}`} class="blog-tag">{tag}</a>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          <h1 class="blog-title">{title}</h1>
+          
+          {description && (
+            <p class="blog-description">{description}</p>
+          )}
+          
+          {/* Verificamos que author sea un objeto y lo convertimos si es necesario */}
+          {author && (
+            <AuthorCard 
+              author={typeof author === 'string' 
+                ? { name: author } 
+                : author as Author} 
+            />
+          )}
+        </div>
       </header>
-
-      <div class="prose prose-base dark:prose-invert max-w-none prose-content">
-        <slot />
+      
+      <div class="blog-content-layout">
+        <main class="blog-main">
+          <div class="blog-content">
+            <slot />
+          </div>
+          
+          <footer class="blog-footer">
+            <RelatedPosts tags={tags} currentPostTitle={title} />
+          </footer>
+        </main>
+        
+        <aside class="blog-sidebar">
+          <div class="blog-sidebar-content">
+            <TableOfContents />
+            <ShareButtons title={title} />
+          </div>
+        </aside>
       </div>
     </article>
-  </main>
+  </div>
 </Base>
 
 <style>
-  /* Barra de progreso superior */
-  :global(.reading-progress-container) {
-    @apply h-1 bg-gray-200 dark:bg-gray-800;
-  }
-  
-  :global(.reading-progress-bar) {
-    @apply h-full bg-lime-500 dark:bg-lime-400 transition-all duration-300;
+  /* Contenedor principal ocupando 90% del ancho */
+  .blog-outer-container {
+    width: 90%;
+    max-width: 1800px;
+    @apply mx-auto py-6;
   }
 
-  /* Contenedor principal del artículo */
-  .prose-content {
-    @apply pt-8;
+  /* Artículo completo */
+  .blog-article {
+    @apply w-full flex flex-col;
   }
 
-  /* Estilos base mejorados */
-  .prose-base {
-    @apply text-gray-700 dark:text-gray-300;
-    font-size: 1.125rem;
-    line-height: 1.8;
-
-    /* Encabezados */
-    & :where(h1, h2, h3) {
-      @apply text-gray-900 dark:text-white tracking-tight font-bold;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-      line-height: 1.3;
-    }
-
-    & :where(h1) { font-size: 2.75rem; }
-    & :where(h2) { font-size: 2.25rem; }
-    & :where(h3) { font-size: 1.875rem; }
-
-    /* Párrafos */
-    & :where(p) {
-      margin-top: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    /* Enlaces */
-    & :where(a) {
-      @apply text-lime-500 dark:text-lime-400 font-semibold;
-      text-decoration: underline;
-      text-underline-offset: 4px;
-      transition: color 0.3s ease;
-    }
-
-    & :where(a:hover) {
-      @apply text-lime-600 dark:text-lime-500;
-    }
-
-    /* Bloques de código */
-    & :where(pre) {
-      @apply bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-xl;
-      padding: 1.5rem;
-      margin: 2rem 0;
-    }
-
-    /* Imágenes */
-    & :where(img) {
-      @apply rounded-2xl shadow-xl dark:shadow-none mx-auto;
-      margin: 2rem 0;
-      transition: transform 0.3s ease;
-    }
-
-    & :where(img:hover) {
-      transform: scale(1.02);
-    }
-
-    /* Blockquotes */
-    & :where(blockquote) {
-      @apply border-l-4 border-lime-500 dark:border-lime-400;
-      padding-left: 1.5rem;
-      margin: 2rem 0;
-      font-style: italic;
-    }
-
-    /* Listas */
-    & :where(ul, ol) {
-      @apply pl-6;
-      margin: 1.5rem 0;
-    }
-
-    /* Tablas */
-    & :where(table) {
-      @apply mt-6 mb-8 w-full;
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-
-    & :where(th) {
-      @apply bg-gray-100 dark:bg-gray-800;
-      padding: 1rem;
-      border-top: 1px solid transparent;
-      border-bottom: 2px solid #e5e7eb;
-    }
-
-    & :where(td) {
-      @apply p-3;
-      border-bottom: 1px solid #e5e7eb;
-    }
+  /* Cabecera */
+  .blog-header {
+    @apply mb-12 w-full;
   }
 
-  /* Mejoras en modo oscuro */
-  .dark .prose-base {
-    & :where(blockquote) {
-      @apply border-lime-400;
-    }
+  .blog-hero-image {
+    @apply mb-10 rounded-xl overflow-hidden shadow-lg w-full;
+    aspect-ratio: 2.5/1;
+  }
 
-    & :where(th) {
-      @apply border-b-gray-700;
-    }
+  .blog-hero-image img {
+    @apply w-full h-full object-cover;
+    transition: transform 0.5s ease;
+  }
 
-    & :where(td) {
-      @apply border-b-gray-700;
+  .blog-hero-image:hover img {
+    transform: scale(1.02);
+  }
+
+  .blog-header-content {
+    @apply max-w-none mx-auto;
+    width: 95%;
+  }
+
+  .blog-meta {
+    @apply flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mb-4;
+  }
+
+  .blog-tags {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .blog-tag {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-lime-100 text-lime-800 dark:bg-lime-900 dark:text-lime-200 hover:bg-lime-200 dark:hover:bg-lime-800 transition-colors;
+  }
+
+  .blog-title {
+    @apply text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 text-gray-900 dark:text-white tracking-tight;
+    line-height: 1.2;
+  }
+
+  .blog-description {
+    @apply text-lg sm:text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-6;
+  }
+
+  /* Nueva estructura de 2 columnas */
+  .blog-content-layout {
+    @apply flex flex-row gap-10 w-full;
+  }
+
+  /* Columna principal */
+  .blog-main {
+    @apply flex-1;
+    width: 75%;
+  }
+
+  .blog-content {
+    @apply prose prose-lg prose-slate dark:prose-invert max-w-none w-full;
+  }
+
+  /* Columna lateral */
+  .blog-sidebar {
+    width: 25%;
+    min-width: 280px;
+    max-width: 320px;
+  }
+
+  .blog-sidebar-content {
+    @apply sticky top-28;
+  }
+
+  /* Footer */
+  .blog-footer {
+    @apply mt-16 pt-8 border-t border-gray-200 dark:border-gray-800;
+  }
+
+  /* Estilos para el contenido */
+  .blog-content :global(h1),
+  .blog-content :global(h2),
+  .blog-content :global(h3) {
+    @apply text-gray-900 dark:text-white font-bold scroll-mt-24;
+  }
+
+  .blog-content :global(h1) {
+    @apply text-3xl mt-12 mb-6;
+  }
+
+  .blog-content :global(h2) {
+    @apply text-2xl mt-10 mb-4;
+  }
+
+  .blog-content :global(h3) {
+    @apply text-xl mt-8 mb-3;
+  }
+
+  .blog-content :global(p) {
+    @apply text-gray-700 dark:text-gray-300 leading-relaxed mb-6;
+  }
+
+  .blog-content :global(img) {
+    @apply rounded-xl shadow-lg my-8;
+    max-width: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .blog-content :global(img:hover) {
+    transform: scale(1.01);
+    @apply shadow-xl;
+  }
+
+  .blog-content :global(blockquote) {
+    @apply pl-4 italic border-l-4 border-lime-500 dark:border-lime-400 my-6 text-gray-700 dark:text-gray-300;
+  }
+
+  .blog-content :global(pre) {
+    @apply rounded-xl p-4 my-6 bg-gray-800 dark:bg-gray-900 text-white overflow-x-auto;
+  }
+
+  .blog-content :global(code) {
+    @apply font-mono text-sm;
+  }
+
+  .blog-content :global(a) {
+    @apply text-lime-600 dark:text-lime-400 hover:text-lime-700 dark:hover:text-lime-300 underline decoration-1 underline-offset-2 transition-colors;
+  }
+
+  .blog-content :global(ul) {
+    @apply list-disc pl-6 mb-6 space-y-2;
+  }
+
+  .blog-content :global(ol) {
+    @apply list-decimal pl-6 mb-6 space-y-2;
+  }
+
+  /* Responsive */
+  @media (max-width: 1280px) {
+    .blog-content-layout {
+      @apply flex-col;
+    }
+    
+    .blog-main {
+      width: 100%;
+    }
+    
+    .blog-sidebar {
+      width: 100%;
+      max-width: 100%;
+      @apply mt-10;
+    }
+    
+    .blog-sidebar-content {
+      @apply static;
+    }
+    
+    .blog-outer-container {
+      width: 95%;
     }
   }
 </style>

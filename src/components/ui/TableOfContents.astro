@@ -1,9 +1,17 @@
 ---
 ---
-<nav class="space-y-2 text-sm">
-  <p class="font-semibold text-gray-900 dark:text-white mb-4">Table of Contents</p>
-  <div id="table-of-contents" class="space-y-2"></div>
-</nav>
+<div class="toc">
+  <h3 class="toc-title">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block mr-2"><line x1="21" y1="10" x2="7" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="7" y2="18"></line></svg>
+    Contenido
+  </h3>
+  
+  <div class="toc-progress">
+    <div class="toc-progress-bar" id="toc-progress-indicator"></div>
+  </div>
+  
+  <div id="table-of-contents" class="toc-links"></div>
+</div>
 
 <script>
 /**
@@ -15,114 +23,259 @@
  * - Resalta el encabezado actualmente visible
  * - Soporte para temas oscuros y claros
  * - Compatibilidad con Astro
+ * - Evita superposición con el footer
  */
- function buildTableOfContents() {
-  // Selecciona todos los encabezados H1, H2 y H3 dentro del elemento 'article'
-  const headings = document.querySelectorAll('article h1, article h2, article h3');
-  
-  // Obtiene el contenedor de la tabla de contenidos
+interface TOCLink {
+  id: string;
+  text: string;
+  level: number;
+  element: HTMLElement;
+}
+
+function buildTableOfContents(): void {
+  // Seleccionar todos los encabezados dentro del artículo
+  const headings = document.querySelectorAll('.blog-content h1, .blog-content h2, .blog-content h3');
   const tocContainer = document.getElementById('table-of-contents');
+  const toc = document.querySelector('.toc');
   
-  // Salir si no se encuentra el contenedor
-  if (!tocContainer) return;
+  if (!tocContainer || !toc || headings.length === 0) {
+    // Ocultar el TOC si no hay encabezados
+    if (toc) toc.classList.add('hidden');
+    return;
+  }
   
   // Limpiar contenido previo
   tocContainer.innerHTML = '';
   
-    // Obtener la altura del header
-    const header = document.querySelector('header');
-    const headerHeight = header ? header.offsetHeight : 70; // Altura por defecto
-
+  // Registrar los datos del TOC
+  const tocLinks: TOCLink[] = [];
+  
   // Generar enlaces para cada encabezado
-  headings.forEach((heading) => {
-    // Crear un enlace para cada encabezado
-    const link = document.createElement('a');
-    const level = heading.tagName.toLowerCase();
+  headings.forEach((heading: Element) => {
+    const headingElement = heading as HTMLElement;
+    const level = parseInt(heading.tagName.substring(1), 10);
     
     // Generar un ID único si no existe
     if (!heading.id) {
-      heading.id = generateUniqueId(heading.textContent);
+      heading.id = generateUniqueId(heading.textContent || '');
     }
     
-    // Configurar propiedades del enlace
-    link.href = `#${heading.id}`;
-    link.textContent = heading.textContent;
-    link.className = `
-      block 
-      text-gray-600 
-      dark:text-gray-400 
-      hover:text-primary-600 
-      dark:hover:text-primary-400 
-      ${level === 'h3' ? 'pl-4' : level === 'h2' ? 'pl-2' : ''}
-    `;
+    // Configurar scroll-margin-top para desplazamiento
+    headingElement.style.scrollMarginTop = '5rem';
     
+    // Crear el enlace
+    const link = document.createElement('a');
+    link.href = `#${heading.id}`;
+    link.textContent = heading.textContent || '';
+    link.classList.add('toc-link', `toc-level-${level}`);
+    link.dataset.target = heading.id;
+    
+    // Añadir a la lista de enlaces
+    tocLinks.push({
+      id: heading.id,
+      text: heading.textContent || '',
+      level,
+      element: headingElement
+    });
+    
+    // Añadir al DOM
     tocContainer.appendChild(link);
     
-    // Type assertion to HTMLElement
-    (heading as HTMLElement).style.paddingTop = `${headerHeight}px`;
-    (heading as HTMLElement).style.marginTop = `-${headerHeight}px`;
-  });
-
-
-  // Configurar observador de intersección para resaltar el encabezado activo
-  const observer = new IntersectionObserver(
-    (entries) => {
-      // Encontrar el primer encabezado visible
-      const firstVisible = entries.find(entry => entry.isIntersecting)?.target;
-
-      // Resetear estilos de todos los enlaces
-      const allLinks = tocContainer.querySelectorAll('a');
-      allLinks.forEach(link => {
-        link.classList.remove('text-primary-600', 'dark:text-primary-400', 'font-medium');
-      });
-
-      // Resaltar el enlace del encabezado visible
-      if (firstVisible) {
-        const headingId = firstVisible.getAttribute('id');
-        if (headingId) {
-          const activeLink = tocContainer.querySelector(`a[href="#${headingId}"]`);
-          activeLink?.classList.add('text-primary-600', 'dark:text-primary-400', 'font-medium');
-        }
+    // Añadir evento de clic para desplazamiento suave
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href')?.substring(1) || '';
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        const targetHTMLElement = targetElement as HTMLElement;
+        // Desplazamiento suave
+        window.scrollTo({
+          top: targetHTMLElement.offsetTop - 80,
+          behavior: 'smooth'
+        });
+        
+        // Actualizar URL sin recargar
+        history.pushState(null, '', `#${targetId}`);
       }
-    },
-    {
-      // Configuraciones del observador para mayor precisión
-      threshold: 0.5, // Activar cuando el 50% del elemento sea visible
-      rootMargin: '-10% 0px -10% 0px' // Ajustar márgenes para mejor precisión
-    }
-  );
+    });
+  });
+  
+  // Configurar observador para resaltar secciones activas
+  setupActiveHeadingHighlight(tocLinks);
+  
+  // Configurar barra de progreso de lectura
+  setupProgressIndicator(tocLinks);
+}
 
+function setupActiveHeadingHighlight(tocLinks: TOCLink[]): void {
+  // Opciones del observador
+  const options = {
+    root: null,
+    rootMargin: '-80px 0px -70% 0px',
+    threshold: 0
+  };
+  
+  // Crear observador
+  const observer = new IntersectionObserver((entries) => {
+    // Encontrar las entradas activas
+    const visibleHeadings = entries
+      .filter(entry => entry.isIntersecting)
+      .map(entry => entry.target.id);
+    
+    // Si no hay encabezados visibles, salir
+    if (visibleHeadings.length === 0) return;
+    
+    // Actualizar clases activas
+    document.querySelectorAll('.toc-link').forEach(link => {
+      const targetId = link.getAttribute('data-target') || '';
+      
+      if (visibleHeadings.includes(targetId)) {
+        link.classList.add('toc-active');
+      } else {
+        link.classList.remove('toc-active');
+      }
+    });
+  }, options);
+  
   // Observar cada encabezado
-  headings.forEach(heading => observer.observe(heading));
+  tocLinks.forEach(link => {
+    const element = document.getElementById(link.id);
+    if (element) observer.observe(element);
+  });
 }
 
-/**
- * Genera un ID único a partir del texto del encabezado.
- * 
- * @param {string | null} text - Texto del encabezado
- * @returns {string} ID generado
- */
-function generateUniqueId(text: string | null): string {
-  if (!text) return '';
+function setupProgressIndicator(tocLinks: TOCLink[]): void {
+  if (tocLinks.length === 0) return;
+  
+  const progressIndicator = document.getElementById('toc-progress-indicator');
+  if (!progressIndicator) return;
+  
+  // Función para actualizar la barra de progreso del TOC
+  const updateTocProgress = () => {
+    const scrollTop = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+    
+    // Calcular elementos visibles
+    let activeIndex = -1;
+    
+    for (let i = 0; i < tocLinks.length; i++) {
+      const { element } = tocLinks[i];
+      const rect = element.getBoundingClientRect();
+      
+      if (rect.top < windowHeight * 0.5) {
+        activeIndex = i;
+      }
+    }
+    
+    // Calcular progreso visual
+    const progress = activeIndex >= 0
+      ? (activeIndex + 1) / tocLinks.length * 100
+      : (scrollTop / (docHeight - windowHeight)) * 100;
+    
+    // Actualizar altura de la barra de progreso
+    progressIndicator.style.height = `${Math.min(100, progress)}%`;
+  };
+  
+  // Registrar eventos
+  window.addEventListener('scroll', updateTocProgress, { passive: true });
+  window.addEventListener('resize', updateTocProgress, { passive: true });
+  
+  // Actualización inicial
+  updateTocProgress();
+  
+  // Limpiar eventos
+  document.addEventListener('astro:before-swap', () => {
+    window.removeEventListener('scroll', updateTocProgress);
+    window.removeEventListener('resize', updateTocProgress);
+  });
+}
 
-  // Convertir a minúsculas, reemplazar espacios con guiones
-  let id = text.toLowerCase()
-    .normalize('NFD')           // Descomponer caracteres acentuados
-    .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
-    .replace(/[^\w\s-]/g, '')    // Eliminar caracteres no alfanuméricos
+function generateUniqueId(text: string): string {
+  if (!text) return 'section';
+
+  return text.toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\s-]/g, '')
     .trim()
-    .replace(/\s+/g, '-');       // Reemplazar espacios con guiones
-
-  // Añadir un número único si es necesario para evitar duplicados
-  const existingElement = document.getElementById(id);
-  if (existingElement) {
-    const suffix = Date.now().toString(36);
-    id = `${id}-${suffix}`;
-  }
-
-  return id;
+    .replace(/\s+/g, '-')
+    .substring(0, 40);
 }
 
-// Registrar evento para Astro
+// Registrar el constructor de TOC
 document.addEventListener('astro:page-load', buildTableOfContents);
 </script>
+
+<style>
+.toc {
+  @apply bg-gray-50 dark:bg-gray-900 rounded-xl p-5 shadow-md relative border border-gray-200 dark:border-gray-800;
+  width: 100%;
+  /* Añadir un ligero efecto de escala al pasar el cursor */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.toc:hover {
+  @apply shadow-lg;
+  transform: translateY(-2px);
+}
+
+.toc-title {
+  @apply flex items-center text-base font-semibold text-gray-900 dark:text-white mb-4;
+  font-size: 1.1rem;
+}
+
+.toc-progress {
+  @apply absolute top-0 left-0 w-1.5 h-full bg-gray-200 dark:bg-gray-800 overflow-hidden;
+  border-top-left-radius: 0.75rem;
+  border-bottom-left-radius: 0.75rem;
+}
+
+.toc-progress-bar {
+  @apply w-full bg-gradient-to-b from-lime-500 to-emerald-500 dark:from-lime-400 dark:to-emerald-400;
+  height: 0%;
+  transition: height 0.2s ease-out;
+}
+
+.toc-links {
+  @apply pl-4 space-y-2.5 max-h-[60vh] overflow-y-auto pr-2;
+}
+
+.toc-link {
+  @apply block text-gray-700 dark:text-gray-300 hover:text-lime-600 dark:hover:text-lime-400 text-sm transition-all duration-150 border-l-2 border-gray-200 dark:border-gray-700 pl-3 py-1.5;
+  line-height: 1.4;
+}
+
+.toc-level-1 {
+  @apply font-medium;
+  font-size: 0.95rem;
+}
+
+.toc-level-2 {
+  @apply pl-3;
+}
+
+.toc-level-3 {
+  @apply pl-6 text-xs;
+}
+
+.toc-active {
+  @apply text-lime-600 dark:text-lime-400 font-medium border-lime-500 dark:border-lime-400;
+  background: linear-gradient(90deg, rgba(132, 204, 22, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+
+/* Personalización del scrollbar */
+.toc-links::-webkit-scrollbar {
+  width: 4px;
+}
+
+.toc-links::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.toc-links::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+</style>

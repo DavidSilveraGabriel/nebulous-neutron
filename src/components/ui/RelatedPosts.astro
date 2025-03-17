@@ -1,0 +1,106 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  tags?: string[];
+  currentPostTitle: string;
+}
+
+const { tags = [], currentPostTitle } = Astro.props;
+
+// Definir el tipo explícitamente
+let relatedPosts: CollectionEntry<'blog'>[] = [];
+
+if (tags.length > 0) {
+  const allPosts = await getCollection('blog');
+  
+  // Filtrar posts que comparten etiquetas pero no son el post actual
+  relatedPosts = allPosts
+    .filter(post => 
+      post.data.title !== currentPostTitle && 
+      post.data.tags && 
+      post.data.tags.some((tag: string) => tags.includes(tag))
+    )
+    .sort((a, b) => {
+      // Ordenar por número de etiquetas compartidas
+      const aMatches = a.data.tags?.filter((tag: string) => tags.includes(tag)).length || 0;
+      const bMatches = b.data.tags?.filter((tag: string) => tags.includes(tag)).length || 0;
+      return bMatches - aMatches;
+    })
+    .slice(0, 3); // Limitar a 3 posts relacionados
+}
+---
+
+{relatedPosts.length > 0 && (
+  <div class="related-posts">
+    <h3 class="related-title">Artículos relacionados</h3>
+    
+    <div class="related-grid">
+      {relatedPosts.map((post) => (
+        <a href={`/blog/${post.slug}`} class="related-post-card">
+          {post.data.image && (
+            <div class="related-post-image">
+              <img 
+                src={post.data.image.url} 
+                alt={post.data.title} 
+                width="300" 
+                height="170" 
+                loading="lazy" 
+              />
+            </div>
+          )}
+          <div class="related-post-content">
+            <h4 class="related-post-title">{post.data.title}</h4>
+            {post.data.description && (
+              <p class="related-post-description">{post.data.description}</p>
+            )}
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+)}
+
+<style>
+.related-posts {
+  @apply mt-12;
+}
+
+.related-title {
+  @apply text-xl font-bold text-gray-900 dark:text-white mb-6;
+}
+
+.related-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.related-post-card {
+  @apply bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden flex flex-col;
+  height: 100%;
+}
+
+.related-post-image {
+  @apply w-full aspect-[16/9] overflow-hidden;
+}
+
+.related-post-image img {
+  @apply w-full h-full object-cover transition-transform duration-300;
+}
+
+.related-post-card:hover .related-post-image img {
+  transform: scale(1.05);
+}
+
+.related-post-content {
+  @apply p-4 flex-1 flex flex-col;
+}
+
+.related-post-title {
+  @apply text-gray-900 dark:text-white font-medium text-lg mb-2;
+}
+
+.related-post-description {
+  @apply text-gray-600 dark:text-gray-300 text-sm line-clamp-2;
+}
+</style> 
