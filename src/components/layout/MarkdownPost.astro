@@ -25,7 +25,7 @@ const accentColor = 'lime-500'; // Color verde para acentos
 <Base title={title} description={description}>
   <ReadingProgress />
   
-  <div class="blog-outer-container">
+  <div class="full-width-override">
     <article class="blog-article">
       <header class="blog-header">
         {image && (
@@ -92,25 +92,21 @@ const accentColor = 'lime-500'; // Color verde para acentos
 </Base>
 
 <style>
-  /* Contenedor principal ocupando 90% del ancho */
-  .blog-outer-container {
-    width: 90%;
-    max-width: 1800px;
-    @apply mx-auto py-6;
+  /* Clase para anular cualquier restricción de ancho */
+  .full-width-override {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
-  /* Artículo completo */
-  .blog-article {
-    @apply w-full flex flex-col;
-  }
-
-  /* Cabecera */
+  /* Cabecera a ancho completo */
   .blog-header {
-    @apply mb-12 w-full;
+    @apply w-full mb-12;
   }
 
   .blog-hero-image {
-    @apply mb-10 rounded-xl overflow-hidden shadow-lg w-full;
+    @apply w-full mb-10 rounded-xl overflow-hidden shadow-lg;
     aspect-ratio: 2.5/1;
   }
 
@@ -123,9 +119,9 @@ const accentColor = 'lime-500'; // Color verde para acentos
     transform: scale(1.02);
   }
 
+  /* Contenido centrado con ancho completo */
   .blog-header-content {
-    @apply max-w-none mx-auto;
-    width: 95%;
+    @apply w-full px-8;
   }
 
   .blog-meta {
@@ -149,9 +145,9 @@ const accentColor = 'lime-500'; // Color verde para acentos
     @apply text-lg sm:text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-6;
   }
 
-  /* Nueva estructura de 2 columnas */
+  /* Estructura de dos columnas sin límite */
   .blog-content-layout {
-    @apply flex flex-row gap-10 w-full;
+    @apply w-full px-8 flex flex-row gap-10;
   }
 
   /* Columna principal */
@@ -161,7 +157,8 @@ const accentColor = 'lime-500'; // Color verde para acentos
   }
 
   .blog-content {
-    @apply prose prose-lg prose-slate dark:prose-invert max-w-none w-full;
+    @apply prose prose-lg prose-slate dark:prose-invert w-full;
+    max-width: none !important;
   }
 
   /* Columna lateral */
@@ -257,9 +254,15 @@ const accentColor = 'lime-500'; // Color verde para acentos
     .blog-sidebar-content {
       @apply static;
     }
-    
-    .blog-outer-container {
-      width: 95%;
-    }
+  }
+
+  /* Específicamente anulando posibles restricciones de ancho */
+  :global(body > div),
+  :global(body > main),
+  :global(main > div) {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 </style>
