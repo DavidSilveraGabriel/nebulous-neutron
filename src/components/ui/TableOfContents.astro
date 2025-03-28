@@ -239,21 +239,21 @@ document.addEventListener('astro:page-load', buildTableOfContents);
 }
 
 .toc-links {
-  @apply pl-4 space-y-2.5 max-h-[60vh] overflow-y-auto pr-2;
+  @apply pl-4 max-h-[60vh] overflow-y-auto pr-2; /* Removed space-y-2 */
 }
 
 .toc-link {
-  @apply block text-gray-700 dark:text-gray-300 hover:text-lime-600 dark:hover:text-lime-400 text-sm transition-all duration-150 border-l-2 border-gray-200 dark:border-gray-700 pl-3 py-1.5;
+  @apply block text-gray-700 dark:text-gray-300 hover:text-lime-600 dark:hover:text-lime-400 text-sm transition-all duration-150 border-l-2 border-gray-200 dark:border-gray-700 pl-3 py-1.5 overflow-hidden whitespace-nowrap text-ellipsis; /* Removed mb-1 */
   line-height: 1.4;
 }
 
 .toc-level-1 {
-  @apply font-medium;
+  @apply font-medium; /* Removed pt-1 */
   font-size: 0.95rem;
 }
 
 .toc-level-2 {
-  @apply pl-3;
+  @apply pl-3; /* Removed mt-2 */
 }
 
 .toc-level-3 {
@@ -277,5 +277,10 @@ document.addEventListener('astro:page-load', buildTableOfContents);
 
 .toc-links::-webkit-scrollbar-thumb {
   @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+/* Add extra margin above H1 links (except the first one) */
+.toc-links > .toc-level-1:not(:first-child) {
+  margin-top: 0.75rem; /* Tailwind mt-3 */
 }
 </style>

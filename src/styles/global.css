@@ -180,15 +180,17 @@
      }
    }
    
-   /* ==========================================================================
-       9. ESTILOS DE MARKDOWN (estilo Medium)
-       ========================================================================== */
-       article {
-         max-width: 700px; /* Ancho máximo del contenido */
-         margin: 0 auto; /* Centrar el artículo */
-     }
-   
-     /* Estilos para encabezados */
+/* ==========================================================================
+    9. ESTILOS DE MARKDOWN (estilo Medium)
+    ========================================================================== */
+    /* General article styling - applied cautiously */
+    /* Consider using a more specific class if this causes conflicts */
+    /* article {
+      max-width: 700px; /* Ancho máximo del contenido */
+      /* margin: 0 auto; /* Centrar el artículo */
+    /* } */
+
+  /* Estilos para encabezados */
      article h1 {
            font-family: 'Figtree', sans-serif; /* Aplicando Figtree como fuente principal */
          font-size: 2.5rem; /* Tamaño de fuente grande */
@@ -410,7 +412,8 @@
 
 /* Contenido centrado con ancho completo */
 .blog-header-content {
-  @apply w-full px-8;
+  /* Adjusted padding for wider screens */
+  @apply w-full px-4 md:px-8; 
 }
 
 .blog-meta {
@@ -435,8 +438,15 @@
 }
 
 /* Estructura de dos columnas sin límite */
+.blog-article {
+  /* Wider max-width for the whole blog post article */
+  max-width: 1400px; /* Adjust as needed */
+  @apply w-11/12 mx-auto; /* Approx 90% width and centered */
+}
+
 .blog-content-layout {
-  @apply w-full px-8 flex flex-row gap-10;
+  /* Adjusted padding for wider screens */
+  @apply w-full px-4 md:px-8 flex flex-row gap-10;
 }
 
 /* Columna principal */
@@ -447,7 +457,8 @@
 
 .blog-content {
   @apply prose prose-lg prose-slate dark:prose-invert w-full;
-  /* max-width: none !important; /* Removed to allow prose to control max-width for readability */
+  /* Override prose max-width for wider content area */
+  max-width: 85ch !important; /* Adjust '85ch' as needed */
 }
 
 /* Columna lateral */
