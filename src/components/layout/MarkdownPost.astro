@@ -3,7 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import Base from './Base.astro';
 import FormattedDate from '../FormattedDate.astro';
 import ReadingProgress from '../ui/ReadingProgress.astro';
-import ShareButtons from '../ui/ShareButtons.astro';
+//import ShareButtons from '../ui/ShareButtons.astro';
 import RelatedPosts from '../ui/RelatedPosts.astro';
 import AuthorCard from '../ui/AuthorCard.astro';
 
@@ -45,7 +45,7 @@ const accentColor = 'lime-500'; // Color verde para acentos
             {tags && tags.length > 0 && (
               <div class="blog-tags">
                 {tags.map((tag: string) => (
-                  <a href={`/tags/${tag}`} class="blog-tag">{tag}</a>
+                  <span class="blog-tag">{tag}</span> // Changed from <a> to <span>
                 ))}
               </div>
             )}
@@ -79,11 +79,11 @@ const accentColor = 'lime-500'; // Color verde para acentos
           </footer>
         </main>
         
-        <aside class="blog-sidebar">
+        {/*<aside class="blog-sidebar">
           <div class="blog-sidebar-content">
             <ShareButtons title={title} />
           </div>
-        </aside>
+        </aside>*/}
       </div>
     </article>
   </div>
