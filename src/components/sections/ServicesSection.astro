@@ -1,10 +1,35 @@
 ---
 // src/components/sections/ServicesSection.astro
-import serviciosData from '../../data/servicios.json';
 import ServiceCard from '../ui/ServiceCard.astro';
-import FilterButtons from '../ui/FilterButtons.astro';
 
-const categoriasUnicas = [...new Set(serviciosData.servicios.flatMap(s => s.category))];
+// Define the three core service pillars
+const coreServices = [
+    {
+        title: "AI & Automations",
+        description: "Streamline workflows and enhance efficiency with custom AI-powered automations.",
+        icon: "mdi:robot-outline", // Example icon (Material Design Icons)
+        category: ["AI", "Automation"], // Keep category for potential future use or styling
+        badges: [], // Added empty array
+        features: [] // Added empty array
+    },
+    {
+        title: "Data Science & Analytics",
+        description: "Unlock insights and make data-driven decisions with advanced analytics and modeling.",
+        icon: "mdi:chart-line", // Example icon
+        category: ["Data Science"],
+        badges: [], // Added empty array
+        features: [] // Added empty array
+    },
+    {
+        title: "Custom AI Solutions",
+        description: "Develop bespoke Artificial Intelligence models and applications tailored to your specific needs.",
+        icon: "mdi:brain-outline", // Example icon
+        category: ["AI"],
+        badges: [], // Added empty array
+        features: [] // Added empty array
+    }
+];
+
 const accentColor = 'lime-400'; // Define accent color for consistency
 ---
 
@@ -18,17 +43,16 @@ const accentColor = 'lime-400'; // Define accent color for consistency
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16 space-y-6 scroll-mt-24">
             <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                Explore my AI & Data Science Services
+                Core Services: AI, Data & Automation
             </h2>
             <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Discover how my tailored AI solutions and data insights can propel your business forward.
+                Leveraging Artificial Intelligence, Data Science, and Automation to drive innovation and efficiency.
             </p>
-
-            <FilterButtons categories={categoriasUnicas} />
+            {/* FilterButtons removed */}
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 services-container">
-            {serviciosData.servicios.map((servicio) => (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"> {/* Removed 'services-container' class */}
+            {coreServices.map((servicio) => (
                 <ServiceCard servicio={servicio} />
             ))}
         </div>
@@ -67,20 +91,9 @@ const accentColor = 'lime-400'; // Define accent color for consistency
         .service-card.hidden {
             @apply opacity-0 scale-95 absolute pointer-events-none;
         }
+
+        /* Removed .service-card.hidden style */
     </style>
 
-    <script is:inline>
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-
-                const filter = this.dataset.filter;
-                document.querySelectorAll('.service-card').forEach(card => {
-                    const categories = card.dataset.category.split(' ');
-                    card.classList.toggle('hidden', filter !== 'all' && !categories.includes(filter));
-                });
-            });
-        });
-    </script>
+    {/* Removed filtering script */}
 </section>
