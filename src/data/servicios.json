@@ -49,12 +49,12 @@
       "icon": "education"
     },
     {
-      "title": "⚙️ Model Optimization",
-      "description": "Performance improvement of AI systems to ensure faster inference, reduce costs, and enable deployment on diverse hardware.",
-      "category": ["ml", "optimization", "AI"],
-      "badges": ["TensorRT", "ONNX", "Pruning", "Quantization", "Benchmark"],
-      "features": ["Optimization", "Compression", "Acceleration"],
-      "icon": "optimization"
+      "title": "🔧 MLOps",
+      "description": "Implementation of MLOps practices to streamline the deployment, monitoring, and management of machine learning models.",
+      "category": ["mlops", "DataScience"],
+      "badges": ["Docker", "Kubernetes", "CI/CD", "Monitoring", "Deployment"],
+      "features": ["Model Deployment", "Monitoring", "Version Control"],
+      "icon": "mlops"
     },
     {
       "title": "💡 AI Strategy",
