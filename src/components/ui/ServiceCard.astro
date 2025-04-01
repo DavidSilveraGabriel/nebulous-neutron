@@ -16,7 +16,8 @@ const { servicio } = Astro.props;
 ---
 
 <article class="service-card group" data-category={servicio.category.join(' ')}>
-  <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 h-full transition-all duration-300 hover:-translate-y-2 border border-gray-100 dark:border-gray-700 hover:border-blue-200 hover:dark:border-purple-900/50 shadow-lg hover:shadow-xl relative overflow-hidden">
+  {/* Added hover:scale-[1.03] for subtle zoom */}
+  <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 h-full transition-all duration-300 hover:-translate-y-2 hover:scale-[1.03] border border-gray-100 dark:border-gray-700 hover:border-blue-200 hover:dark:border-purple-900/50 shadow-lg hover:shadow-xl relative overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-br from-blue-50/20 to-purple-50/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
     
     <div class="relative">
@@ -34,14 +35,18 @@ const { servicio } = Astro.props;
         {servicio.description}
       </p>
       
-      <ul class="space-y-3 text-gray-600 dark:text-gray-300 mb-6">
-        {servicio.features.map((feature) => (
-          <li class="flex items-center hover:pl-3 transition-all duration-300">
-            <span class="mr-2 text-blue-500 dark:text-purple-400">▸</span>
-            {feature}
-          </li>
-        ))}
-      </ul>
+      {/* Added border separator */}
+      <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
+        <h4 class="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wider">Key Features</h4>
+        <ul class="space-y-3 text-gray-600 dark:text-gray-300">
+          {servicio.features.map((feature) => (
+            <li class="flex items-center hover:pl-3 transition-all duration-300">
+              <span class="mr-2 text-blue-500 dark:text-purple-400">▸</span>
+              {feature}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </div>
 </article>

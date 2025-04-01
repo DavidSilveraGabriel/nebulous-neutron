@@ -2,7 +2,7 @@
   "servicios": [
     {
       "title": "🤖 AI Chatbots",
-      "description": "Advanced conversational solutions with multimodal integration",
+      "description": "Advanced conversational solutions that enhance user engagement and automate customer interactions with multimodal integration.",
       "category": ["chatbots", "automation"],
       "badges": ["GPT-4", "Gemini", "NLP","Supabase", "RAG"],
       "features": ["Natural Language Processing", "Multimodal Integration", "Workflow Automation"],
@@ -10,7 +10,7 @@
     },
     {
       "title": "📊 Data Analysis",
-      "description": "Interactive dashboards and advanced predictive models",
+      "description": "Interactive dashboards and advanced predictive models to uncover key insights and drive informed business decisions.",
       "category": ["analysis", "DataScience"],
       "badges": ["Python", "Power BI", "Tableau", "Pandas", "Spark"],
       "features": ["Data Visualization", "Predictive Modeling", "Data Mining"],
@@ -18,31 +18,31 @@
     },
     {
       "title": "🧠 Machine Learning",
-      "description": "Predictive models and custom intelligent systems",
-      "category": ["ml", "DataScience"],
-      "badges": ["TensorFlow", "PyTorch", "Scikit-learn", "XGBoost", "AutoML"],
-      "features": ["Predictive Modeling", "Classification", "Optimization"],
+      "description": "Develop and refine intelligent systems, including Large Language Models, to solve complex problems and predict future outcomes.",
+      "category": ["ml", "DataScience", "AI"],
+      "badges": ["TensorFlow", "PyTorch", "Scikit-learn", "LLMs", "Fine-tuning"],
+      "features": ["Fine-tuning", "LLM Engineering", "Predictive Modeling"],
       "icon": "ai"
     },
     {
       "title": "👁️ Computer Vision",
-      "description": "Automated visual analysis solutions",
-      "category": ["vision", "automation"],
+      "description": "Automated visual analysis solutions to improve quality control, enhance security, and streamline processes.",
+      "category": ["vision", "automation", "AI"],
       "badges": ["OpenCV", "YOLO", "TensorFlow", "PyTorch", "OCR"],
       "features": ["Image Recognition", "Object Detection", "Quality Control"],
       "icon": "vision"
     },
     {
       "title": "📝 Natural Language Processing",
-      "description": "Advanced text analysis and NLP",
-      "category": ["nlp", "DataScience"],
+      "description": "Advanced text analysis and NLP to extract valuable information, understand sentiment, and automate text-based tasks.",
+      "category": ["nlp", "DataScience", "AI"],
       "badges": ["NLTK", "Spacy", "BERT", "Transformers", "LLMs"],
       "features": ["Sentiment Analysis", "Topic Modeling", "Automatic Summarization"],
       "icon": "text"
     },
     {
       "title": "🧑🏫 AI Workshops",
-      "description": "Practical training in artificial intelligence",
+      "description": "Practical training in artificial intelligence to empower your team with the skills needed to leverage AI effectively.",
       "category": ["education", "consulting","DataScience"],
       "badges": ["Workshops", "Training", "MLOps", "AI Ethics", "Cases"],
       "features": ["Technical Training", "Executive Sessions", "Practical Materials"],
@@ -50,15 +50,15 @@
     },
     {
       "title": "⚙️ Model Optimization",
-      "description": "Performance improvement of AI systems",
-      "category": ["ml", "optimization"],
+      "description": "Performance improvement of AI systems to ensure faster inference, reduce costs, and enable deployment on diverse hardware.",
+      "category": ["ml", "optimization", "AI"],
       "badges": ["TensorRT", "ONNX", "Pruning", "Quantization", "Benchmark"],
       "features": ["Optimization", "Compression", "Acceleration"],
       "icon": "optimization"
     },
     {
       "title": "💡 AI Strategy",
-      "description": "Strategic consulting in artificial intelligence",
+      "description": "Strategic consulting in artificial intelligence to define your AI roadmap, identify high-impact opportunities, and ensure successful implementation.",
       "category": ["consulting", "strategy"],
       "badges": ["Roadmap", "Audit", "Ethics", "Implementation", "ROI"],
       "features": ["Planning", "Evaluation", "Implementation"],
@@ -66,4 +66,3 @@
     }
   ]
 }
-

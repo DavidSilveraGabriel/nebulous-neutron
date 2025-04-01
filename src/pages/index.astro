@@ -3,6 +3,7 @@ import Base from '../components/layout/Base.astro';
 import HeroSection from '../components/sections/HeroSection.astro';
 import ProjectsGrid from '../components/sections/ProjectsGrid.astro';
 import ServicesSection from '../components/sections/ServicesSection.astro';
+import ProcessSection from '../components/sections/ProcessSection.astro'; // Import the new section
 import Testimonios from '../components/sections/Testimonies.astro';
 import BlogSection from '../components/sections/BlogSection.astro';
 
@@ -37,6 +38,8 @@ import projects from '../data/projects.json';
     </div>
      <!-- Sección de servicios -->
     <ServicesSection />
+    <!-- Sección de Proceso -->
+    <ProcessSection />
     <!-- Sección de testimonios -->
     <Testimonios />
     <!-- Sección de proyectos -->
@@ -49,4 +52,3 @@ import projects from '../data/projects.json';
     <!--<elevenlabs-convai agent-id="7NTtm6YZ0GTe9QD7FPud"></elevenlabs-convai><script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>-->
   </div>
 </Base>
-

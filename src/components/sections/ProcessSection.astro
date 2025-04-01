@@ -1,0 +1,53 @@
+---
+// src/components/sections/ProcessSection.astro
+const processSteps = [
+  {
+    title: "Discovery & Planning",
+    description: "We start by deeply understanding your goals, challenges, and requirements to define a clear project scope and strategy.",
+    icon: "mdi:magnify" // Example icon
+  },
+  {
+    title: "Development & Iteration",
+    description: "Building the solution using agile methodologies, ensuring regular feedback loops and adaptability throughout the process.",
+    icon: "mdi:cogs" // Example icon
+  },
+  {
+    title: "Delivery & Launch",
+    description: "Rigorous testing and quality assurance followed by seamless deployment and integration into your existing workflows.",
+    icon: "mdi:rocket-launch-outline" // Example icon
+  },
+  {
+    title: "Support & Evolution",
+    description: "Providing ongoing support, monitoring, and identifying opportunities for future enhancements and optimization.",
+    icon: "mdi:chart-line" // Example icon
+  }
+];
+---
+
+<section class="py-20 bg-gray-50 dark:bg-gray-800/50" id="process">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        Our Collaborative Process
+      </h2>
+      <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        A transparent and structured approach to ensure project success and deliver maximum value.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {processSteps.map((step, index) => (
+        <div class="flex flex-col items-center text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
+          <div class="mb-4 text-blue-600 dark:text-purple-400">
+            {/* Basic text representation of step number */}
+            <span class="text-4xl font-bold">{index + 1}</span>
+            {/* TODO: Replace with actual icons if desired */}
+            {/* <Icon name={step.icon} class="w-12 h-12" /> */}
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">{step.title}</h3>
+          <p class="text-gray-600 dark:text-gray-400 text-sm">{step.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
