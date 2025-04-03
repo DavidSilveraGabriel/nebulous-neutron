@@ -1,5 +1,5 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+// Removed CollectionEntry import as content collections are not used here
 import Base from './Base.astro';
 import FormattedDate from '../FormattedDate.astro';
 import ReadingProgress from '../ui/ReadingProgress.astro';
@@ -7,14 +7,23 @@ import ReadingProgress from '../ui/ReadingProgress.astro';
 import RelatedPosts from '../ui/RelatedPosts.astro';
 import AuthorCard from '../ui/AuthorCard.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
-
-// Definir estructura correcta para author
+// Define Author structure explicitly
 interface Author {
   name: string;
   avatar?: string;
   role?: string;
   bio?: string;
+}
+
+// Define Props interface explicitly based on data from Supabase
+interface Props {
+  title: string;
+  description?: string;
+  pubDate: Date;
+  image?: { url: string; alt: string };
+  author?: string | Author; // Can be string or Author object
+  tags?: string[];
+  // Note: The main content comes via the <slot />, not as a prop here.
 }
 
 const { title, description, pubDate, image, author, tags } = Astro.props;
@@ -52,7 +61,7 @@ const accentColor = 'lime-500'; // Color verde para acentos
           </div>
           
           <h1 class="blog-title">{title}</h1>
-          
+
           {description && (
             <p class="blog-description">{description}</p>
           )}

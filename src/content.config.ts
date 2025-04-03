@@ -1,7 +1,8 @@
 // src/content.config.ts
 import { defineCollection, z } from 'astro:content';
-import { docsLoader } from '@astrojs/starlight/loaders';
-import { docsSchema } from '@astrojs/starlight/schema';
+// Removed Starlight imports as Starlight is not used
+// import { docsLoader } from '@astrojs/starlight/loaders';
+// import { docsSchema } from '@astrojs/starlight/schema';
 
 const postsCollection = defineCollection({
     type: 'content',
@@ -24,6 +25,7 @@ const postsCollection = defineCollection({
 
 
 export const collections = {
-  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
-  blog: postsCollection, // Agrega esta línea
+  // Removed 'docs' collection as Starlight is not used
+  // docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
+  blog: postsCollection,
 };

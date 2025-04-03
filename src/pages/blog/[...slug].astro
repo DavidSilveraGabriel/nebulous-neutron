@@ -2,12 +2,13 @@
 import BlogPost from '../../components/layout/MarkdownPost.astro';
 import { supabase } from '../../utils/supabaseClient';
 import type { PostFrontmatter } from '../../utils/types';
+// import { Fragment } from 'astro:components'; // No longer needed here
 // Using unified for manual processing
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
-// Note: We are processing as Markdown -> HTML. If MDX features are needed, remark-mdx and different rehype plugins might be required.
+// Removed Markdown import
 // import {matter} from 'vfile-matter';
 // import parse from 'js-yaml';
 // import remarkFrontmatter from 'remark-frontmatter';
@@ -37,7 +38,8 @@ export async function getStaticPaths() {
         return [];
     }
 
-    const paths = posts.map((post) => {
+    // Add type annotation for 'post'
+    const paths = posts.map((post: { slug: string }) => { 
         //console.log("getStaticPaths: Procesando post:", post, "Slug:", post.slug); // LOG - Post individual y slug
         const slugValue = post.slug; // Extrae el slug
         //console.log("getStaticPaths: Slug:", slugValue); // LOG - Valor del slug extraído
@@ -109,8 +111,7 @@ const { frontmatter, htmlContent } = postData || { frontmatter: null, htmlConten
   author={frontmatter?.author ?? 'Unknown Author'}
   pubDate={frontmatter?.pubDate ? new Date(frontmatter.pubDate) : new Date()}
   tags={frontmatter?.tags ?? []}
-  {...frontmatter} 
 >
-  {/* Pass the pre-rendered HTML content via the slot using set:html */}
-  <Fragment set:html={htmlContent} />
+  {/* Render the pre-rendered HTML content directly in the slot */}
+  <div set:html={htmlContent} />
 </BlogPost>

@@ -1,21 +1,23 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
+    // Removed explicit jsx/jsxImportSource as Astro handles it for .astro files
     "strictNullChecks": true,
-    "types": ["astro/client","jsdom", "dompurify"],
+    "types": ["astro/client", "react", "react-dom"], // Add React types alongside astro/client
     "allowJs": true,
     "strict": true,
     "noImplicitAny": true,
     "strictPropertyInitialization": true,
     "esModuleInterop": true,
+    "jsx": "react-jsx", // Reverted - Let Astro's base config handle JSX
+    "jsxImportSource": "react", // Reverted - Let Astro's base config handle JSX
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
     
     "target": "ES2020",
+    
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "skipLibCheck": true // Temporal para evitar conflictos de tipos
@@ -27,6 +29,6 @@
     "experimentalSpecifierResolution": "node"
   },
 
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/types/**/*.d.ts","src"], // Explicitly include .d.ts files
   "exclude": ["node_modules"]
 }

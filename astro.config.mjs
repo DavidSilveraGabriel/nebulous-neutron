@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import nodejs from '@astrojs/node';
 
-import preact from "@astrojs/preact";
+//import preact from "@astrojs/preact";
 import react from '@astrojs/react';
 import icon from "astro-icon";
 
@@ -14,7 +14,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import expressiveCode from 'astro-expressive-code';
 
-import starlight from '@astrojs/starlight';
+//import starlight from '@astrojs/starlight';
 
 //
 //import vercel from '@astrojs/vercel/serverless';
@@ -26,7 +26,7 @@ export default defineConfig({
   // MODIFICAR CON LA URL FINAL
   site: "https://silveradavid.site/",
   integrations: [
-    preact(),
+    // preact(), // Removed Preact integration
     react(),
     tailwind(),
     sitemap(),
@@ -34,18 +34,6 @@ export default defineConfig({
       include: {
         mdi: ['*'] // Esto incluirá todos los iconos de Material Design
       }
-    }),
-    starlight({
-      title: "DAVID",
-      logo: {
-        src: './src/assets/icono-black.png',//'./src/assets/icon.png',
-        replacesTitle: true,
-      },
-      // Removed nested expressiveCode config from starlight
-      social: {
-        linkedin: 'https://www.linkedin.com/in/davidsilveragabriel',
-        github: 'https://github.com/DavidSilveraGabriel',
-      },
     }),
     expressiveCode({
       // Reverting back to original themes
