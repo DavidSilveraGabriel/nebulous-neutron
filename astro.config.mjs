@@ -41,13 +41,7 @@ export default defineConfig({
         src: './src/assets/icono-black.png',//'./src/assets/icon.png',
         replacesTitle: true,
       },
-      expressiveCode: {
-        // Configuración de expressive-code
-        themes: ['catppuccin-macchiato','snazzy-light'], // o el tema que prefieras
-        styleOverrides: {
-          borderRadius: '0.5rem' // Radio de borde para los bloques de código
-        },
-      },
+      // Removed nested expressiveCode config from starlight
       social: {
         linkedin: 'https://www.linkedin.com/in/davidsilveragabriel',
         github: 'https://github.com/DavidSilveraGabriel',
