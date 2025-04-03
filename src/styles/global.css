@@ -571,3 +571,56 @@ main > div {
 */
 
 /* End of styles moved from src/components/layout/MarkdownPost.astro */
+
+/* ==========================================================================
+   11. EXPRESSIVE CODE CONFLICT RESOLUTION
+   ========================================================================== */
+
+/* Reset prose styles specifically for expressive-code blocks */
+/* This prevents Tailwind's .prose class from interfering */
+.prose .expressive-code pre,
+.prose .expressive-code code {
+  /* Reset properties potentially set by prose or custom overrides */
+  background-color: unset !important;
+  border: unset !important;
+  border-radius: unset !important;
+  color: unset !important;
+  font-family: unset !important; /* Ensure font doesn't interfere */
+  font-size: unset !important;
+  font-weight: unset !important;
+  line-height: unset !important; /* Ensure line height doesn't interfere */
+  margin: unset !important;
+  padding: unset !important;
+  text-shadow: unset !important;
+  white-space: pre !important; /* Force preservation of whitespace */
+  /* Add any other properties prose might be setting that cause issues */
+}
+
+/* Ensure expressive-code container itself has appropriate margins */
+/* Adjust values if needed to match your desired spacing */
+.prose .expressive-code {
+  margin-top: 1.6em !important; 
+  margin-bottom: 1.6em !important;
+  padding: 0 !important; /* Reset padding if prose adds it */
+  border-radius: unset !important; /* Reset border-radius if prose adds it */
+  background: unset !important; /* Reset background if prose adds it */
+}
+
+/* Reset specific overrides for pre/code within blog-content if they are inside expressive-code */
+.blog-content .expressive-code pre {
+  border-radius: unset !important;
+  padding: unset !important;
+  margin: unset !important;
+  background-color: unset !important;
+  color: unset !important;
+  overflow-x: auto !important; /* Ensure horizontal scroll works if needed */
+  white-space: pre !important; /* Force preservation */
+  line-height: unset !important;
+}
+
+.blog-content .expressive-code code {
+  font-family: unset !important;
+  font-size: unset !important;
+  line-height: unset !important;
+  white-space: pre !important; /* Force preservation */
+}

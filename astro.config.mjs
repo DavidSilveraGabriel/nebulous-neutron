@@ -12,7 +12,7 @@ import vercel from "@astrojs/vercel";
 
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-
+import expressiveCode from 'astro-expressive-code';
 
 import starlight from '@astrojs/starlight';
 
@@ -53,7 +53,16 @@ export default defineConfig({
         github: 'https://github.com/DavidSilveraGabriel',
       },
     }),
-     mdx()
+    expressiveCode({
+      // Reverting back to original themes
+      themes: ['catppuccin-macchiato', 'snazzy-light']
+      // Temporarily removed styleOverrides to test
+      // styleOverrides: {
+      //   borderRadius: '0.5rem'
+      // },
+      // Add other expressive-code options if needed
+    }),
+    mdx() // Keep mdx() if you are using MDX features beyond basic markdown
   ],
   //  output: "server",
     adapter: vercel({webAnalytics: {
