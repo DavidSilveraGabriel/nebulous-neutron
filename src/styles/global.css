@@ -584,7 +584,7 @@ main > div {
   background-color: unset !important;
   border: unset !important;
   border-radius: unset !important;
-  color: unset !important;
+  /* color: unset !important; <-- REMOVED THIS LINE */
   font-family: unset !important; /* Ensure font doesn't interfere */
   font-size: unset !important;
   font-weight: unset !important;
@@ -612,7 +612,7 @@ main > div {
   padding: unset !important;
   margin: unset !important;
   background-color: unset !important;
-  color: unset !important;
+  /* color: unset !important; <-- REMOVED THIS LINE */
   overflow-x: auto !important; /* Ensure horizontal scroll works if needed */
   white-space: pre !important; /* Force preservation */
   line-height: unset !important;
@@ -623,4 +623,5 @@ main > div {
   font-size: unset !important;
   line-height: unset !important;
   white-space: pre !important; /* Force preservation */
+  /* color: unset !important; <-- Also ensure color is not unset here if it was added */
 }

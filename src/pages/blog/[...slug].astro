@@ -8,6 +8,9 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
+// Import types along with the plugin
+import rehypeExpressiveCode, { type ExpressiveCodeTheme, type StyleVariant } from 'rehype-expressive-code';
+import ecConfig from '../../ec.config.mjs'; // Import the shared config
 // Removed Markdown import
 // import {matter} from 'vfile-matter';
 // import parse from 'js-yaml';
@@ -22,6 +25,10 @@ export async function getStaticPaths() {
     // ... (previous code) ...
 }
 */
+/** @type {import('rehype-expressive-code').RehypeExpressiveCodeOptions} */
+const rehypeExpressiveCodeOptions = {
+  // You can add configuration options here
+}
     const { data: posts, error } = await supabase
         .from('posts')
         .select('slug');
@@ -75,9 +82,11 @@ if (slug) {
     // Process the fetched Markdown content into HTML using unified
     if (post && post.contenido) {
         const file = await unified()
-            .use(remarkParse) // Parse Markdown
-            .use(remarkRehype) // Convert Markdown AST to HTML AST
-            .use(rehypeStringify) // Convert HTML AST to HTML string
+            .use(remarkParse) // 1. Parse Markdown
+            .use(remarkRehype, { allowDangerousHtml: true }) // 2. Convert Markdown AST to HTML AST
+            // 3. Apply rehypeExpressiveCode to the HTML AST, passing the imported shared config
+            .use(rehypeExpressiveCode, ecConfig) 
+            .use(rehypeStringify) // 4. Convert final HTML AST to string
             .process(post.contenido);
 
         postData = {

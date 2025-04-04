@@ -35,15 +35,9 @@ export default defineConfig({
         mdi: ['*'] // Esto incluirá todos los iconos de Material Design
       }
     }),
-    expressiveCode({
-      // Reverting back to original themes
-      themes: ['catppuccin-macchiato', 'snazzy-light']
-      // Temporarily removed styleOverrides to test
-      // styleOverrides: {
-      //   borderRadius: '0.5rem'
-      // },
-      // Add other expressive-code options if needed
-    }),
+    // Expressive Code integration will automatically load config from ec.config.mjs
+    // No need to pass options here unless overriding ec.config.mjs
+    expressiveCode(), 
     mdx() // Keep mdx() if you are using MDX features beyond basic markdown
   ],
   //  output: "server",
