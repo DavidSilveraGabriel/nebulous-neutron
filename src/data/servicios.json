@@ -1,13 +1,13 @@
 {
   "servicios": [
     {
-      "title": "🤖 AI Chatbots",
-      "description": "Advanced conversational solutions that enhance user engagement and automate customer interactions with multimodal integration.",
-      "category": ["chatbots", "automation"],
-      "badges": ["GPT-4", "Gemini", "NLP","Supabase", "RAG"],
-      "features": ["Natural Language Processing", "Multimodal Integration", "Workflow Automation"],
-      "icon": "chat"
-    },
+      "title": "🎯 n8n Automation",
+      "description": "Automate repetitive tasks and integrate various applications using n8n, a powerful open-source workflow automation tool.",
+      "category": ["automation"],
+      "badges": ["n8n", "Automation", "Integration"],
+      "features": ["Workflow Automation", "Task Scheduling", "API Integration"],
+      "icon": "automation"
+    },  
     {
       "title": "📊 Data Analysis",
       "description": "Interactive dashboards and advanced predictive models to uncover key insights and drive informed business decisions.",
@@ -41,28 +41,12 @@
       "icon": "text"
     },
     {
-      "title": "🧑🏫 AI Workshops",
-      "description": "Practical training in artificial intelligence to empower your team with the skills needed to leverage AI effectively.",
-      "category": ["education", "consulting","DataScience"],
-      "badges": ["Workshops", "Training", "MLOps", "AI Ethics", "Cases"],
-      "features": ["Technical Training", "Executive Sessions", "Practical Materials"],
-      "icon": "education"
-    },
-    {
       "title": "🔧 MLOps",
       "description": "Implementation of MLOps practices to streamline the deployment, monitoring, and management of machine learning models.",
       "category": ["mlops", "DataScience"],
       "badges": ["Docker", "Kubernetes", "CI/CD", "Monitoring", "Deployment"],
       "features": ["Model Deployment", "Monitoring", "Version Control"],
       "icon": "mlops"
-    },
-    {
-      "title": "💡 AI Strategy",
-      "description": "Strategic consulting in artificial intelligence to define your AI roadmap, identify high-impact opportunities, and ensure successful implementation.",
-      "category": ["consulting", "strategy"],
-      "badges": ["Roadmap", "Audit", "Ethics", "Implementation", "ROI"],
-      "features": ["Planning", "Evaluation", "Implementation"],
-      "icon": "strategy"
     }
   ]
 }
