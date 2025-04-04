@@ -3,48 +3,48 @@ import { Icon } from 'astro-icon/components';
 // src/components/sections/ProcessSection.astro
 const processSteps = [
   {
-    title: "Descubrimiento y Estrategia",
-    description: "Comprendemos a fondo tus objetivos, audiencia y desafíos para definir una hoja de ruta y estrategia claras.",
+    title: "Discovery & Strategy",
+    description: "We thoroughly understand your goals, audience, and challenges to define a clear roadmap and strategy.",
     icon: "mdi:clipboard-text-search-outline"
   },
   {
-    title: "Diseño UI/UX",
-    description: "Creamos prototipos y diseños de interfaz intuitivos y atractivos, centrados en la experiencia del usuario final.",
+    title: "UI/UX Design",
+    description: "We create intuitive and attractive interface prototypes and designs, focusing on the end-user experience.",
     icon: "mdi:palette-outline"
   },
   {
-    title: "Desarrollo e Iteración",
-    description: "Construimos la solución utilizando metodologías ágiles, con ciclos de feedback regulares para asegurar la alineación.",
+    title: "Development & Iteration",
+    description: "We build the solution using agile methodologies, with regular feedback cycles to ensure alignment.",
     icon: "mdi:code-braces"
   },
   {
-    title: "Pruebas y Entrega",
-    description: "Realizamos pruebas exhaustivas para garantizar la calidad y funcionalidad antes del despliegue final.",
+    title: "Testing & Delivery",
+    description: "We perform exhaustive testing to guarantee quality and functionality before the final deployment.",
     icon: "mdi:rocket-launch-outline"
   },
   {
-    title: "Mantenimiento y Crecimiento",
-    description: "Ofrecemos soporte post-lanzamiento, monitorizamos el rendimiento y proponemos mejoras continuas.",
+    title: "Maintenance & Growth",
+    description: "We offer post-launch support, monitor performance, and propose continuous improvements.",
     icon: "mdi:lifebuoy"
   }
 ];
 ---
 
 <section class="py-20 bg-gray-50 dark:bg-gray-800/50" id="process">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> {/* Increased max-width */}
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-16">
       <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-        Nuestro Proceso {/* Changed Title */}
+        Our Process
       </h2>
-      <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"> {/* Increased max-width */}
-        Un enfoque transparente y estructurado para garantizar el éxito del proyecto y entregar el máximo valor. {/* Changed text */}
+      <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+        A transparent and structured approach to ensure project success and deliver maximum value.
       </p>
     </div>
 
-    {/* Adjusted grid columns for better responsiveness */}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+    {/* Adjusted grid columns and gap for better spacing */}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12"> {/* Changed md/lg cols, increased gap */}
       {processSteps.map((step, index) => (
-        <div class="process-step-container group relative overflow-hidden p-10 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700/50 cursor-pointer transition-all duration-300 ease-in-out h-96 flex flex-col justify-center items-center text-center"> {/* Increased h-64, p-8, rounded-2xl, shadow-lg */}
+        <div class="process-step-container group relative overflow-hidden p-10 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700/50 cursor-pointer transition-all duration-300 ease-in-out h-96 flex flex-col justify-center items-center text-center"> {/* Kept h-96, p-10 */}
           {/* Step Number */}
           <span class="absolute top-4 right-4 text-5xl font-bold text-gray-200 dark:text-gray-600/50 group-hover:text-gray-300 dark:group-hover:text-gray-500/70 transition-colors duration-300 z-0">
             {String(index + 1).padStart(2, '0')}
