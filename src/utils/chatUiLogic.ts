@@ -240,7 +240,7 @@ const api: APIFunctions = {
 };
 // Reset completo
 const hardResetSession = async () => {
-  if (!confirm('¿Resetear toda la conversación y contexto?')) return;
+  if (!confirm('Reset the chat?')) return;
 
   try {
     const oldSessionId = localStorage.getItem('chatSessionId');
@@ -260,9 +260,7 @@ const hardResetSession = async () => {
       // Update reset message style to match new bot style
       elements.messagesContainer.innerHTML = `
         <div class="bot-message flex justify-start">
-          <div class="bg-gray-200/70 dark:bg-gray-700/70 text-black dark:text-white rounded-lg p-3 max-w-[85%]">
-            ¡Conversación reiniciada! ¿En qué puedo ayudarte ahora?
-          </div>
+           
         </div>`;
     }
 
