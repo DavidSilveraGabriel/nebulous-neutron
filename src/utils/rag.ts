@@ -72,12 +72,12 @@ interface Memory {
   longTerm: LongTermMemory;
 }
 
-// Umbrales optimizados
+// Umbrales optimizados (Lowered similarity for testing)
 const RAG_THRESHOLDS = {
-  similarity: 0.50, // Aumentar para mayor precisión
-  minConfidenceDrop: 0.20,
-  contentLength: 1500,
-  confidence: 0.55
+  similarity: 0.40, // Lowered from 0.50 to potentially retrieve more results
+  minConfidenceDrop: 0.15, // Lowered confidence drop threshold slightly
+  contentLength: 1500, // Keep this if relevant, otherwise consider removing
+  confidence: 0.50 // Lowered confidence slightly
 };
 
 // Gestión de sesiones
@@ -255,33 +255,44 @@ class ChatMemoryManager {
   }
 }
 export const shouldUseRAG = async (query: string): Promise<boolean> => {
-  try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const prompt = `Analiza si la consulta y el contexto de la conversacion, requiere información específica de:
-- Proyectos profesionales/personales
-- Tecnologías usadas (Python, BCI, IA, Machine learning, Data science u similares.)
-- Experiencia laboral/académica
-- Servicios ofrecidos (consultoría, desarrollo de software, etc.)
-- Redes sociales, contacto o informacion personal disponible en el sitio web.
+  // --- Direct Check Added ---
+  // If the query explicitly mentions "david", assume RAG is needed.
+  if (query.toLowerCase().includes('david')) {
+    console.log('[RAG] Decisión: SI (Mención directa de "david")');
+    return true;
+  }
+  // --- End Direct Check ---
 
-En caso de que lo requiera responde "SI", caso contrario responde "NO".
+  try {
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    // --- Prompt Updated ---
+    const prompt = `Analiza si la consulta del usuario requiere información específica sobre David o su trabajo. Responde "SI" si la consulta trata sobre:
+- David directamente (quién es, su experiencia, educación, información personal mencionada en el sitio, etc.)
+- Sus proyectos profesionales o personales.
+- Tecnologías que utiliza (Python, BCI, IA, Machine Learning, Data Science, etc.).
+- Su experiencia laboral o académica.
+- Servicios que ofrece (consultoría, desarrollo de software, etc.).
+- Sus redes sociales, formas de contacto u otra información específica del sitio web.
+
+Si la consulta cumple alguno de estos criterios, responde "SI". De lo contrario, responde "NO".
 
 Consulta: "${query}"
 
-Responde SOLO "SI" o "NO"`;
+Responde únicamente con "SI" o "NO".`;
+    // --- End Prompt Update ---
 
     const start = Date.now();
     const result = await model.generateContent(prompt);
     const response = (await result.response.text()).trim().toUpperCase();
     const decision = response === "SI";
-    const keywords = ['proyecto', 'project', 'trabajo', 'portfolio', 'experiencia'];
+    // Removed unused 'keywords' variable from here
 
-    console.log('[RAG] Decisión:', {
-      query: query.substring(0, 100), // Mostrar más contexto
+    console.log('[RAG] Decisión (AI):', { // Log updated slightly
+      query: query.substring(0, 100),
       decision,
       response,
-      latency: Date.now() - start,
-      envKeywords: keywords // Verificar keywords cargadas
+      latency: Date.now() - start
+      // Removed reference to non-existent 'keywords'
     });
 
     return decision;
@@ -307,7 +318,7 @@ export const getEmbedding = async (text: string): Promise<number[]> => {
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-embedding-exp-03-07	' });
+    const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
     const result = await model.embedContent(text);
 
     if (!result.embedding?.values) {
@@ -338,9 +349,14 @@ export const semanticSearch = async (embedding: number[]): Promise<Document[]> =
 
     if (error) throw error;
 
+    // --- Added Logging ---
+    // Explicitly type 'd' as Document
+    console.log('[RAG] Raw DB Results:', (data || []).map((d: Document) => ({ id: d.id, similarity: d.similarity, title: d.metadata?.title })));
+    // --- End Logging ---
+
     const results = (data || [])
       .filter((doc: Document) =>
-        //doc.content.length >= RAG_THRESHOLDS.contentLength &&
+        //doc.content.length >= RAG_THRESHOLDS.contentLength && // Keep commented out unless needed
         (doc.similarity ?? 0) >= RAG_THRESHOLDS.similarity
       )
       .slice(0, 2);
@@ -357,6 +373,10 @@ export const semanticSearch = async (embedding: number[]): Promise<Document[]> =
         return [results[0]];
       }
     }
+    // --- Added Logging ---
+    // Explicitly type 'd' as Document
+    console.log('[RAG] Final Filtered Results:', results.map((d: Document) => ({ id: d.id, similarity: d.similarity, title: d.metadata?.title })));
+    // --- End Logging ---
 
     return results;
 
@@ -390,7 +410,7 @@ const buildPrompt = (query: string, context: Document[], memory: Memory): string
 Bob
 
 **Tu presentacion en el idioma en el que se este hablando:**
-Hola Soy bob, el asistente virtual de David, ¿En qué puedo ayudarte hoy?
+NO TIENES QUE PRESENTARTE, a menos que EXPLICITAMENTE se te pida.
 
 **Tu Historia:**
 Eres Bob, el asistente virtual de David.
@@ -466,7 +486,7 @@ export const generateResponse = async (
     query,
     response: '',
     response_time: 0,
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     sources: [],
     context_count: context.length,
     max_similarity: Math.max(...context.map(d => d.similarity || 0))
@@ -477,7 +497,7 @@ export const generateResponse = async (
     memoryManager.addInteraction('user', query);
 
     const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash',
       generationConfig: {
         temperature: context.length ? 0.4 : 0.7,
         topP: 0.95,

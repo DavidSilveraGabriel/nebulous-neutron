@@ -1,90 +1,119 @@
 ---
 // src/components/chat/ChatUi.astro
-import { init } from '../../utils/chatUiLogic.ts'; // Importa la función init desde chatUiLogic.ts
+import { init } from '../../utils/chatUiLogic.ts';
 ---
 
 <div class="fixed bottom-4 right-4 z-[999]">
-  <!-- Botón toggle -->
+  <!-- Toggle Button -->
   <button
     id="chatbot-toggle"
-    class="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-xl cursor-pointer transition-all duration-300 hover:scale-110 flex items-center justify-center z-[999]"
-    aria-label="Abrir chat"
+    class="w-14 h-14 bg-white dark:bg-black rounded-full shadow-lg cursor-pointer transition-all duration-300 hover:scale-110 flex items-center justify-center z-[999] border border-gray-200 dark:border-gray-800"
+    aria-label="Open Chat"
   >
-    <svg class="w-6 h-6 text-white transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <!-- Icon changes color based on theme -->
+    <svg class="w-6 h-6 text-black dark:text-white transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
     </svg>
   </button>
 
-  <!-- Contenedor del Chat -->
-  <div id="chatbot-container" class="fixed bottom-20 right-4 w-[95vw] md:w-96 h-[70vh] bg-gray-900 backdrop-blur-lg bg-opacity-95 text-white rounded-xl shadow-2xl opacity-0 translate-y-4 scale-95 origin-bottom-right transition-all duration-300 border border-white/10 invisible chat-container">
+  <!-- Chat Container -->
+  <div
+    id="chatbot-container"
+    class="fixed bottom-20 right-4 w-[95vw] md:w-96 h-[70vh]
+           bg-white/90 dark:bg-black/90 backdrop-blur-sm
+           text-black dark:text-white
+           rounded-lg shadow-xl
+           opacity-0 translate-y-4 scale-95 origin-bottom-right
+           transition-all duration-300
+           border border-gray-200 dark:border-gray-800
+           invisible chat-container"
+  >
     <div class="flex flex-col h-full pointer-events-auto">
-            <!-- Header -->
-            <div class="bg-gradient-to-r from-blue-600/30 to-purple-600/30 p-4 rounded-t-xl flex justify-between items-center">
-              <h3 class="font-bold text-lg">Bob 🧐🍷</h3>
+      <!-- Header -->
+      <div class="bg-gray-50 dark:bg-gray-950 p-3 rounded-t-lg flex justify-between items-center border-b border-gray-200 dark:border-gray-800">
+        <h3 class="font-semibold text-base text-gray-800 dark:text-gray-200">🧐🍷 Bob Assistant</h3>
 
-              <div class="flex items-center space-x-2"> {/* Container for reset and close buttons */}
-                <button
-                  id="hard-reset"
-                  class="p-1 hover:text-red-500 transition-colors"
-                  aria-label="Reinicio completo"
-                >
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                  </svg>
-                </button>
-                <div class="border-r border-white/20 h-5"></div> {/* Visual Separator */}
-                <button id="close-chat" class="p-1 hover:text-blue-400 transition-colors" aria-label="Cerrar chat">
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-      <!-- Área de mensajes -->
-      <div
-        id="chat-messages"
-        class="flex-1 overflow-y-auto p-4 space-y-4 text-sm scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent"
-      >
-        <!-- Mensaje inicial -->
-        <div class="bot-message flex justify-start">
-          <div class="bg-gray-800/80 rounded-xl p-3 max-w-[85%]">
-            Hello! I'm Bob, The virtual asistant of David
-            - I'm here to help you with any question you have about David, his services or this website.
-            - take in account that your conversation with me is being recorded and used for improve me
-              so dont share any sensitive information please.
-              How can I help you today?
-
-          </div>
+        <div class="flex items-center space-x-2">
+          {/* Reset Button */}
+          <button
+            id="hard-reset"
+            class="p-1 text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+            aria-label="Hard Reset"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </button>
+          <div class="border-r border-gray-300 dark:border-gray-700 h-4"></div> {/* Visual Separator */}
+          {/* Close Button */}
+          <button id="close-chat" class="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors" aria-label="Close Chat">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
         </div>
       </div>
 
-      <!-- Indicador de estado -->
+      <!-- Message Area -->
       <div
-        id="status-indicator"
-        class="flex items-center gap-2 px-4 pb-2 text-xs text-gray-400 opacity-0 transition-opacity duration-200"
+        id="chat-messages"
+        class="flex-1 overflow-y-auto p-4 space-y-3 text-sm
+               scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent"
       >
-        <div class="spinner animate-spin h-4 w-4 border-2 border-white/50 border-t-transparent rounded-full"></div>
-        <span>Generando respuesta...</span>
+        <!-- Initial Message -->
+        <div class="bot-message flex justify-start">
+          {/* Updated background color and transparency */}
+          <div class="bg-gray-200/70 dark:bg-gray-700/70 rounded-lg p-3 max-w-[85%]">
+            Hello! I'm Bob, David's virtual assistant.
+            <ul class="list-disc list-inside mt-2 text-xs text-gray-600 dark:text-gray-400">
+              <li>I can answer questions about David, his services, or this website.</li>
+              <li>Please note: conversations may be recorded for improvement purposes. Avoid sharing sensitive info.</li>
+            </ul>
+             How can I help you today?
+          </div>
+        </div>
+        <!-- User messages will be added here dynamically -->
+        <!-- Example User Message Structure (for reference, added via JS) -->
+        <!--
+        <div class="user-message flex justify-end">
+          <div class="bg-blue-500 text-white rounded-lg p-3 max-w-[85%]">
+            This is a user message example.
+          </div>
+        </div>
+        -->
       </div>
 
-      <!-- Input de usuario -->
-      <div class="border-t border-white/10 p-4 bg-gray-900/50">
+      <!-- Status Indicator -->
+      <div
+        id="status-indicator"
+        class="flex items-center gap-2 px-4 pb-2 text-xs text-gray-500 dark:text-gray-400 opacity-0 transition-opacity duration-200"
+      >
+        {/* Replaced spinner with typing dots indicator */}
+        <div class="typing-indicator inline-flex items-center gap-1">
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+        </div>
+        <span>Generating response...</span>
+      </div>
+
+      <!-- User Input -->
+      <div class="border-t border-gray-200 dark:border-gray-800 p-3 bg-gray-50 dark:bg-gray-950">
         <div class="flex gap-2">
           <input
             id="user-input"
             type="text"
-            placeholder="Escribe tu pregunta..."
-            class="flex-1 bg-gray-800/70 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-            aria-label="Escribe tu mensaje"
+            placeholder="Type your question..."
+            class="flex-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md px-3 py-2 text-sm text-black dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder-gray-400 dark:placeholder-gray-500"
+            aria-label="Type your message"
           />
           <button
             id="send-btn"
-            class="bg-blue-600 hover:bg-blue-700 px-4 rounded-lg transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Enviar mensaje"
+            class="bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 px-4 rounded-md transition-colors flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
+            aria-label="Send message"
             disabled
           >
-            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-white dark:text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
             </svg>
           </button>
@@ -95,105 +124,94 @@ import { init } from '../../utils/chatUiLogic.ts'; // Importa la función init d
 </div>
 
 <style>
-  /* Animaciones personalizadas */
-  @keyframes messagePop {
-    0% { transform: scale(0.8); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-  }
+  /* Keep existing animations */
+  @keyframes messagePop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes typing { 0%, 80%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
 
-  @keyframes typing {
-    0%, 80%, 100% { transform: translateY(0); }
-    30% { transform: translateY(-6px); }
-  }
+  .message-enter { animation: messagePop 0.3s ease-out; }
 
-  .message-enter {
-    animation: messagePop 0.3s ease-out;
-  }
-
-  .typing-indicator {
-    display: inline-flex;
-    gap: 4px;
-    padding: 0.5rem 1rem;
-  }
-
+  /* Typing indicator styling */
+  .typing-indicator { display: inline-flex; gap: 4px; padding: 0.5rem 1rem; }
   .typing-dot {
-    width: 6px;
-    height: 6px;
-    background: #94a3b8;
+    width: 6px; height: 6px;
+    @apply bg-gray-400 dark:bg-gray-600; /* Use Tailwind apply for theme colors */
     border-radius: 50%;
     animation: typing 1.4s infinite ease-in-out;
   }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
+  /* Message alignment */
   .user-message {
-    margin-left: auto;
-    margin-right: 0.5rem;
+    display: flex; /* Ensure flex properties apply */
+    justify-content: flex-end; /* Align content to the right */
+    margin-left: auto; /* Push container to the right */
+    margin-right: 0; /* Remove default right margin */
+  }
+  .user-message > div { /* Style the inner div containing the message bubble */
+     @apply bg-blue-500 dark:bg-blue-600 text-white; /* Example user bubble style */
+     /* Add other styles like padding, border-radius if needed */
   }
 
   .bot-message {
-    margin-right: auto;
-    margin-left: 0.5rem;
+    display: flex; /* Ensure flex properties apply */
+    justify-content: flex-start; /* Align content to the left */
+    margin-right: auto; /* Push container to the left */
+    margin-left: 0; /* Remove default left margin */
+  }
+  .bot-message > div {
+     /* Updated bot bubble style with transparency */
+     @apply bg-gray-200/70 dark:bg-gray-700/70 text-black dark:text-white;
   }
 
-  .scrollbar-thumb-gray-700::-webkit-scrollbar-thumb {
-    background-color: #374151;
-    border-radius: 0.5rem;
-  }
 
-  .chat-container ul {
-  list-style-type: disc;
-  margin-left: 1.5rem;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-}
+  /* Custom scrollbar styles (Tailwind plugin might override this, but good fallback) */
+  .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scrollbar-track-transparent::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb { @apply bg-gray-300; border-radius: 4px; }
+  .dark .scrollbar-thumb-gray-700::-webkit-scrollbar-thumb { @apply bg-gray-700; border-radius: 4px; }
+  .scrollbar-thumb-gray-300:hover::-webkit-scrollbar-thumb { @apply bg-gray-400; }
+  .dark .scrollbar-thumb-gray-700:hover::-webkit-scrollbar-thumb { @apply bg-gray-600; }
 
-.chat-container li {
-  margin-bottom: 0.25rem;
-}
 
-.chat-container pre {
-  white-space: pre-wrap;
-  word-break: break-word;
-}
+  /* Markdown content styling within chat */
+  .chat-container ul { list-style-type: disc; margin-left: 1.5rem; margin-top: 0.5rem; margin-bottom: 0.5rem; }
+  .chat-container li { margin-bottom: 0.25rem; }
+  .chat-container pre { white-space: pre-wrap; word-break: break-word; }
+  .chat-container code { font-family: 'Courier New', monospace; font-size: 0.9em; }
 
-.chat-container code {
-  font-family: 'Courier New', monospace;
-  font-size: 0.9em;
-}
-/* Asegurar estilos adecuados para elementos markdown */
-.chat-container {
-  h1, h2, h3 { 
-    font-weight: bold;
-    margin: 0.5em 0;
+  .chat-container {
+    h1, h2, h3 { font-weight: bold; margin: 0.5em 0; @apply text-black dark:text-white; }
+
+    pre {
+      @apply bg-gray-100 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto my-2;
+    }
+
+    code:not(pre code) { /* Inline code */
+      @apply bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded text-sm;
+    }
+
+    pre code { /* Code within pre blocks */
+       background: none; /* Reset background for code inside pre */
+       padding: 0;
+       border-radius: 0;
+       color: inherit; /* Inherit color from pre */
+    }
+
+    a { @apply text-blue-600 dark:text-blue-400 underline hover:opacity-80; }
   }
-  
-  pre {
-    background: #1a1a1a;
-    padding: 1em;
-    border-radius: 8px;
-    overflow-x: auto;
-  }
-  
-  code {
-    background: #2d2d2d;
-    padding: 0.2em 0.4em;
-    border-radius: 4px;
-  }
-  
-  a {
-    color: #58a6ff;
-    text-decoration: underline;
-  }
-}
 </style>
 
 <script>
-  import { init } from '../../utils/chatUiLogic.ts'; // Asegúrate de que la ruta sea correcta
-  
+  import { init } from '../../utils/chatUiLogic.ts';
+
+  // Initialize on first load and subsequent Astro page transitions
   document.addEventListener('astro:page-load', init);
-  document.addEventListener('DOMContentLoaded', () => { init();});
+  // Fallback for initial load if astro:page-load doesn't fire early enough
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    // DOMContentLoaded has already fired
+    init();
+  }
 </script>
-
-
-
-
-

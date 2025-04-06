@@ -74,12 +74,13 @@ const ui: UIFunctions = {
     messageElement.className = `${role}-message flex ${role === 'user' ? 'justify-end' : 'justify-start'} message-enter`;
 
     const bubble = document.createElement('div');
-    bubble.className = `rounded-xl p-3 max-w-[85%] ${
-      role === 'error' ? 'bg-red-600/20 text-red-400 border border-red-600/30' :
-      role === 'user' ? 'bg-blue-600/80' : 'bg-gray-800/80'
+    bubble.className = `rounded-lg p-3 max-w-[85%] ${ // Changed to rounded-lg to match Astro component
+      role === 'error' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-700' : // Adjusted error style for better theme fit
+      role === 'user' ? 'bg-blue-500 dark:bg-blue-600 text-white' : // Matched user style from Astro component
+      'bg-gray-200/70 dark:bg-gray-700/70 text-black dark:text-white' // Applied correct bot style
     }`;
 
-    bubble.innerHTML = utils.formatContent(content);
+    bubble.innerHTML = utils.formatContent(content); // Ensure formatContent sanitizes or handles HTML correctly
 
     if (sources.length > 0) {
       const sourcesDiv = document.createElement('div');
@@ -256,9 +257,10 @@ const hardResetSession = async () => {
 
     // Reset UI
     if (elements.messagesContainer) {
+      // Update reset message style to match new bot style
       elements.messagesContainer.innerHTML = `
         <div class="bot-message flex justify-start">
-          <div class="bg-gray-800/80 rounded-xl p-3 max-w-[85%]">
+          <div class="bg-gray-200/70 dark:bg-gray-700/70 text-black dark:text-white rounded-lg p-3 max-w-[85%]">
             ¡Conversación reiniciada! ¿En qué puedo ayudarte ahora?
           </div>
         </div>`;
